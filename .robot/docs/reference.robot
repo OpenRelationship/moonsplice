@@ -76,7 +76,7 @@ Systems and code
     ...    \ \ Rows set props for that frame only (cleared before the next). Systems run in order; a later one sees an earlier one's rows.
     ...    - q (also a global in every piece of code): q.get(id, prop), shorthand q.x(id) q.y(id) q.opacity(id) ...; q.state (game state, false in videos); q.fact("beat:3") -> seconds; q.all(pred) -> fact rows; q.t.
     ...    - A system named "shared" (order 0) runs once and returns a table; every other piece of code reads it as the global `shared` (constants, palettes, helper functions).
-    ...    - Sandbox globals: math, string, table, ipairs, pairs, select, tostring, tonumber, type, unpack, ease(name) -> f(0..1), lerp(a,b,k), clamp(x,a,b), color(c) -> {r,g,b,a}, shared, q.
+    ...    - Sandbox globals: math, string, table, ipairs, pairs, select, tostring, tonumber, type, unpack, ease(name, u) -> u eased (u in 0..1), lerp(a,b,k), clamp(x,a,b), color(c) -> {r,g,b,a}, shared, q.
     ...    - A code prop is { fn = "<source>" } where source returns the function the kind expects: a vector's draw = { fn = [[ return function(v, t) ... end ]] }.
     ...    - A system row whose id is not a node and whose parent is a world spawns a Bevy entity for that frame (see 3D).
     [Tags]    doc    source:cadence@56ddad1:agent/REFERENCE.md
