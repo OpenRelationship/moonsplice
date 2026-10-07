@@ -14,6 +14,7 @@ import { bridge, why } from "../bridge";
 import { activeTab, useStudio } from "../state";
 import { Button, Empty, Icon } from "../ui/bits";
 import { describeAsk } from "./describe";
+import { Said } from "./Said";
 import { studioTransport, working, type StudioMessage } from "./transport";
 
 const SUGGESTIONS = [
@@ -172,13 +173,9 @@ function Message({
       {message.parts.map((part, i) => {
         if (part.type === "text") {
           return (
-            <p
-              key={i}
-              data-selectable
-              className="whitespace-pre-wrap text-[12.5px] leading-[1.5] text-[var(--text-1)]"
-            >
-              {part.text}
-            </p>
+            <div key={i} data-selectable>
+              <Said text={part.text} />
+            </div>
           );
         }
         if (part.type === "dynamic-tool") {
