@@ -62,18 +62,20 @@ P["core/moonsplice/init.lua"] = {
 }
 
 P["core/moonsplice/lint.lua"] = {
-  note = "L.run (834 lines) keeps its setup and sampling; each `-- ====` rule family becomes a function of the "
-    .. "sampled state (states, add, opts) in its own module, called in the same order",
+  note = "L.run (873 lines) is cut by hand into phases: each part returns function(ctx) and reads what it needs "
+    .. "from ctx (comp, opts, fps, dur, n_samples, add, visual, audio, tdims); sample adds at, ct, live, ever_live, "
+    .. "states and amp for the rules after it. init keeps the helpers, the setup, cliplint and the summary",
   rest = "core/moonsplice/lint/init.lua",
-  ranges = {
-    ["core/moonsplice/lint/sample.lua"] = { { 272, 374 } },   -- frame-grid sampling: states per node per sample
-    ["core/moonsplice/lint/motion.lua"] = { { 375, 562 } },   -- motion rules, segment metadata
-    ["core/moonsplice/lint/frame.lua"] = { { 563, 718 } },    -- geometry, colour and brand
-    ["core/moonsplice/lint/audio.lua"] = { { 719, 783 } },
-    ["core/moonsplice/lint/world.lua"] = { { 784, 889 } },    -- solids, 3D framing, keys a system overrides
-    ["core/moonsplice/lint/expect.lua"] = { { 890, 941 } },   -- the ask as predicates
+  modules = {
+    ["core/moonsplice/lint/sample.lua"] = {},   -- frame-grid sampling: states per node per sample, motion amplitude
+    ["core/moonsplice/lint/motion.lua"] = {},   -- motion rules, segment metadata
+    ["core/moonsplice/lint/frame.lua"] = {},    -- geometry, colour and brand
+    ["core/moonsplice/lint/audio.lua"] = {},
+    ["core/moonsplice/lint/world.lua"] = {},    -- solids, 3D framing, keys a system overrides
+    ["core/moonsplice/lint/expect.lua"] = {},   -- the ask as predicates
   },
 }
+
 
 P["core/runtime/resolve.lua"] = {
   note = "R.media (318 lines) stays whole in resolve/init.lua; the helpers it calls become modules that return "

@@ -223,11 +223,26 @@ function M.library(root)
     return stage()[to]
   end
 
+  -- a plan already carried out: the file is gone, and its rest and every part are on disk within the limit
+  local function cut(to, plan)
+    if to == plan.rest or io.open(root .. "/" .. to) then return false end
+    for _, path in ipairs((function() local l = { plan.rest } for m in pairs(plan.modules or plan.ranges or {}) do
+      l[#l + 1] = m end return l end)()) do
+      local f = io.open(root .. "/" .. path)
+      if not f then return false end
+      local n = select(2, f:read("*a"):gsub("\n", ""))
+      f:close()
+      if n > laws.limit then return false end
+    end
+    return true
+  end
+
   lib:add("Every Split Plan Fits", function()
     local bad = {}
     for to, plan in pairs(splits) do
-      local s = current(to)
-      if not s then bad[#bad + 1] = to .. ": no such ported file"
+      local s = not cut(to, plan) and current(to)
+      if cut(to, plan) then -- cut already: the plan is done
+      elseif not s then bad[#bad + 1] = to .. ": no such ported file"
       elseif s.lines <= laws.limit then -- cut already: the plan is done
       else
         local sizes, used = outline.measure(s.text, to:match("%.(%w+)$"), plan)
