@@ -137,26 +137,6 @@ P["core/runtime/rowsmode.lua"] = {
   },
 }
 
--- the two lessons are generated (tools/make-lesson.py, make-agent-lesson.py, both parked): cut them once by hand,
--- and the Lua generator that replaces the Python writes them cut. A comp loads its parts with a resolve-phase
--- include relative to the comp (no I/O during render), which the engine gains first.
-P["comps/lesson/how-moonsplice-works.lua"] = {
-  rest = "comps/lesson/how-moonsplice-works.lua",
-  ranges = {
-    ["comps/lesson/captions.lua"] = { { 41, 147 } },    -- narration clips and word-aligned captions
-    ["comps/lesson/chapters-1.lua"] = { { 155, 318 } }, -- open, fn, seek, declare, det
-    ["comps/lesson/chapters-2.lua"] = { { 319, 551 } }, -- hash, lift, perceive, lower, why, close
-  },
-}
-
-P["comps/agent/facts-on-footage.lua"] = {
-  rest = "comps/agent/facts-on-footage.lua",
-  ranges = {
-    ["comps/agent/cues-1.lua"] = { { 62, 305 } },
-    ["comps/agent/cues-2.lua"] = { { 306, 549 } },
-  },
-}
-
 -- Rust: a module cut out of src/x.rs goes to src/x/<part>.rs (declared `mod part;` in x.rs; for lib.rs, in
 -- src/<part>.rs), and a second `impl` block may live in the new module. `cargo test` and the goldens stay green.
 P["native/scene/src/lib.rs"] = {

@@ -11,6 +11,8 @@
 --           "drop"     superseded; `why` says by what
 local M = {}
 
+local DEMOS = "Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL"
+
 -- the tree the port reads, and the commit it reads it at (git show, never the working tree)
 M.source = os.getenv("CADENCE") or ((os.getenv("HOME") or "") .. "/cadence")
 
@@ -48,11 +50,12 @@ M.rules = {
   -- comps travel with their media, so the relative paths inside them hold
   { "^evals/cases/(.+)$", "port", "comps/cases/%1" },
   { "^evals/assets/(.+)$", "copy", "comps/assets/%1" },
-  { "^evals/film/(.+)$", "port", "comps/film/%1" },
-  { "^evals/projects/(.+)$", "port", "comps/projects/%1" },
-  { "^examples/(.+)%.md$", "doc", ".robot/docs/examples.robot" },
-  { "^examples/(.+%.lua)$", "port", "comps/examples/%1" },
-  { "^examples/(.+)$", "copy", "comps/examples/%1" },
+  { "^evals/film/", "drop", why = DEMOS },
+  { "^evals/projects/", "drop", why = DEMOS },
+  { "^examples/", "drop", why = DEMOS },
+  { "^comps/lesson/", "drop", why = DEMOS },
+  { "^comps/agent/", "drop", why = DEMOS },
+  { "^comps/demo/", "drop", why = DEMOS },
   { "^comps/(.+%.lua)$", "port", "comps/%1" },
   { "^comps/(.+)$", "copy", "comps/%1" },
 

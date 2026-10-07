@@ -36,7 +36,7 @@ P1 — core render ✅ gate green 2026-08-01 (tests/run_p1.sh, 7/7)
     ...    - [x] **Audio graph** (2026-08-01): `s:audio/tts/sfx` → filter_complex (atrim/volume/
     ...    \ \ \ \ \ \ afade/adelay/amix, clamp+pad to comp duration) → aac mux with `-c copy`.
     ...    \ \ \ \ \ \ Verified: stream durations exact, clip placement by volume-window probe
-    ...    \ \ \ \ \ \ (`comps/examples/audio_test.lua`). Media resolves in `post_scene` hook → scripts pace
+    ...    \ \ \ \ \ \ (Cadence's `examples/audio_test.lua`, not carried over). Media resolves in `post_scene` hook → scripts pace
     ...    \ \ \ \ \ \ to resolved TTS/clip durations. NOT yet covered: >32-input recursive merge,
     ...    \ \ \ \ \ \ volume envelopes from tweens, live ElevenLabs call (key absent on dev machine —
     ...    \ \ \ \ \ \ code path written, cache-keyed; needs `ELEVENLABS_API_KEY` to validate).

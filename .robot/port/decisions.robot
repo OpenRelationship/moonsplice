@@ -23,9 +23,10 @@ Rust Is One Workspace Under Native
     Placement Should Be    tools/apple/main.swift    port    native/apple/main.swift
 
 Comps Keep Their Media Beside Them
-    [Documentation]    A comp names its media by relative path, so lesson, case and example folders move whole.
+    [Documentation]    A comp names its media by relative path, so the case folder moves whole. The Cadence demos and
+    ...    samples (examples, lessons, film, projects) were dropped on 2026-10-07: new work starts fresh.
     Placement Should Be    evals/cases/bounce.lua    port    comps/cases/bounce.lua
-    Placement Should Be    examples/basics/hello.lua    port    comps/examples/basics/hello.lua
+    Placement Should Be    examples/basics/hello.lua    drop    ${EMPTY}
 
 Validation Lives In .robot
     Placement Should Be    evals/golden/bounce.scene.md5    copy    .robot/golden/bounce.scene.md5

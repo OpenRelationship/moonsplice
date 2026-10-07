@@ -169,7 +169,7 @@ flowchart TB
 | `core/` | Almost everything, in Lua: the authoring API, the engine's Lua, the agent's world and the command line. |
 | `native/` | The Rust that has to be fast: the LuaJIT host, the rasterizer, Bevy, decoding, tracking and TabICL. |
 | `editor/` | The desktop app. Every gesture in it becomes the same typed move the agent uses. |
-| `comps/` | Example and test compositions with their media. |
+| `comps/` | The eval suite (`comps/cases`) and its shared media. New work starts fresh in the current DSL. |
 | `submodules/` | [Tablua](https://github.com/OpenRelationship/tablua), the agent harness, and [connectory](https://github.com/OpenRelationship/connectory), a directory of APIs with each one a Lua file. Both are developed in their own repositories. |
 | `.robot/` | Documentation, rules and tests, all written as Robot Framework suites. |
 
@@ -181,10 +181,10 @@ You need [LuaJIT](https://luajit.org), a [Rust toolchain](https://rustup.rs) and
 git clone --recursive https://github.com/OpenRelationship/moonsplice
 cd moonsplice
 
-./moonsplice rows comps/examples/basics/hello.lua -o hello.lua   # the example, in rows form
-./moonsplice rows hello.lua --brief                             # read it as rows
-./moonsplice lint hello.lua --json                              # what the checker finds
-./moonsplice render hello.lua -o hello.mp4                      # render it
+./moonsplice rows comps/cases/bounce.lua -o bounce.lua   # an eval case, in rows form
+./moonsplice rows bounce.lua --brief                      # read it as rows
+./moonsplice lint bounce.lua --json                       # what the checker finds
+./moonsplice render bounce.lua -o bounce.mp4              # render it
 ```
 
 The first command builds the engine once (`cargo build --release` in `native/`), which takes a few minutes.

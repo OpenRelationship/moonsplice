@@ -123,7 +123,7 @@ Plan for the remaining gaps (2026-09-16)
     ...    \ \ per frame; give it a recording builder (pure Lua, same verbs as
     ...    \ \ `core/runtime/scene.lua`) and call `draw(v, t)` at each sample. The diff between
     ...    \ \ consecutive command streams is real motion amplitude. No FFI, host-free.
-    ...    \ \ Proof: both `comps/examples/vv` reels lint with zero false frozen-span findings and
+    ...    \ \ Proof: both Cadence `examples/vv` reels (not carried over) lint with zero false frozen-span findings and
     ...    \ \ a deliberately static vector node still trips one.
     ...
     ...    *2. 3D world and shader-fx output into scene slots (hours)*

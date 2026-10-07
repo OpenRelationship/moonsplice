@@ -199,30 +199,30 @@ cli/Cargo.toml	port	native/cli/Cargo.toml
 cli/src/main.rs	port	native/cli/src/main.rs	
 cloud/client.py	park		Python Modal worker
 cloud/worker.py	park		Python Modal worker
-comps/agent/facts-on-footage.lua	port	comps/agent/facts-on-footage.lua	
-comps/agent/narration.json	copy	comps/agent/narration.json	
-comps/agent/narration/00_open.mp3	copy	comps/agent/narration/00_open.mp3	
-comps/agent/narration/01_track.mp3	copy	comps/agent/narration/01_track.mp3	
-comps/agent/narration/02_thirds.mp3	copy	comps/agent/narration/02_thirds.mp3	
-comps/agent/narration/03_motion.mp3	copy	comps/agent/narration/03_motion.mp3	
-comps/agent/narration/04_event.mp3	copy	comps/agent/narration/04_event.mp3	
-comps/agent/narration/05_edit.mp3	copy	comps/agent/narration/05_edit.mp3	
-comps/agent/narration/06_proof.mp3	copy	comps/agent/narration/06_proof.mp3	
-comps/agent/narration/07_close.mp3	copy	comps/agent/narration/07_close.mp3	
-comps/demo/handoff.lua	port	comps/demo/handoff.lua	
-comps/lesson/how-moonsplice-works.lua	port	comps/lesson/how-moonsplice-works.lua	
-comps/lesson/narration.json	copy	comps/lesson/narration.json	
-comps/lesson/narration/00_open.mp3	copy	comps/lesson/narration/00_open.mp3	
-comps/lesson/narration/01_fn.mp3	copy	comps/lesson/narration/01_fn.mp3	
-comps/lesson/narration/02_seek.mp3	copy	comps/lesson/narration/02_seek.mp3	
-comps/lesson/narration/03_declare.mp3	copy	comps/lesson/narration/03_declare.mp3	
-comps/lesson/narration/04_det.mp3	copy	comps/lesson/narration/04_det.mp3	
-comps/lesson/narration/05_hash.mp3	copy	comps/lesson/narration/05_hash.mp3	
-comps/lesson/narration/06_lift.mp3	copy	comps/lesson/narration/06_lift.mp3	
-comps/lesson/narration/07_perceive.mp3	copy	comps/lesson/narration/07_perceive.mp3	
-comps/lesson/narration/08_lower.mp3	copy	comps/lesson/narration/08_lower.mp3	
-comps/lesson/narration/09_why.mp3	copy	comps/lesson/narration/09_why.mp3	
-comps/lesson/narration/10_close.mp3	copy	comps/lesson/narration/10_close.mp3	
+comps/agent/facts-on-footage.lua	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+comps/agent/narration.json	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+comps/agent/narration/00_open.mp3	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+comps/agent/narration/01_track.mp3	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+comps/agent/narration/02_thirds.mp3	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+comps/agent/narration/03_motion.mp3	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+comps/agent/narration/04_event.mp3	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+comps/agent/narration/05_edit.mp3	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+comps/agent/narration/06_proof.mp3	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+comps/agent/narration/07_close.mp3	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+comps/demo/handoff.lua	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+comps/lesson/how-moonsplice-works.lua	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+comps/lesson/narration.json	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+comps/lesson/narration/00_open.mp3	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+comps/lesson/narration/01_fn.mp3	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+comps/lesson/narration/02_seek.mp3	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+comps/lesson/narration/03_declare.mp3	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+comps/lesson/narration/04_det.mp3	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+comps/lesson/narration/05_hash.mp3	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+comps/lesson/narration/06_lift.mp3	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+comps/lesson/narration/07_perceive.mp3	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+comps/lesson/narration/08_lower.mp3	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+comps/lesson/narration/09_why.mp3	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+comps/lesson/narration/10_close.mp3	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
 context/AGENTS.md	drop		nomimono context; plans are Robot now
 context/dump/.gitkeep	drop		nomimono context; plans are Robot now
 context/dump/context.sqlite	drop		nomimono context; plans are Robot now
@@ -390,10 +390,10 @@ evals/cases/video.lua	port	comps/cases/video.lua
 evals/cases/video_layers.lua	port	comps/cases/video_layers.lua	
 evals/cases/world3d.lua	port	comps/cases/world3d.lua	
 evals/cases/world_bevy.lua	port	comps/cases/world_bevy.lua	
-evals/film/Small Boats.lua	port	comps/film/Small Boats.lua	
-evals/film/Sound/bed-harbour.mp3	port	comps/film/Sound/bed-harbour.mp3	
-evals/film/Sound/quay.mp3	port	comps/film/Sound/quay.mp3	
-evals/film/Sound/swell.mp3	port	comps/film/Sound/swell.mp3	
+evals/film/Small Boats.lua	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+evals/film/Sound/bed-harbour.mp3	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+evals/film/Sound/quay.mp3	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+evals/film/Sound/swell.mp3	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
 evals/golden/audio.scene.md5	copy	.robot/golden/audio.scene.md5	
 evals/golden/blend_modes.scene.md5	copy	.robot/golden/blend_modes.scene.md5	
 evals/golden/bounce.scene.md5	copy	.robot/golden/bounce.scene.md5	
@@ -444,44 +444,44 @@ evals/golden/video_layers.scene.md5	copy	.robot/golden/video_layers.scene.md5
 evals/golden/world3d.scene.md5	copy	.robot/golden/world3d.scene.md5	
 evals/golden/world_bevy.scene.md5	copy	.robot/golden/world_bevy.scene.md5	
 evals/manifest.json	port	.robot/eval/manifest.json	
-evals/projects/launch-spot/assets/in/vo-39e5bed07150.mp3	port	comps/projects/launch-spot/assets/in/vo-39e5bed07150.mp3	
-evals/projects/launch-spot/assets/in/vo.mp3	port	comps/projects/launch-spot/assets/in/vo.mp3	
-evals/projects/launch-spot/comps/launch.lua	port	comps/projects/launch-spot/comps/launch.lua	
-evals/projects/launch-spot/doc.json	port	comps/projects/launch-spot/doc.json	
-evals/projects/launch-spot/studio.json	port	comps/projects/launch-spot/studio.json	
-examples/README.md	doc	.robot/docs/examples.robot	
-examples/basics/bounce.lua	port	comps/examples/basics/bounce.lua	
-examples/basics/bumper.lua	port	comps/examples/basics/bumper.lua	
-examples/basics/captions.lua	port	comps/examples/basics/captions.lua	
-examples/basics/chart.lua	port	comps/examples/basics/chart.lua	
-examples/basics/effects.lua	port	comps/examples/basics/effects.lua	
-examples/basics/grade.lua	port	comps/examples/basics/grade.lua	
-examples/basics/hello.lua	port	comps/examples/basics/hello.lua	
-examples/basics/onair.lua	port	comps/examples/basics/onair.lua	
-examples/basics/page.lua	port	comps/examples/basics/page.lua	
-examples/basics/palette.lua	port	comps/examples/basics/palette.lua	
-examples/basics/pulse.lua	port	comps/examples/basics/pulse.lua	
-examples/basics/wave.lua	port	comps/examples/basics/wave.lua	
-examples/basics/world3d.lua	port	comps/examples/basics/world3d.lua	
-examples/clips/multi.lua	port	comps/examples/clips/multi.lua	
-examples/clips/vertical.lua	port	comps/examples/clips/vertical.lua	
-examples/demos/carousel.lua	port	comps/examples/demos/carousel.lua	
-examples/demos/dub_demo.lua	port	comps/examples/demos/dub_demo.lua	
-examples/demos/dubbing_record.json	copy	comps/examples/demos/dubbing_record.json	
-examples/demos/moon_demo.lua	port	comps/examples/demos/moon_demo.lua	
-examples/demos/screen3d.lua	port	comps/examples/demos/screen3d.lua	
-examples/vv/fonts/BebasNeue-Regular.ttf	copy	comps/examples/vv/fonts/BebasNeue-Regular.ttf	
-examples/vv/fonts/CormorantGaramond[wght].ttf	copy	comps/examples/vv/fonts/CormorantGaramond[wght].ttf	
-examples/vv/fonts/DMMono-Regular.ttf	copy	comps/examples/vv/fonts/DMMono-Regular.ttf	
-examples/vv/fonts/InstrumentSerif-Italic.ttf	copy	comps/examples/vv/fonts/InstrumentSerif-Italic.ttf	
-examples/vv/fonts/InstrumentSerif-Regular.ttf	copy	comps/examples/vv/fonts/InstrumentSerif-Regular.ttf	
-examples/vv/fonts/SpaceGrotesk[wght].ttf	copy	comps/examples/vv/fonts/SpaceGrotesk[wght].ttf	
-examples/vv/fonts/Syne[wght].ttf	copy	comps/examples/vv/fonts/Syne[wght].ttf	
-examples/vv/fonts/Unbounded[wght].ttf	copy	comps/examples/vv/fonts/Unbounded[wght].ttf	
-examples/vv/scene-explainer.lua	port	comps/examples/vv/scene-explainer.lua	
-examples/vv/scene-explainer.mp4	copy	comps/examples/vv/scene-explainer.mp4	
-examples/vv/type-specimen.lua	port	comps/examples/vv/type-specimen.lua	
-examples/vv/type-specimen.mp4	copy	comps/examples/vv/type-specimen.mp4	
+evals/projects/launch-spot/assets/in/vo-39e5bed07150.mp3	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+evals/projects/launch-spot/assets/in/vo.mp3	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+evals/projects/launch-spot/comps/launch.lua	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+evals/projects/launch-spot/doc.json	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+evals/projects/launch-spot/studio.json	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/README.md	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/basics/bounce.lua	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/basics/bumper.lua	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/basics/captions.lua	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/basics/chart.lua	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/basics/effects.lua	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/basics/grade.lua	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/basics/hello.lua	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/basics/onair.lua	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/basics/page.lua	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/basics/palette.lua	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/basics/pulse.lua	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/basics/wave.lua	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/basics/world3d.lua	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/clips/multi.lua	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/clips/vertical.lua	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/demos/carousel.lua	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/demos/dub_demo.lua	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/demos/dubbing_record.json	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/demos/moon_demo.lua	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/demos/screen3d.lua	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/vv/fonts/BebasNeue-Regular.ttf	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/vv/fonts/CormorantGaramond[wght].ttf	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/vv/fonts/DMMono-Regular.ttf	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/vv/fonts/InstrumentSerif-Italic.ttf	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/vv/fonts/InstrumentSerif-Regular.ttf	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/vv/fonts/SpaceGrotesk[wght].ttf	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/vv/fonts/Syne[wght].ttf	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/vv/fonts/Unbounded[wght].ttf	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/vv/scene-explainer.lua	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/vv/scene-explainer.mp4	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/vv/type-specimen.lua	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
+examples/vv/type-specimen.mp4	drop		Cadence-era demos and samples, dropped 2026-10-07 at the owner's word: new work starts fresh in the current DSL
 git/AGENTS.md	drop		nomimono git hooks
 git/ci/github/check.yml	drop		nomimono git hooks
 git/ci/local/check.sh	drop		nomimono git hooks

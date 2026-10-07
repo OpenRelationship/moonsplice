@@ -110,7 +110,7 @@ MotionGfx, read (2026-10-06, spikes/motiongfx at 50404ae)
     ...    \ \ playback runs backwards for free -- the same property `Timeline:evaluate(t)` has. We keep Lua's.
     ...    - **What we take:** the lens pattern for writing evaluated values into ECS components;
     ...    \ \ `PassivePlayer::set_time(t)`, which is the seek mode; and the pipeline-readiness gate from
-    ...    \ \ `comps/examples/recording.rs` (a system in the render sub-app's `ExtractSchedule` that flips a state
+    ...    \ \ `recording.rs` (a Cadence example, not carried over) (a system in the render sub-app's `ExtractSchedule` that flips a state
     ...    \ \ once `PipelineCache` has no waiting pipelines) -- which is the fix for Bevy's blank first frames.
     ...    - **What we do not take:** its recording (a real window, PNG screenshots per frame, real time)
     ...    \ \ and Typst via velyst as the type system. Glyphs drawn as vello paths are the right idea for
@@ -125,7 +125,7 @@ MotionGfx, read (2026-10-06, spikes/motiongfx at 50404ae)
 bevy_vello, read (spikes/bevy_vello at 659b06f)
     [Documentation]    About 4.9k lines. It already has the three integrations we need: text through parley (0.7, behind
     ...    ours at 0.11), SVG through vello_svg, and Lottie through velato -- which is the ThorVG
-    ...    replacement. `comps/examples/headless` renders with `MinimalPlugins` + `RenderPlugin`, no window, into a
+    ...    replacement. `headless` (a Cadence example, not carried over) rendered with `MinimalPlugins` + `RenderPlugin`, no window, into a
     ...    camera whose target is an `Image`, and saves it -- so offscreen is a supported path, not a hack.
     ...
     ...    **The constraint that shapes our design:** every vello item is drawn into one intermediate

@@ -6,7 +6,7 @@ Documentation    Friction log
 ...    when deciding what to fix. Each entry says what happened, what it cost, and the smallest
 ...    fix that would have prevented it.
 ...
-...    Source of the first batch: building `comps/lesson/how-moonsplice-works.lua` (2026-09-18), a
+...    Source of the first batch: building the Cadence lesson comp how-moonsplice-works.lua (2026-09-18; not carried over), a
 ...    160 s narrated explainer — the first comp to use `s:tts`, and the largest comp by node
 ...    count (~270) written so far.
 ...
