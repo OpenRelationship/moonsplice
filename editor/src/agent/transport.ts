@@ -62,6 +62,17 @@ export function working(tool: string): string {
     undo: "Putting it back",
     export: "Rendering",
     repaint: "Asking the pixel model",
+    // Tablua's verbs (`run.rs` reads them off the run's log)
+    brief: "Reading the composition",
+    look: "Looking at the picture",
+    expect: "Writing down what it should do",
+    reference: "Reading how the engine works",
+    connect: "Using a connected service",
+    set_prop: "Changing a property",
+    add_node: "Adding something",
+    remove_node: "Taking something out",
+    add_key: "Adding a key",
+    move_key: "Moving a key",
   };
   return named[tool] ?? tool;
 }

@@ -36,7 +36,7 @@ use serde::{Deserialize, Serialize};
 use tauri::ipc::Channel;
 use tauri::{AppHandle, Emitter, Manager, State};
 
-use crate::agent::{Ask, Cancel, Decision, Said};
+use crate::agent::{Cancel, Decision, Said};
 use crate::engine::{Engine, EngineMeta};
 use crate::frames::{Frame, FrameCache, FrameKey};
 use crate::lower::{Edit, EditRefusal, NodeRef};
@@ -46,7 +46,6 @@ use crate::source::SourceDoc;
 // The app's commands and their bodies, by what they act on.
 mod apply;
 mod assets;
-mod bridge;
 mod connections;
 mod describe;
 mod edit;
@@ -56,10 +55,10 @@ mod gesture;
 mod gesture_edits;
 mod library;
 mod open;
+mod run;
 
 pub use apply::*;
 pub use assets::*;
-use bridge::*;
 pub use connections::*;
 pub use describe::*;
 pub use edit::*;
@@ -122,7 +121,6 @@ pub struct Studio {
     /// The turn in flight, and the question it is waiting on.
     turn: Mutex<Option<Cancel>>,
     pending: Mutex<HashMap<u64, std::sync::mpsc::Sender<Decision>>>,
-    next_ask: Mutex<u64>,
     /// What every sound the app has looked at looks like. See `waveform.rs`.
     shapes: Arc<waveform::Waveforms>,
 }
@@ -138,7 +136,6 @@ impl Studio {
             serve_dir,
             turn: Mutex::new(None),
             pending: Mutex::new(HashMap::new()),
-            next_ask: Mutex::new(1),
             shapes: Arc::new(waveform::Waveforms::new()),
         }
     }

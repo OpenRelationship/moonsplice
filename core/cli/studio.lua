@@ -4,7 +4,9 @@
 -- comp is edited in place, so point it at a copy. Rows go to the sheet; the log, asks among it, to stderr.
 --
 --   moonsplice studio --comp COMP --ask TEXT [--kind video|game] [--sheet RUN.sqlite] [--todo run1]
---     [--past a.sqlite,b.sqlite] [--tabicl off] [--connect off]
+--     [--past a.sqlite,b.sqlite] [--tabicl off] [--connect off] [--work DIR]
+-- --work is where the run keeps its scratch (the sheet's picture, the engine's temp files); the comp's folder when
+-- not given. The editor's agent panel runs this with a folder of its own, so a run leaves nothing in the project.
 -- The model key is OPENROUTER_API_KEY, from the environment or the keychain (connect's store). The last line on
 -- stdout is the run as JSON, with asks: what still waits on the person (connect it, approve a call) and how.
 local json = require("ports.json")
@@ -25,7 +27,8 @@ function M.run(cli, args)
   end
   if not (o.comp and o.ask) then io.stderr:write("moonsplice studio: --comp and --ask are needed\n") return 2 end
   o.sheet = o.sheet or (o.comp:gsub("%.lua$", "") .. ".sqlite")
-  local dir = o.comp:match("^(.*)/[^/]*$") or "."
+  local dir = o.work or o.comp:match("^(.*)/[^/]*$") or "."
+  os.execute("mkdir -p '" .. dir:gsub("'", "'\\''") .. "'")
   local bin = cli.root .. "/moonsplice"
   local function log(s) io.stderr:write(s, "\n") io.stderr:flush() end
 
@@ -94,7 +97,8 @@ function M.run(cli, args)
     asks[#asks + 1] = { kind = a.kind, service = a.service, op = a.op, how = a.how }
   end
   print(json.encode({ todo = o.todo, stop = out.stop, status = out.status, steps = out.steps, pass = out.pass,
-    sheet = o.sheet, seconds = os.time() - t0, asks = asks }))
+    sheet = o.sheet, seconds = os.time() - t0, asks = asks, said = out.said,
+    error = out.error and tostring(out.error) or nil }))
   return out.status == "complete" and 0 or 1
 end
 

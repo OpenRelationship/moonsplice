@@ -9,8 +9,9 @@ Documentation    Connecting other people's APIs
 ...
 ...    Built 2026-10-07 (owner's goal): connectory's port (lua/connect.lua, lua/http.lua, its card lua/library.md),
 ...    Tablua's connect tool (core/studio/connect.lua, schema 27), Moonsplice's host (core/connect/), the command
-...    line (./moonsplice connect, ./moonsplice studio) and the editor's sheet (editor/src/connect/,
-...    src-tauri/src/connections.rs). suites/connect runs it end to end. Where this page says plan, it says so.
+...    line (./moonsplice connect, ./moonsplice studio), the editor's sheet (editor/src/connect/,
+...    src-tauri/src/connections.rs) and the editor's agent panel, which runs ./moonsplice studio
+...    (src-tauri/src/run.rs). suites/connect runs it end to end. Where this page says plan, it says so.
 Metadata    Status    built; multiple accounts per service, OAuth and spending are not
 
 *** Test Cases ***
@@ -142,9 +143,6 @@ What is not built yet
     [Documentation]    - More than one account per service (work and personal): one keychain item per field name today.
     ...    - OAuth for the services that need it (a loopback redirect from the editor); API keys work now.
     ...    - Other platforms' keychains.
-    ...    - The editor's own agent: it still waits on its move from malleable to Tablua (port/done.robot), so in
-    ...    the app the sheet answers asks raised by a run from the command line (`./moonsplice studio`) or any
-    ...    other agent using `./moonsplice connect`.
     [Tags]    doc
     Skip    prose
 

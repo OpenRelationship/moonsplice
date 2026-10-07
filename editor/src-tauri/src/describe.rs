@@ -206,45 +206,6 @@ pub(super) fn brief(v: &serde_json::Value) -> String {
     }
 }
 
-pub(super) struct ChannelSurface {
-    pub(super) app: AppHandle,
-    pub(super) channel: Channel<serde_json::Value>,
-}
-
-impl agent::Surface for ChannelSurface {
-    fn emit(&self, chunk: serde_json::Value) {
-        let _ = self.channel.send(chunk);
-    }
-
-    fn ask(&self, ask: Ask) -> Decision {
-        let studio = self.app.state::<Studio>();
-        let id = {
-            let mut n = studio.next_ask.lock().unwrap();
-            *n += 1;
-            *n
-        };
-        let (tx, rx) = std::sync::mpsc::channel::<Decision>();
-        studio.pending.lock().unwrap().insert(id, tx);
-        let _ = self.channel.send(serde_json::json!({
-            "event": "ask",
-            "id": id,
-            "tool": ask.tool,
-            "args": ask.args,
-            "reason": ask.reason,
-            "can_remember": ask.can_remember,
-        }));
-        // No timeout: a question with a deadline is a question that answers itself.
-        match rx.recv() {
-            Ok(d) => d,
-            Err(_) => Decision {
-                allow: false,
-                reason: Some("nobody answered".into()),
-                remember: None,
-            },
-        }
-    }
-}
-
 #[tauri::command]
 pub(super) fn answer_ask(studio: State<Studio>, id: u64, decision: Decision) -> Result<(), String> {
     let tx = studio
@@ -272,62 +233,38 @@ pub(super) fn stop_turn(studio: State<Studio>) {
     }
 }
 
+/// The person asked the agent for something: a Tablua run on the open composition (`run.rs`).
+/// The conversation so far is the run's sheet, not the history the chat sends, so that is unused.
 #[tauri::command]
 pub(super) fn ask_agent(
     app: AppHandle,
     variation: String,
     prompt: String,
-    history: Vec<Said>,
+    #[allow(unused_variables)] history: Vec<Said>,
     channel: Channel<serde_json::Value>,
 ) -> Result<(), String> {
-    let root = engine::moonsplice_root().ok_or("the Moonsplice engine is not next to this app")?;
-    let paths = agent::Paths::resolve(&root)?;
-    let (scheme, key) = secrets::preferred()?;
+    let comp = {
+        let studio = app.state::<Studio>();
+        let open = studio.open.lock().unwrap();
+        open.get(&variation).map(|o| o.doc.path.clone()).ok_or("open a composition first")?
+    };
+    let name: String = variation.chars().map(|c| if c.is_ascii_alphanumeric() { c } else { '-' }).collect();
+    let work = app.path().app_cache_dir().map_err(|e| e.to_string())?.join("runs").join(name);
+    let when = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map(|d| d.as_millis()).unwrap_or(0);
     let cancel = Cancel::default();
     {
         let studio = app.state::<Studio>();
         *studio.turn.lock().unwrap() = Some(cancel.clone());
     }
-    let bridge = Arc::new(Bridge {
-        app: app.clone(),
-        variation,
-    });
-    let surface = Arc::new(ChannelSurface {
-        app: app.clone(),
-        channel: channel.clone(),
-    });
-    std::thread::spawn(move || {
-        let outcome = agent::run_turn(
-            agent::Turn {
-                paths: &paths,
-                bridge,
-                surface: surface.clone(),
-                transport: Arc::new(agent::Http),
-                scheme,
-                key: &key,
-                model: None,
-                budget: None,
-                cancel,
-            },
-            &prompt,
-            &history,
-        );
-        let payload = match outcome {
-            Ok(o) => serde_json::json!({
-                "event": "answer",
-                "stop": o.stop,
-                "reason": o.reason,
-                "answer": o.answer,
-                "steps": o.steps,
-                "notes": o.notes,
-            }),
-            Err(why) => serde_json::json!({ "event": "answer", "stop": "error", "reason": why }),
-        };
-        let _ = channel.send(payload);
-        let studio = app.state::<Studio>();
-        *studio.turn.lock().unwrap() = None;
-    });
-    Ok(())
+    let after = app.clone();
+    crate::run::start(
+        crate::run::Ask { comp, work, prompt, todo: format!("ask-{when}") },
+        channel,
+        cancel,
+        move || {
+            *after.state::<Studio>().turn.lock().unwrap() = None;
+        },
+    )
 }
 
 // ----------------------------------------------------------------------------- the keys
