@@ -13,19 +13,37 @@
 
 # Moonsplice
 
-**An engine for videos and games that an AI can author as easily as it writes a sentence.**
+**Don't generate pixels. Generate the world that makes them.**
 
-Most creative tools keep their work in a form only the tool understands: a timeline file, a scene graph, a project
-bundle. An AI working in them has to click, guess and hope. Moonsplice keeps everything as **rows**: plain,
-labelled facts such as *"the title appears at half a second"* or *"the boat reaches the right edge at two
-seconds"*. A person can read them, a program can check them, and a model can predict the next one.
+There are two ways for AI to make things that move.
 
-That is the whole bet. If a piece of motion is a table, then making it is filling in the table, one row at a time,
-and a model that is good at predicting rows becomes good at making videos and games.
+The first is to predict the pixels. That is what video models do, and the results can be stunning, but they arrive
+finished and sealed: you cannot change one line of a title, replay a scene exactly, play it as a game, or ask why
+anything happened.
+
+The second is to predict what makes the pixels: the scenes, the motion, the timing and the rules, which an engine
+then renders. The result stays alive. It can be edited, replayed to the exact frame, played, checked and improved.
+
+Moonsplice is an engine built for the second way. Game engines were designed for people clicking in editors.
+Moonsplice is designed for models: everything in a piece is a **row**, a plain labelled fact such as *"the title
+appears at half a second"* or *"the boat reaches the right edge at two seconds"*. A model reads the whole piece as a
+table and makes it by predicting the next row. A person can read the same rows, and the engine checks every one.
 
 <p align="center">
   <img src="assets/brand/app-screenshot.png" alt="The Moonsplice editor: a project's footage on the left, the comp in the middle with its timeline, and the agent on the right" width="90%">
 </p>
+
+```mermaid
+flowchart LR
+    subgraph pixels["Predict the pixels"]
+        p1(["prompt"]) --> p2["video model"] --> p3[["a finished clip<br/>sealed: no edits, no replay, no play"]]
+    end
+    subgraph worlds["Predict the world (Moonsplice)"]
+        w1(["prompt"]) --> w2["model writes rows"] --> w3[("the piece as rows<br/>scenes, motion, rules")]
+        w3 --> w4["engine renders and checks"] --> w5[["a living piece<br/>editable, exact, playable"]]
+        w5 -.->|"change a row"| w3
+    end
+```
 
 ## What you can make
 
@@ -34,8 +52,8 @@ and a model that is good at predicting rows becomes good at making videos and ga
 - **Games:** a game is a comp that also reads input, so it plays in a window and replays exactly.
 - **3D worlds:** meshes, lights and cameras, rendered with Bevy.
 
-A video and a game are the same kind of object here. They differ only in their rows, so one set of tools, one
-checker and one agent serve both.
+A video, a game and a 3D world are the same kind of object here. They differ only in their rows, so one engine, one
+checker and one agent serve them all.
 
 ## How it works, in one picture
 
