@@ -176,9 +176,70 @@ local function segvalue(seg, t)
   return seg.from + (seg.to - seg.from) * k
 end
 
--- Pure evaluation: writes computed values into each node's state overlay.
+-- One group's value at t: what `evaluate` would write for it (nil before its first segment).
+local function group_value(g, t)
+  local v = nil
+  for _, seg in ipairs(g.segs) do
+    if t >= seg.t1 then
+      v = seg.to
+    elseif t >= seg.t0 then
+      return segvalue(seg, t)
+    else
+      break
+    end
+  end
+  return v
+end
+
+function Timeline:group(node, prop) return self.groups[groupkey(node, prop)] end
+
+-- (node, prop) at t, falling back to the node's rest value: for a clip's speed and time, which are
+-- read at times other than the frame's (core/moonsplice/clip.lua)
+function Timeline:value(node, prop, t)
+  local g = self.groups[groupkey(node, prop)]
+  local v = g and group_value(g, t)
+  if v == nil then v = node.initial[prop] end
+  return v
+end
+
+-- The integral of (node, prop) over a..b: a clip's local time under a keyed speed. Simpson's rule
+-- on each piece between segment boundaries, sixteen panels a piece, so it depends on a and b alone
+-- and a frame gets the same local time whichever frames came before it.
+function Timeline:integral(node, prop, a, b, rest)
+  if b <= a then return 0 end
+  local g = self.groups[groupkey(node, prop)]
+  local cuts = { a, b }
+  for _, seg in ipairs(g and g.segs or {}) do
+    if seg.t0 > a and seg.t0 < b then cuts[#cuts + 1] = seg.t0 end
+    if seg.t1 > a and seg.t1 < b then cuts[#cuts + 1] = seg.t1 end
+  end
+  table.sort(cuts)
+  local function f(x)
+    local v = g and group_value(g, x)
+    if v == nil then v = node.initial[prop] end
+    if v == nil then v = rest end
+    return v
+  end
+  local sum, N = 0, 16
+  for k = 2, #cuts do
+    local x0, x1 = cuts[k - 1], cuts[k]
+    if x1 > x0 then
+      -- the piece's ends are segment boundaries, where a step jumps: sample just inside them
+      local h = (x1 - x0) / N
+      local acc = f(x0 + 1e-9) + f(x1 - 1e-9)
+      for j = 1, N - 1 do acc = acc + f(x0 + j * h) * (j % 2 == 1 and 4 or 2) end
+      sum = sum + acc * h / 3
+    end
+  end
+  return sum
+end
+
+-- Pure evaluation: writes computed values into each node's state overlay. A node under a clip
+-- is evaluated at that clip's local time (core/moonsplice/clip.lua sets clock._lt first).
 function Timeline:evaluate(t)
   for _, g in ipairs(self.order) do
+    local clock = g.node.clock
+    local t = clock and clock._lt or t
     local v = nil
     for _, seg in ipairs(g.segs) do
       if t >= seg.t1 then

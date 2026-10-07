@@ -218,7 +218,8 @@ function R.lua(rows)
   if #rows.system > 0 then
     o[#o + 1] = "\n  -- systems: pure (t, state, q) -> rows, run every frame after the keys, in order\n  systems = {\n"
     for _, s in ipairs(rows.system) do
-      o[#o + 1] = ("    { name = %s, order = %s, source = %s },\n"):format(lv(s.name), lv(s.order), lv(s.source))
+      o[#o + 1] = ("    { name = %s, order = %s,%s source = %s },\n"):format(lv(s.name), lv(s.order),
+        s.clip and (" clip = " .. lv(s.clip) .. ",") or "", lv(s.source))
     end
     o[#o + 1] = "  },\n"
   end

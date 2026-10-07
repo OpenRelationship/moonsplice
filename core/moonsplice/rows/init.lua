@@ -19,7 +19,7 @@ R.schema = "msr/1"
 R.TABLES = { "comp", "node", "prop", "key", "motion", "system", "asset", "fact", "input", "game", "expect" }
 
 -- props that hold a node: an id in rows, the node itself once built
-R.REF = { parent = true, clip_node = true, camera = true }
+R.REF = { parent = true, clip_node = true, camera = true, matte = true }
 R.REFS = { items = true }
 
 -- the authored form's fields that are tables of rows, not comp settings
@@ -181,7 +181,8 @@ function R.normalize(def)
   for i, sys in ipairs(def.systems or {}) do
     assert(type(sys.name) == "string", "moonsplice rows: a system needs a name")
     assert(type(sys.source) == "string", "moonsplice rows: system " .. sys.name .. " needs source text")
-    rows.system[#rows.system + 1] = { name = sys.name, order = sys.order or i, source = sys.source }
+    -- clip: the clip whose local time the system runs in (.robot/docs/rows.robot, "Composition")
+    rows.system[#rows.system + 1] = { name = sys.name, order = sys.order or i, source = sys.source, clip = sys.clip }
   end
   for _, a in ipairs(def.assets or {}) do
     rows.asset[#rows.asset + 1] = { id = a.id, src = a.src, derive = copy(a.derive), solid = copy(a.solid), parts = a.parts }
@@ -274,6 +275,7 @@ R._ = { copy = copy, num = num, same = same, ROW_FIELDS = ROW_FIELDS, plain = pl
 package.loaded["moonsplice.rows"] = R
 require("moonsplice.rows.dump")
 require("moonsplice.rows.moves")
+require("moonsplice.rows.precomp")
 require("moonsplice.rows.scene")
 
 return R

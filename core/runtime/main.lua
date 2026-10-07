@@ -147,6 +147,8 @@ local function load_comp(path, fps_override, host_opts)
     derive = function(src, ops) return require("derive").derive(resolve.localize(src), ops) end,
     -- s:solid(tree): a solid built by Manifold, cached (core/runtime/solid.lua, .robot/docs/solids.robot)
     solid = function(tree) return require("solid").build(tree) end,
+    -- a precomp's rows, read relative to the comp that names it (.robot/docs/rows.robot, "Composition")
+    load_rows = function(src, from) return resolve.precomp_rows(src, from or path) end,
     post_scene = function(nodes, c)
       resolve.media(nodes, fps_override or c.fps)
       resolve.layout(nodes)

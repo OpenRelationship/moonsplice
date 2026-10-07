@@ -62,6 +62,25 @@ end
 -- tweens resolve from solved positions.
 R.localize = localize
 
+-- A precomp's comp (.robot/docs/rows.robot, "Composition"): its rows, read at compile like any other source.
+-- A relative `src` is relative to the comp that names it (`from`), so a comp and its parts move
+-- together wherever the command runs; an absolute path is itself.
+function R.precomp_rows(src, from)
+  local path = src
+  if not src:match("^/") then
+    local dir = (from or ""):match("^(.*)/[^/]*$") or (os.getenv("MOONSPLICE_CWD") or ".")
+    path = (dir .. "/" .. src):gsub("/%./", "/")
+  end
+  local chunk, err = loadfile(path)
+  if not chunk then error(("moonsplice: precomp %s: %s"):format(src, tostring(err)), 0) end
+  local ok, comp = pcall(chunk)
+  if not ok then error(("moonsplice: precomp %s: %s"):format(src, tostring(comp)), 0) end
+  if type(comp) ~= "table" or not comp.rows then
+    error(("moonsplice: precomp %s is not a comp in rows form (e.comp { nodes = {...} })"):format(path), 0)
+  end
+  return comp.rows, path
+end
+
 function R.layout(nodes)
   local layout = require("layout")
   for _, n in ipairs(nodes) do

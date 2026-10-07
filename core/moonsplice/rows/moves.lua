@@ -4,6 +4,16 @@ local copy, plain, find = R._.copy, R._.plain, R._.find
 
 local function node_of(rows, id) return find(rows.node, function(n) return n.id == id end) end
 
+-- a node a key may name: a row, or a node inside a precomp instance (<instance>/<child>), which is
+-- made again from the precomp's file at compile; the compile check then proves the child exists
+local function keyable(rows, id)
+  if type(id) ~= "string" then return false end
+  if node_of(rows, id) then return true end
+  local inst = id:match("^(.-)/")
+  local _, n = node_of(rows, inst or "")
+  return n ~= nil and n.kind == "precomp"
+end
+
 -- the node and everything under it (children by parent, recursively)
 local function subtree(rows, id)
   local out, seen, frontier = {}, { [id] = true }, { id }
@@ -26,7 +36,11 @@ for k in ("x y z w h r rx rotation scale opacity size progress tracking reveal o
   .. "sx sy sz volume at from duration media_start fade_in fade_out leading wrap spacing n seed life emit "
   .. "emit_window heading spread speed gravity metallic roughness reflectance emissive_strength intensity "
   .. "range angle softness detail ambient bloom near far"):gmatch("%S+") do NUMBER[k] = true end
-local STRING = { text = true, src = true, font = true, anchor = true, blend = true, primitive = true, shape = true }
+for k in ("offset length gap overlap time"):gmatch("%S+") do NUMBER[k] = true end
+local STRING = { text = true, src = true, font = true, anchor = true, blend = true, primitive = true, shape = true,
+  matte = true }
+local BOOLEAN = { loop = true, reverse = true, isolate = true }
+local MATTES = { alpha = true, alpha_inverted = true, luma = true, luma_inverted = true }
 -- returns the value to store: a numeric prop given a string that is exactly a number ("500",
 -- "0.9") takes the number, since a model writing JSON often quotes them; anything else is refused
 local function check_value(name, v)
@@ -43,6 +57,27 @@ local function check_value(name, v)
     end
   elseif STRING[name] then
     ok, what = type(v) == "string", name .. " needs a string"
+  elseif BOOLEAN[name] then
+    if v == "true" then v = true elseif v == "false" then v = false end
+    ok, what = type(v) == "boolean", name .. " needs true or false"
+  elseif name == "start" then
+    -- seconds in the parent's time, or a fact the clip starts on (beat:8)
+    if type(v) == "string" and v:match("^%s*[-+]?%d*%.?%d+%s*s?%s*$") then v = tonumber((v:gsub("s?%s*$", ""))) end
+    ok = type(v) == "number" or type(v) == "string" and v:match("^[%w_]+:.+") ~= nil
+    what = "start needs seconds or a fact reference (beat:8)"
+  elseif name == "hold" then
+    if v == "true" then v = true elseif v == "false" then v = false end
+    ok = type(v) == "boolean" or v == "start" or v == "end"
+    what = 'hold needs true, false, "start" or "end"'
+  elseif name == "matte_mode" then
+    ok, what = MATTES[v] == true, "matte_mode needs alpha, alpha_inverted, luma or luma_inverted"
+  elseif name == "transition" then
+    -- false: a cut here, though the track has a transition for every cut
+    if v ~= false then
+      local ok2, err = pcall(require("moonsplice.track").transition, v, "transition")
+      if not ok2 then error((tostring(err):gsub("^transition: ", "")), 0) end
+    end
+    return v
   elseif name == "color" or name == "emissive" or name == "background" then
     ok = type(v) == "string" and v:match("^#%x+$") and (#v == 4 or #v == 5 or #v == 7 or #v == 9)
       or type(v) == "table" and type(v[1]) == "number"
@@ -112,7 +147,7 @@ end
 
 function MOVES.add_key(rows, p, touched)
   p.t = key_time(p.t)
-  if not node_of(rows, p.id) then error("no node " .. tostring(p.id), 0) end
+  if not keyable(rows, p.id) then error("no node " .. tostring(p.id), 0) end
   if type(p.name) ~= "string" then error("a key needs a prop name", 0) end
   if type(p.t) ~= "number" and type(p.t) ~= "string" then error("a key needs t (seconds or a fact reference)", 0) end
   if p.value == nil then error("a key needs a value", 0) end
@@ -158,9 +193,10 @@ function MOVES.add_system(rows, p, touched)
   if find(rows.system, function(s) return s.name == p.name end) then error("a system " .. p.name .. " exists (edit_system)", 0) end
   if type(p.source) ~= "string" then error("a system needs source", 0) end
   R.load_system(p.name, p.source, nil, p.name == "shared")
+  if p.clip ~= nil and type(p.clip) ~= "string" then error("clip needs the id of a clip", 0) end
   local order = p.order
   if not order then order = 0; for _, s in ipairs(rows.system) do if s.order > order then order = s.order end end; order = order + 1 end
-  rows.system[#rows.system + 1] = { name = p.name, order = order, source = p.source }
+  rows.system[#rows.system + 1] = { name = p.name, order = order, source = p.source, clip = p.clip }
   touched[#touched + 1] = { id = "system:" .. p.name }
 end
 
@@ -170,6 +206,11 @@ function MOVES.edit_system(rows, p, touched)
   if s.opaque then error("system " .. s.name .. " is the object API's code; convert the comp to rows first", 0) end
   if p.source then R.load_system(p.name, p.source, nil, p.name == "shared"); s.source = p.source end
   if p.order then s.order = p.order end
+  -- clip = "" (or JSON null is not enough: a missing field leaves it) runs it in comp time again
+  if p.clip ~= nil then
+    if type(p.clip) ~= "string" then error("clip needs the id of a clip", 0) end
+    s.clip = p.clip ~= "" and p.clip or nil
+  end
   touched[#touched + 1] = { id = "system:" .. p.name }
 end
 
@@ -217,15 +258,66 @@ function MOVES.remove(rows, p, touched)
     for _, r in ipairs(list) do if f(r) then out[#out + 1] = r end end
     return out
   end
+  -- and keys on a removed precomp's inner nodes (<instance>/<child>)
+  local function inside(id) return gone[id] or gone[tostring(id):match("^(.-)/") or ""] end
   rows.node = keep(rows.node, function(n) return not gone[n.id] end)
   rows.prop = keep(rows.prop, function(r) return not gone[r.id] end)
-  rows.key = keep(rows.key, function(r) return not gone[r.id] end)
-  rows.motion = keep(rows.motion, function(r) return not gone[r.id] end)
+  rows.key = keep(rows.key, function(r) return not inside(r.id) end)
+  rows.motion = keep(rows.motion, function(r) return not inside(r.id) end)
+  for _, s in ipairs(rows.system) do
+    if s.clip and gone[s.clip] then s.clip = nil; touched[#touched + 1] = { id = "system:" .. s.name } end
+  end
   -- references to what is gone go too
   for _, r in ipairs(rows.prop) do
     if R.REF[r.name] and gone[r.value] then r.value = nil; touched[#touched + 1] = { id = r.id, name = r.name } end
   end
   rows.prop = keep(rows.prop, function(r) return r.value ~= nil end)
+end
+
+-- move_clip: put a clip at another place in its track, { id, index } (1 is first) or { id, before }
+-- or { id, after } (a sibling clip's id). The track lays clips end to end, so the rest ripple. The
+-- clips' subtrees keep their draw order among themselves and take the places the track's nodes held,
+-- so nothing outside the track moves in the draw order.
+function MOVES.move_clip(rows, p, touched)
+  local _, c = node_of(rows, p.id)
+  if not c then error("no node " .. tostring(p.id), 0) end
+  local _, track = node_of(rows, c.parent or "")
+  if not (track and track.kind == "track") then error(tostring(p.id) .. " is not in a track", 0) end
+  local clips = {}
+  for _, n in ipairs(rows.node) do if n.parent == track.id then clips[#clips + 1] = n.id end end
+  local from
+  for i, id in ipairs(clips) do if id == p.id then from = i end end
+  table.remove(clips, from)
+  local to
+  if p.index ~= nil then
+    to = tonumber(p.index)
+    if not to or to < 1 or to > #clips + 1 or to ~= math.floor(to) then
+      error(("index needs a whole number from 1 to %d"):format(#clips + 1), 0)
+    end
+  else
+    local ref = p.before or p.after
+    if type(ref) ~= "string" then error("move_clip needs index, before or after", 0) end
+    for i, id in ipairs(clips) do if id == ref then to = p.before and i or i + 1 end end
+    if not to then error(("%s is not another clip in track %s"):format(ref, track.id), 0) end
+  end
+  table.insert(clips, to, p.id)
+  -- each clip's subtree, in its present draw order; then the same order values, handed out again
+  local blocks, slots = {}, {}
+  for _, id in ipairs(clips) do
+    local set = {}
+    for _, sid in ipairs(subtree(rows, id)) do set[sid] = true end
+    local block = {}
+    for _, n in ipairs(rows.node) do
+      if set[n.id] then block[#block + 1] = n; slots[#slots + 1] = n.order end
+    end
+    blocks[#blocks + 1] = block
+  end
+  table.sort(slots)
+  local k = 0
+  for _, block in ipairs(blocks) do
+    for _, n in ipairs(block) do k = k + 1; n.order = slots[k] end
+  end
+  for _, id in ipairs(clips) do touched[#touched + 1] = { id = id, name = "order" } end
 end
 
 R.MOVES = {}

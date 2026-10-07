@@ -107,11 +107,17 @@ local function brief(comp, rows, path)
   -- nodes
   local props, keys, motion, setby = {}, {}, {}, {}
   for _, r in ipairs(rows.prop) do props[r.id] = props[r.id] or {}; table.insert(props[r.id], r) end
+  local is_row = {}
+  for _, n in ipairs(rows.node) do is_row[n.id] = true end
   for _, k in ipairs(rows.key) do
     local c = k.id .. "." .. k.name
-    keys[k.id] = keys[k.id] or {}
-    keys[k.id][c] = keys[k.id][c] or { name = k.name }
-    table.insert(keys[k.id][c], k)
+    -- a key on a precomp's inner node (<instance>/<child>) is listed under the instance
+    local at, name = k.id, k.name
+    local inst = not is_row[k.id] and k.id:match("^(.-)/")
+    if inst and is_row[inst] then at, name = inst, k.id:sub(#inst + 2) .. "." .. k.name end
+    keys[at] = keys[at] or {}
+    keys[at][c] = keys[at][c] or { name = name, id = k.id }
+    table.insert(keys[at][c], k)
   end
   for _, m in ipairs(rows.motion) do motion[m.id] = motion[m.id] or {}; table.insert(motion[m.id], m) end
   for sys, ids in pairs(comp.access or {}) do
@@ -125,7 +131,25 @@ local function brief(comp, rows, path)
   end
   local depth, parent = {}, {}
   for _, n in ipairs(rows.node) do parent[n.id] = n.parent end
-  w("nodes (draw order; children indented):")
+  -- composition (core/moonsplice/clip.lua): what each clip plays, and when, in comp time
+  local Clip = require("moonsplice.clip")
+  local built = {}
+  for _, n in ipairs(comp.nodes) do if n.id then built[n.id] = n end end
+  local function secs(t) return t == math.huge and "end" or ("%.2fs"):format(t) end
+  -- a key time under a clip is local: say when it plays, too
+  local function at_comp(node, t)
+    if not (node and node.clock) then return "" end
+    local lt = t
+    if type(t) ~= "number" then
+      local ok, v = pcall(R.fact_time, t, comp.derived or {})
+      if not ok then return "" end
+      lt = v
+    end
+    local c = Clip.to_comp(comp, node, lt)
+    return c and (" (comp %.2fs)"):format(c) or " (never plays)"
+  end
+  w(comp._clips and "nodes (draw order; children indented; keys under a clip are in its local time):"
+    or "nodes (draw order; children indented):")
   for _, n in ipairs(rows.node) do
     local d = n.parent and ((depth[n.parent] or 0) + 1) or 0
     depth[n.id] = d
@@ -133,9 +157,23 @@ local function brief(comp, rows, path)
     local ps = {}
     for _, r in ipairs(props[n.id] or {}) do ps[#ps + 1] = r.name .. "=" .. val(r.value) end
     w(pad .. n.id .. " " .. n.kind .. (#ps > 0 and (" " .. table.concat(ps, " ")) or ""))
-    for _, c in pairs(keys[n.id] or {}) do
+    local b = built[n.id]
+    if b and Clip.CLOCKS[b.kind] and b._start then w(pad .. "  " .. Clip.describe(comp, b)) end
+    if b and b.kind == "track" and b._members then
+      local first = b._members[1]
+      w(pad .. ("  track: %d clips end to end from %s to %s; reorder with move_clip, trim with set_prop duration")
+        :format(#b._members, first and secs(Clip.to_comp(comp, first, first._start) or 0) or "-",
+          b._end and secs(Clip.to_comp(comp, b, b._end) or b._end) or "-"))
+    end
+    -- curves by prop name: `pairs` order changes from run to run (LuaJIT seeds its string hash)
+    local curves = {}
+    for _, c in pairs(keys[n.id] or {}) do curves[#curves + 1] = c end
+    table.sort(curves, function(a, b) return a.name < b.name end)
+    for _, c in ipairs(curves) do
       local parts = {}
-      for _, k in ipairs(c) do parts[#parts + 1] = val(k.value) .. "@" .. tref(k.t) .. (k.ease and (" " .. k.ease) or "") end
+      for _, k in ipairs(c) do
+        parts[#parts + 1] = val(k.value) .. "@" .. tref(k.t) .. at_comp(built[c.id], k.t) .. (k.ease and (" " .. k.ease) or "")
+      end
       w(pad .. "  keys " .. c.name .. ": " .. table.concat(parts, " -> "))
     end
     for _, m in ipairs(motion[n.id] or {}) do
@@ -161,8 +199,10 @@ local function brief(comp, rows, path)
       #ids > 0 and (": sets " .. table.concat(ids, ", ")) or "",
       #sp > 0 and ("; spawns " .. table.concat(sp, ", ")) or ""))
   end
-  -- expectations
-  if #(rows.expect or {}) > 0 then
+  -- expectations: the comp's own, then its precomps' (checked in each instance's local time)
+  local inner = {}
+  for _, x in ipairs(comp.expect or {}) do if x.clock then inner[#inner + 1] = x end end
+  if #(rows.expect or {}) > 0 or #inner > 0 then
     local failing = {}
     for _, f in ipairs(fs) do
       if f.code == "expect_failed" then failing[f.detail:match("%(expect ([^)]+)%)$") or ""] = f.detail end
@@ -173,6 +213,9 @@ local function brief(comp, rows, path)
         or (x.t0 or x.t1) and (" over %s..%s%s"):format(tostring(x.t0 or 0), tostring(x.t1 or "end"), x.holds == "ever" and " (ever)" or "")
         or x.prop and " over the whole piece" or ""
       w(failing[x.id] and ("  FAIL " .. failing[x.id]) or ("  ok   " .. x.id .. when .. ": " .. (x.says or "")))
+    end
+    for _, x in ipairs(inner) do
+      w(failing[x.id] and ("  FAIL " .. failing[x.id]) or ("  ok   " .. x.id .. ": " .. (x.says or "") .. " (precomp)"))
     end
   end
   -- findings: errors, then warnings; info left out
@@ -227,6 +270,9 @@ function M.rows(comp, opts)
   return 0
 end
 
+-- the comp file a patch or an expectation is for: its precomps are relative to it
+local comp_path
+
 -- a comp built from rows, compiled with no media work and evaluated at three times: what a
 -- patch must survive before it lands
 local function try(rows)
@@ -239,7 +285,8 @@ local function try(rows)
   local E = rawget(_G, "MOONSPLICE_ENGINE")
   comp:compile({ game_host = { physics = E and E.physics_world or nil }, derive = function(src, ops)
     return require("derive").derive(require("resolve").localize(src), ops)
-  end, solid = function(tree) return require("solid").build(tree) end })
+  end, solid = function(tree) return require("solid").build(tree) end,
+    load_rows = function(src, from) return require("resolve").precomp_rows(src, from or comp_path) end })
   for _, t in ipairs({ 0, comp.duration / 2, comp.duration * 0.999 }) do comp:evaluate(t) end
   return comp
 end
@@ -274,18 +321,23 @@ local function key_of(f) return (f.code or "") .. ":" .. ((f.id ~= "" and f.id) 
 
 function M.state(rows, fs)
   local errs, warns, failing = {}, 0, {}
+  local own, held_off = {}, 0
+  for _, x in ipairs(rows.expect or {}) do own[x.id] = true end
   for _, f in ipairs(fs) do
     if f.code == "expect_failed" then
-      failing[#failing + 1] = (f.detail or ""):match("%(expect ([^)]+)%)$") or "?"
+      local id = (f.detail or ""):match("%(expect ([^)]+)%)$") or "?"
+      failing[#failing + 1] = id
+      -- a precomp's own expectation (<instance>/<id>) fails the gate but is not one of this comp's rows
+      if own[id] then held_off = held_off + 1 end
     elseif f.severity == "error" then errs[#errs + 1] = f.code .. " " .. ((f.id ~= "" and f.id) or f.node or "")
     elseif f.severity == "warn" then warns = warns + 1 end
   end
   local total = #(rows.expect or {})
   local digest = M.digest(rows)
   local line = ("state: digest %s; errors %d%s; warnings %d; expect %d/%d%s"):format(digest:sub(1, 8), #errs,
-    #errs > 0 and (" (" .. table.concat(errs, ", ") .. ")") or "", warns, total - #failing, total,
+    #errs > 0 and (" (" .. table.concat(errs, ", ") .. ")") or "", warns, total - held_off, total,
     #failing > 0 and (" (failing: " .. table.concat(failing, ", ") .. ")") or "")
-  return { digest = digest, errors = #errs, warnings = warns, expect_held = total - #failing, expect_total = total,
+  return { digest = digest, errors = #errs, warnings = warns, expect_held = total - held_off, expect_total = total,
     failing = failing, line = line }
 end
 
@@ -321,6 +373,7 @@ function M.patch(comp, opts)
   end
   local rows = R.copy(comp.rows)
   local before = M.digest(rows)
+  comp_path = opts.comp
   local res = R.apply(rows, patches, try)
   local after = M.digest(rows)
   -- the findings before, only when something will change (a lint and a check: about a second)
@@ -393,6 +446,7 @@ function M.expect(comp, opts)
     return 0
   end
   local rows = R.copy(comp.rows)
+  comp_path = opts.comp
   rows.expect = rows.expect or {}
   local before = M.digest(rows)
   local have = {}

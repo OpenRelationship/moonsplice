@@ -55,6 +55,8 @@ local ANIMATABLE = {
   outline = true, weight = true, -- SDF/coverage type
   -- a world's materials and lights (core/runtime/worldbevy.lua reads them every frame)
   metallic = true, roughness = true, reflectance = true, emissive_strength = true, intensity = true,
+  -- a clip's clock (core/moonsplice/clip.lua): a keyed speed is integrated, a keyed time is a time remap
+  speed = true, time = true,
 }
 
 -- ---------- nodes ----------
@@ -371,6 +373,20 @@ end
 -- accept CSS-style sugar, e.g. effects={blur=8, contrast=1.1}.
 function Scene:group(p)
   return add(self, "group", p or {})
+end
+-- Clip: a group with its own time (core/moonsplice/clip.lua, .robot/docs/rows.robot "Composition"). Its children
+-- see local time: start (parent seconds it begins), duration, offset (local time at start), speed (keyable,
+-- integrated), time (keyable remap), loop + length, hold, reverse. Outside its range it draws nothing.
+function Scene:clip(p) return add(self, "clip", p or {}) end
+-- Track: its child clips play end to end, each starting where the one before ends, less the overlap
+-- its transition needs. Reordering or trimming one clip ripples the rest.
+function Scene:track(p) return add(self, "track", p or {}) end
+-- Precomp: a clip of another rows comp (src), its nodes made again under this one as <id>/<child id>.
+-- core/moonsplice/rows/ expands it; it needs the host to read the file, so it is rows form only.
+function Scene:precomp(p)
+  assert(type(p.src) == "string", "moonsplice: precomp{src=...} required")
+  if not p.length then error("moonsplice: precomp is rows form only (.robot/docs/rows.robot, Composition)", 0) end
+  return add(self, "precomp", p)
 end
 -- Flex container (Taffy): positions its item nodes at compile/resolve time.
 -- Structural: x,y,w,h,dir("row"|"column"),justify,align,gap,pad,wrap,items={nodes}.
@@ -875,7 +891,8 @@ function Comp:compile(hooks, inputs_map)
   end
   local s = setmetatable(
     { nodes = {}, scripts = {}, count = 0, input = bound, source = chunk, views = {}, game = self.game,
-      _derive = hooks and hooks.derive, _solid = hooks and hooks.solid }, Scene)
+      _derive = hooks and hooks.derive, _solid = hooks and hooks.solid,
+      _load_rows = hooks and hooks.load_rows }, Scene)
   self._views = s.views
   self._scene_fn(s)
   self.derived = s.derived -- facts a rows comp's assets produced (core/moonsplice/rows/)
@@ -903,7 +920,8 @@ function Comp:compile(hooks, inputs_map)
     if n.kind == "vector" or n.kind == "html" or n.kind == "group" or n.kind == "fx"
       or n.kind == "particles" or n.kind == "chart" or n.kind == "ornament"
       or n.kind == "spine" or n.kind == "rive" or n.kind == "world"
-      or n.kind == "camera" or n.kind == "mesh" or n.kind == "light" then
+      or n.kind == "camera" or n.kind == "mesh" or n.kind == "light"
+      or n.kind == "clip" or n.kind == "track" or n.kind == "precomp" then
       local i = n.initial
       i.x, i.y = i.x or 0, i.y or 0
       if n.kind == "html" then i.progress = i.progress or 0 end
@@ -954,6 +972,8 @@ function Comp:compile(hooks, inputs_map)
       end
     end
   end
+  -- clocks, track layout and transitions, now that the keys on clips (speed, time) are recorded
+  require("moonsplice.clip").setup(self)
   return self
 end
 
@@ -964,6 +984,8 @@ local NO_STATE = setmetatable({}, { __newindex = function() error("moonsplice: a
 function Comp:evaluate(t)
   local views = self._views and #self._views > 0
   if self.game or views then M._clear_live() end
+  -- every clip's local time first: the timeline evaluates what is under a clip at it
+  if self._clips then require("moonsplice.clip").frame(self, t) end
   self.timeline:evaluate(t)
   if self.game or views then
     local state = self.game and self.game:advance(t) or NO_STATE

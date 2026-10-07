@@ -11,6 +11,7 @@
 --             measured, threshold, detail, suggestion? }
 
 local color = require("moonsplice.color")
+local Clip = require("moonsplice.clip")
 
 local L = {}
 
@@ -263,11 +264,21 @@ function L.run(comp, opts)
     return d
   end
 
-  -- the whole comp at t: timeline, then the game and its views (what they set is motion too)
+  -- the whole comp at t: clips' local times, the timeline, then the game and its views (what they
+  -- set is motion too)
   local function at(t)
-    if comp.evaluate and ((comp._views and #comp._views > 0) or comp.game) then comp:evaluate(t)
+    if comp.evaluate and ((comp._views and #comp._views > 0) or comp.game or comp._clips) then comp:evaluate(t)
     else comp.timeline:evaluate(t) end
   end
+  -- a key time on a node, in comp time: under a clip it is local, and the clip says when it plays
+  -- (nil when the clip never shows it)
+  local function ct(node, t) return Clip.to_comp(comp, node, t) end
+  -- a node shows only while every clip around it plays
+  local function live(n)
+    if n.clock and not n.clock._live then return false end
+    return n._live ~= false
+  end
+  local ever_live = {}
 
   -- ============ frame-grid sampling ============
   -- states[s][node] = {x,y,op,scale,size,w,h,r, visible, bx0,by0,bx1,by1}
@@ -275,14 +286,17 @@ function L.run(comp, opts)
   for s = 0, n_samples - 1 do
     local t = s / fps
     at(t)
+    for _, c in ipairs(comp._clips or {}) do if c._live then ever_live[c] = true end end
     local row = {}
     for _, n in ipairs(visual) do
       local i = n.initial
       local g = function(p) local v = n.state[p]; if v == nil then v = i[p] end; return v end
       local op = g("opacity") or 1
-      local vis = op > 0.01
+      local vis = op > 0.01 and live(n)
+      -- media under a clip plays in the clip's local time
+      local lt = n.clock and n.clock._lt or t
       if (n.kind == "video" or n.kind == "lottie") and vis then
-        vis = t >= (i.from or 0) and t < (i.from or 0) + (i.duration or dur)
+        vis = lt >= (i.from or 0) and lt < (i.from or 0) + (i.duration or dur)
       end
       local sc = g("scale") or 1
       local x, y = g("x") or 0, g("y") or 0
@@ -313,6 +327,7 @@ function L.run(comp, opts)
         row[n] = { x = x, y = y, op = op, vis = vis, sc = sc, rot = rot }
       end
       local st = row[n]
+      st.lt = lt
       st.reveal = g("reveal")
       st.progress = g("progress")
       st.outline, st.weight, st.tracking = g("outline"), g("weight"), g("tracking")
@@ -420,7 +435,8 @@ function L.run(comp, opts)
         local st = states[s][n]
         local i = n.initial
         local from, len = i.from or 0, i.duration or (dur - (i.from or 0))
-        if st and st.vis and t >= from and t < from + len then return true end
+        local lt = st and st.lt or t
+        if st and st.vis and lt >= from and lt < from + len then return true end
       end
     end
     for _, n in ipairs(audio) do
@@ -467,7 +483,14 @@ function L.run(comp, opts)
   local sets = {}
   local overshoot_reported = {} -- dedupe stagger swarms: one finding per beat
   for _, g in ipairs(comp.timeline.order) do
-    for _, seg in ipairs(g.segs) do
+    for _, seg0 in ipairs(g.segs) do
+      -- under a clip a segment's times are local: these rules are about when it plays
+      local seg = seg0
+      if g.node and g.node.clock then
+        local a, b = ct(g.node, seg0.t0), ct(g.node, seg0.t1)
+        seg = setmetatable({ t0 = a or -1, t1 = b or -1 }, { __index = seg0 })
+        if not (a and b) then seg = { kind = "unplaced" } end
+      end
       if not seg.kind then -- plain tween/set
         if seg.t1 > seg.t0 then
           total_tweens = total_tweens + 1
@@ -751,7 +774,8 @@ function L.run(comp, opts)
         local near = false
         for _, g in ipairs(comp.timeline.order) do
           for _, seg in ipairs(g.segs) do
-            if math.abs(seg.t0 - ia.at) < 0.25 or math.abs(seg.t1 - ia.at) < 0.25 then
+            local a, b = ct(g.node, seg.t0) or -1, ct(g.node, seg.t1) or -1
+            if math.abs(a - ia.at) < 0.25 or math.abs(b - ia.at) < 0.25 then
               near = true break
             end
           end
@@ -780,6 +804,9 @@ function L.run(comp, opts)
       if depth == 0 then last_end = ev.t end
     end
   end
+
+  -- ============ composition (core/moonsplice/cliplint.lua): clips, tracks, transitions ============
+  require("moonsplice.cliplint").run(comp, add, ever_live, dur)
 
   -- ============ solids (.robot/docs/solids.robot): what Manifold built, against what was meant ============
   for id, m in pairs(comp.solids or {}) do
@@ -907,9 +934,22 @@ function L.run(comp, opts)
         ("%s: %s (expect %s)"):format(x.says or x.id, why, x.id),
         "the ask requires this; do not remove or hide what it names, make it true")
     end
-    for _, x in ipairs(comp.expect) do
+    for _, x0 in ipairs(comp.expect) do
+      local x = x0
+      -- a precomp's expectations are in its local time: each time read at the comp time it plays
+      if x0.clock then
+        x = {}
+        for k, v in pairs(x0) do x[k] = v end
+        for _, k in ipairs({ "at", "t0", "t1" }) do
+          if x0[k] ~= nil then x[k] = Clip.comp_time(comp, x0.clock, x0[k]) or -1 end
+        end
+        if x.t0 and x.t1 and x.t1 < x.t0 then x.t0, x.t1 = x.t1, x.t0 end
+        if x0.at and x.at < 0 then x.at = nil; x.unplaced = true end
+      end
       local n = x.node and byid[x.node]
-      if x.node and not n then
+      if x.unplaced then
+        fail(x, nil, 0, dur, ("precomp %s never shows its local %.2f s"):format(tostring(x0.clock.id), x0.at))
+      elseif x.node and not n then
         fail(x, nil, 0, dur, ("node %s does not exist"):format(x.node))
       elseif n and x.prop then
         local op = OPS[x.op or "=="]
