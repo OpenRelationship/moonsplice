@@ -126,7 +126,7 @@ P9 Legible Source
     Every File Is Within The Limit
 
 P10 The Schema Is A Contract
-    [Documentation]    core/moonsplice/rows.lua owns the schema (msr/1) and .robot/docs/rows.robot describes it. A change
+    [Documentation]    core/moonsplice/rows/ owns the schema (msr/1) and .robot/docs/rows.robot describes it. A change
     ...    to a table's columns changes that doc first, then both sides, Moonsplice and tablua. Columns are never
     ...    added quietly.
     [Tags]    principle

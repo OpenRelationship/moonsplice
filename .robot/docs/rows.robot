@@ -224,7 +224,7 @@ Level 9: process
     Skip    prose
 
 Ownership
-    [Documentation]    - Moonsplice owns the schema (`core/moonsplice/rows.lua`), compile, evaluation, rendering, findings
+    [Documentation]    - Moonsplice owns the schema (`core/moonsplice/rows/`), compile, evaluation, rendering, findings
     ...    \ \ and the serve ops.
     ...    - tablua owns the harness: the Moonsplice world (moves above), the features, the learner's heads,
     ...    \ \ the ports to the engine and to the models, and the claims runner.

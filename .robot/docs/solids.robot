@@ -14,7 +14,7 @@ Metadata    Source    cadence@56ddad1:docs/SOLIDS.md
 *** Test Cases ***
 The path
     [Documentation]    ```
-    ...    assets = { { id = "buoy", solid = TREE } } \ \ \ \ \ \ \ \ \ -- rows (core/moonsplice/rows.lua)
+    ...    assets = { { id = "buoy", solid = TREE } } \ \ \ \ \ \ \ \ \ -- rows (core/moonsplice/rows/)
     ...    \ \ -> s:solid(TREE) \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -- core/moonsplice/init.lua, a compile hook
     ...    \ \ -> core/runtime/solid.lua: canonical JSON, sha1 -> ~/.cache/moonsplice/solids/<sha>.{msh,gltf,info.json}
     ...    \ \ -> MOONSPLICE_ENGINE.solid(json, out) \ \ \ \ \ \ \ \ \ \ \ \ \ -- engine/src/solid.rs

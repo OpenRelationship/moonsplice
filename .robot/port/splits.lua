@@ -34,14 +34,15 @@ P["core/runtime/painter.lua"] = {
 }
 
 P["core/moonsplice/rows.lua"] = {
-  note = "the json, copy and sort helpers the parts share become fields of rows/init.lua",
+  note = "the helpers the parts share (copy, num, same, sorted_keys, is_array, plain, hex, find) stay in rows/init.lua, "
+    .. "exported on R._; the parts load after init registers itself as moonsplice.rows",
   rest = "core/moonsplice/rows/init.lua",
   modules = {
     ["core/moonsplice/rows/scene.lua"] = { "^R%.scene$", "^R%.game$", "^derived_facts$", "^R%.fact_time$", "^SAFE$",
       "^R%.load_system$" },
     ["core/moonsplice/rows/moves.lua"] = { "^MOVES", "^NUMBER$", "^STRING$", "^check_value$", "^R%.check_value$",
-      "^key_time$", "^key_at$", "^R%.MOVES$", "^R%.apply$", "^find$", "^node_of$", "^subtree$" },
-    ["core/moonsplice/rows/dump.lua"] = { "^hex$", "^plain$", "^R%.dump$", "^IDENT$", "^LUA_KEYWORDS$", "^lua_key$",
+      "^key_time$", "^key_at$", "^R%.MOVES$", "^R%.apply$", "^node_of$", "^subtree$" },
+    ["core/moonsplice/rows/dump.lua"] = { "^R%.dump$", "^IDENT$", "^LUA_KEYWORDS$", "^lua_key$",
       "^lua_val$", "^lv$", "^COMP_FIRST$", "^R%.lua$" },
   },
 }
