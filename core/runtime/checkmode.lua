@@ -3,6 +3,28 @@ local C = {}
 
 local function luma(r, g, b) return 0.2126 * r + 0.7152 * g + 0.0722 * b end
 
+-- a node shows only while every clip around it plays (core/moonsplice/clip.lua)
+local function live(n)
+  if n.clock and not n.clock._live then return false end
+  return n._live ~= false
+end
+
+-- where a point in a node's own space lands in the frame, through the clips and groups around it
+-- (translation and scale; a rotated parent is not followed). Only for nodes under a clip, so every
+-- comp without one is measured exactly as before.
+local function placed(node, x, y, sc)
+  local p = node.initial.parent
+  while p do
+    local ps = p.state.scale or p.initial.scale or 1
+    local tr = p._tr
+    x = (p.state.x or p.initial.x or 0) + x * ps + (tr and tr.dx or 0)
+    y = (p.state.y or p.initial.y or 0) + y * ps + (tr and tr.dy or 0)
+    sc = sc * ps
+    p = p.initial.parent
+  end
+  return x, y, sc
+end
+
 local function contrast_ratio(l1, l2)
   if l1 < l2 then l1, l2 = l2, l1 end
   return (l1 + 0.05) / (l2 + 0.05)
@@ -88,7 +110,7 @@ function C.run(comp, opts, painter)
           -- a full-canvas backdrop being visible doesn't make a frame non-blank
           or (node.kind == "rect" and (node.initial.w or 0) >= W * 0.9
             and (node.initial.h or 0) >= H * 0.9)
-        if not skip then
+        if not skip and live(node) then
           local op = node.state.opacity
           if op == nil then op = node.initial.opacity or 1 end
           if op > 0.05 then any_vis = true break end
@@ -124,7 +146,7 @@ function C.run(comp, opts, painter)
         if node.kind == "text" then
           local op = node.state.opacity
           if op == nil then op = node.initial.opacity or 1 end
-          if op > 0.5 then
+          if op > 0.5 and live(node) then
             local fg = node.state.color or node.initial.color
             if fg then
               local x = node.state.x or node.initial.x or 0
@@ -146,6 +168,11 @@ function C.run(comp, opts, painter)
               if not tw then tw, th = math.min(#str * (size * 0.62 + track), W), size * 1.2 end
               local cx, cy = x, y
               if (node.initial.anchor or "topleft") ~= "center" then cx, cy = x + tw / 2, y + th / 2 end
+              if node.clock then
+                local s2
+                cx, cy, s2 = placed(node, cx, cy, 1)
+                tw, th, size = tw * s2, th * s2, size * s2
+              end
               -- overflow: the text's real box against the smallest panel holding its start (a rect,
               -- surface, world, image or video at top level), or the frame
               -- (a text clipped to a mask is cut on purpose; a mask or an invisible rect is no panel)

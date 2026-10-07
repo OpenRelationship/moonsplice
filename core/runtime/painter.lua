@@ -513,7 +513,19 @@ local function fx_ancestor(node)
   end
 end
 
-local paint_node
+local paint_node, paint_layer
+
+-- ---- composition: clips, tracks and isolated groups paint as layers (core/runtime/layers.lua) ----
+local layers = require("layers")
+local plan_of, within, live = layers.plan, layers.within, layers.live
+local opacity_from, fx_paints = layers.opacity_from, layers.fx_paints
+P.plan = plan_of
+
+local function paint_any(comp, node, t)
+  local plan = comp._plan
+  if plan and plan.layer[node] then return paint_layer(comp, node, t) end
+  return paint_node(comp, node, t)
+end
 
 -- ---- moonsplice-scene (MOONSPLICE_SCENE=1): text goes to the vello rasterizer ----
 P.scene = scene
@@ -530,6 +542,11 @@ end
 local function node_affine(chain, node)
   local m = { 1, 0, 0, 1, 0, 0 }
   local function trs(n)
+    -- a push, slide or zoom moves the clip in its track's space before its own transform
+    local tr = n._tr
+    if tr and (tr.dx ~= 0 or tr.dy ~= 0 or tr.s ~= 1) then
+      m = affine_mul(m, { tr.s, 0, 0, tr.s, tr.dx + tr.cx - tr.s * tr.cx, tr.dy + tr.cy - tr.s * tr.cy })
+    end
     local x, y = n:get("x") or 0, n:get("y") or 0
     local r = n:get("rotation") or 0
     local s = n:get("scale") or 1
@@ -583,7 +600,8 @@ end
 -- which nodes the scene crate paints today (grows one kind at a time)
 local SCENE_KINDS = { displace = true, draw = true, spritesheet = true, particles = true, chart = true, ornament = true, spine = true,
   text = true, rect = true, surface = true, circle = true, flex = true, group = true, kinetic = true,
-  image = true, svg = true, page = true, vector = true, html = true, world = true, fx = true, video = true, lottie = true }
+  image = true, svg = true, page = true, vector = true, html = true, world = true, fx = true, video = true, lottie = true,
+  clip = true, track = true, precomp = true }
 local EFFECT_DEFAULTS = { effect_blur = 0, effect_brightness = 1, effect_contrast = 1, effect_saturate = 1,
   effect_grayscale = 0, effect_sepia = 0, effect_invert = 0, effect_opacity = 1, effect_hue_rotate = 0 }
 local SCENE_BLENDS = scene.BLEND
@@ -756,7 +774,7 @@ local function node_box(node)
 end
 
 -- one scene-owned node: clip / blend / shadow / effect layers around its paint
-local function scene_node(node, opacity, chain, t)
+local function scene_node(node, opacity, chain, t, noblend)
   local i = node.initial
   local pops = 0
   if i.clip_node then
@@ -774,7 +792,7 @@ local function scene_node(node, opacity, chain, t)
     end
     pops = pops + 1
   end
-  if i.blend and i.blend ~= "alpha" then scene_builder:blend_push(i.blend); pops = pops + 1 end
+  if i.blend and i.blend ~= "alpha" and not noblend then scene_builder:blend_push(i.blend); pops = pops + 1 end
   if i.shadow then
     local sw, sh2 = node:get("w") or 0, node:get("h") or 0
     if sw > 0 and sh2 > 0 then
@@ -916,7 +934,7 @@ local function apply_fx(comp, node, t)
   local g = love.graphics
   local opacity = node:get("opacity")
   local chain = parent_chain(node)
-  for _, p in ipairs(chain) do opacity = opacity * (p:get("opacity") or 1) end
+  for k = opacity_from(comp, chain), #chain do opacity = opacity * (chain[k]:get("opacity") or 1) end
   if opacity <= 0 then return end
   local w = math.floor(node:get("w") or 0)
   local h = math.floor(node:get("h") or 0)
@@ -931,7 +949,7 @@ local function apply_fx(comp, node, t)
     P.fx_offset = P.fx_offset or {}
     P.fx_offset[node] = { ox, oy }
     for _, child in ipairs(comp.nodes) do
-      if fx_ancestor(child) == node then paint_node(comp, child, t) end
+      if fx_ancestor(child) == node and fx_paints(comp, child, node) then paint_any(comp, child, t) end
     end
     P.fx_offset[node] = nil
     scene_builder:pop()
@@ -1032,8 +1050,11 @@ local function paint_offline(node, t, stop)
   g.pop()
 end
 
-paint_node = function(comp, node, t, stop)
+paint_node = function(comp, node, t, stop, flags)
   local g = love.graphics
+  -- a clip that is not playing paints nothing, and what is under one is drawn at its local time
+  if not live(node) then return end
+  if node.clock then t = node.clock._lt end
   -- Something this node needed is not on the disk. It keeps its place, its size and its moment,
   -- so the edit around it is exactly the edit it was, and it paints a slate instead of its
   -- picture. `core/runtime/resolve.lua` decides that and says why.
@@ -1056,9 +1077,10 @@ paint_node = function(comp, node, t, stop)
   local opacity = node:get("opacity")
     -- inherited opacity: a group fading takes its children with it
     local chain = parent_chain(node, stop)
-    for _, p in ipairs(chain) do opacity = opacity * (p:get("opacity") or 1) end
+    for k = opacity_from(comp, chain), #chain do opacity = opacity * (chain[k]:get("opacity") or 1) end
     if opacity > 0 and node.kind ~= "group" and node.kind ~= "kinetic" and node.kind ~= "fx"
-      and node.kind ~= "camera" and node.kind ~= "light" and node.kind ~= "mesh" then
+      and node.kind ~= "camera" and node.kind ~= "light" and node.kind ~= "mesh"
+      and node.kind ~= "clip" and node.kind ~= "track" and node.kind ~= "precomp" then
       -- Blend, shader, canvas, and stencil state are node-local. Transform-only
       -- pushes let a `screen` node leak into later text, corrupting glyph atlas
       -- blending into solid character rectangles.
@@ -1112,7 +1134,7 @@ paint_node = function(comp, node, t, stop)
           love.graphics.setBlendMode(bm, ba)
         end
       end
-      if scene_builder and not stop and scene_owns(node) and scene_node(node, opacity, chain, t) then
+      if scene_builder and not stop and scene_owns(node) and scene_node(node, opacity, chain, t, flags and flags.noblend) then
         -- painted by moonsplice-scene
       elseif node.kind == "flex" then
         if node:get("color") then
@@ -1496,6 +1518,78 @@ paint_node = function(comp, node, t, stop)
 end
 
 
+-- A layer: its subtree drawn as one picture, then composited once. From the outside in: the blend
+-- (a crossfade's incoming clip adds onto the outgoing one), the opacity (its own, a transition's, and
+-- the plain groups above it up to the next layer), the matte, the effects, a wipe's edge and a
+-- precomp's or track's box; then the members, and a dip's colour over them.
+local MATTE_MODE = { alpha = 0, alpha_inverted = 1, luma = 2, luma_inverted = 3 }
+local CONTAINER = { group = true, clip = true, track = true, precomp = true, flex = true }
+local LEAF = { noblend = true }
+paint_layer = function(comp, L, t)
+  if not live(L) then return end
+  if L.clock then t = L.clock._lt end
+  local plan = comp._plan
+  local i, tr = L.initial, L._tr
+  local chain = parent_chain(L)
+  local op = (L:get("opacity") or 1) * (tr and tr.op or 1)
+  for k = opacity_from(comp, chain), #chain do op = op * (chain[k]:get("opacity") or 1) end
+  if op <= 0 then return end
+  local b = scene_builder
+  -- a node that is a layer only for its matte paints itself (with its own opacity) inside the matte
+  local leaf = L.kind == "fx" or (not plan.members[L] and not CONTAINER[L.kind])
+  local pops = 0
+  local blend = (tr and tr.plus) and "add" or i.blend
+  if blend and blend ~= "alpha" and blend ~= "normal" then b:blend_push(blend); pops = pops + 1 end
+  if not leaf and op < 1 then b:opacity_push(op); pops = pops + 1 end
+  if i.matte then
+    b:matte_push(MATTE_MODE[i.matte_mode or "alpha"] or 0)
+    paint_layer(comp, i.matte, t)
+    b:matte_body()
+    pops = pops + 1
+  end
+  if not leaf then
+    local has_fx = false
+    for key, default in pairs(EFFECT_DEFAULTS) do
+      local v = L:get(key)
+      if v ~= nil and v ~= default then has_fx = true end
+    end
+    if has_fx then
+      local function e(k) local v = L:get(k); if v == nil then v = EFFECT_DEFAULTS[k] end; return v end
+      b:transform({ 1, 0, 0, 1, 0, 0 })
+      b:fx_push(e("effect_blur"), e("effect_brightness"), e("effect_contrast"), e("effect_saturate"),
+        e("effect_grayscale"), e("effect_sepia"), e("effect_invert"), e("effect_opacity"), e("effect_hue_rotate"),
+        { 0, 0, comp.width, comp.height })
+      pops = pops + 1
+    end
+  end
+  if tr and tr.wipe then
+    b:transform(node_affine(chain, nil))
+    b:clip_push(tr.wipe[1], tr.wipe[2], tr.wipe[3], tr.wipe[4], 0)
+    pops = pops + 1
+  end
+  -- a precomp and a track are frames: what falls outside their box (a push, a boat sailing off) is cut
+  if L.kind == "precomp" or L.kind == "track" then
+    b:transform(node_affine(chain, L))
+    b:clip_push(0, 0, i.w or comp.width, i.h or comp.height, 0)
+    pops = pops + 1
+  end
+  if leaf then
+    paint_node(comp, L, t, nil, LEAF)
+  else
+    for _, m in ipairs(plan.members[L] or {}) do
+      if not SKIP_DRAW[m.kind] and not plan.matte_src[m] then
+        local fa = fx_ancestor(m)
+        if not (fa and within(fa, L)) then paint_any(comp, m, t) end
+      end
+    end
+  end
+  if tr and tr.dip then
+    b:transform(node_affine(chain, nil))
+    b:rect(0, 0, tr.w, tr.h, tr.dip, 0)
+  end
+  for _ = 1, pops do b:pop() end
+end
+
 -- The first node scene/ cannot draw, in words, or nil when it can draw them all.
 function P.scene_blocker(comp)
   if not scene_builder then return "the scene renderer (native/target/release has no moonsplice-scene)" end
@@ -1538,16 +1632,19 @@ local direct_data, direct_w, direct_h
 -- Walk the draw order, one node at a time. `flush` is called before anything the scene builder does not own, which
 -- is what keeps the love path's draw order honest; the direct path has nothing to flush.
 local function paint_in_order(comp, t, flush)
+  local plan = plan_of(comp)
   local order = draw_order(comp)
   local i = 1
   while i <= #order do
     local node = order[i].node
     local skip = SKIP_DRAW[node.kind] or fx_ancestor(node)
+    -- a layer paints what it holds; a matte's source is painted only as the matte
+    if plan and not skip then skip = plan.owner[node] or plan.matte_src[node] end
     if skip then
       i = i + 1
     else
       if flush then flush(node) end
-      paint_node(comp, node, t)
+      paint_any(comp, node, t)
       i = i + 1
     end
   end

@@ -169,6 +169,10 @@ local FILTER = { effect_blur = 0, effect_brightness = 1, effect_contrast = 2, ef
 S.FILTER = FILTER
 function Builder:filter_push(kind, amount) push(self, 108, kind, amount) end
 function Builder:opacity_push(a) push(self, 110, a) end
+-- a track matte (opcodes 117/118): what is drawn until 118 is the matte, then until 105 the layer
+-- that shows through it. mode 0 alpha, 1 alpha inverted, 2 luma, 3 luma inverted
+function Builder:matte_push(mode) push(self, 117, mode) end
+function Builder:matte_body() push(self, 118) end
 -- the moonsplice-effects chain (love parity): blur brightness contrast saturate grayscale sepia invert opacity hue
 -- box = { x, y, w, h } in the current transform space: the effect runs on that box only
 function Builder:fx_push(blur, brightness, contrast, saturate, grayscale, sepia, invert, opacity, hue, box)

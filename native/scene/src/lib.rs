@@ -29,6 +29,12 @@
 //                                          (ox, oy, w, h), moved as a grid mesh (displace.rs)
 //   116 lottie     id frame x y w h alpha   Lottie `id` (cs_lottie_load) at Lottie frame `frame`,
 //                                          its own box scaled into (x, y, w, h) (lottie.rs)
+//   117 matte_push mode                     a track matte: what is drawn until 118 is the matte, in
+//                                          a scratch frame the size of the output
+//   118 matte_body                          then until 105 the layer that shows through it, in a
+//                                          second scratch frame; 105 multiplies it by the matte
+//                                          (mode 0 alpha, 1 alpha inverted, 2 luma, 3 luma
+//                                          inverted; luma of the matte over black) and composites
 //   111 fx_push blur bright contrast sat gray sepia invert opacity hue  bx by bw bh
 //                                          render until 105 into a scratch frame the size of the
 //                                          node box (transformed by the current affine), run
@@ -370,6 +376,26 @@ enum Close {
     Persp(persp::Camera, (u16, u16, u16, u16), (f32, f32), Affine),
     /// displace the flat page (pw x ph) as a grid onto a stage (sw x sh), drawn with `place`
     Displace(displace::Grid, (u16, u16, u16, u16), (f32, f32), Affine),
+    /// a matte being drawn (117 until 118): its mode
+    MatteSource(u32),
+    /// the layer a matte shows (118 until 105): the matte's pixels and its mode
+    Matte(Pixmap, u32),
+}
+
+/// A track matte on a premultiplied layer: every channel times the matte's alpha or luma (the
+/// matte over black, as a track matte reads it), inverted for modes 1 and 3.
+fn apply_matte(px: &mut [u8], mask: &[u8], mode: u32) {
+    for (p, m) in px.chunks_exact_mut(4).zip(mask.chunks_exact(4)) {
+        let k = match mode {
+            0 | 1 => m[3] as u32,
+            // BT.709 weights in 256ths: 54 + 183 + 19 = 256, so white is 255
+            _ => (m[0] as u32 * 54 + m[1] as u32 * 183 + m[2] as u32 * 19 + 128) >> 8,
+        };
+        let k = if mode == 1 || mode == 3 { 255 - k } else { k };
+        for c in p.iter_mut() {
+            *c = ((*c as u32 * k + 127) / 255) as u8;
+        }
+    }
 }
 struct Frame {
     scene: Scene,
@@ -390,7 +416,7 @@ fn run(st: &mut State, cmds: &[f32], strings: &[u8], w: u16, h: u16, scale: f32,
         while let Some(op) = r.next() {
             let n = match op as u32 { 0 => 8, 1 => 9, 2 => 7, 3 | 4 => 2, 5 => 6, 6 => 4, 7 => 5, 8 => 16, 9 => 11, 10 => 2,
                 100 => 6, 101 => { let hdr = r.take::<15>(); match hdr { Some(h) => (h[14] as usize) * 8, None => 0 } }, 102 => 4, 103 => 7, 104 => 5, 105 => 0,
-                106 => 6, 107 => 2, 108 => { found = true; 2 }, 110 => 1, 111 => 13, 113 => 5, 114 => 21, 115 => 9, 116 => 7, 112 => { let hdr = r.take::<5>(); match hdr { Some(h) => (h[0] as usize) * 4, None => 0 } }, _ => 0 };
+                106 => 6, 107 => 2, 108 => { found = true; 2 }, 110 => 1, 111 => 13, 113 => 5, 114 => 21, 115 => 9, 116 => 7, 117 => 1, 118 => 0, 112 => { let hdr = r.take::<5>(); match hdr { Some(h) => (h[0] as usize) * 4, None => 0 } }, _ => 0 };
             r.i += n;
         }
         found
@@ -536,6 +562,16 @@ fn run(st: &mut State, cmds: &[f32], strings: &[u8], w: u16, h: u16, scale: f32,
                                 let stage = displace::warp(page.data_as_u8_slice(), pw as usize, ph as usize, sw as usize, sh as usize, x0, y0, &grid);
                                 (premul_pixmap(stage, sw, sh), place, (0, 0, sw, sh))
                             }
+                            Close::Matte(mask, mode) => {
+                                // the layer, in the parent's pixels, times the matte, put back in place
+                                let mut sub = RenderContext::new_with(w, h, settings(threads));
+                                let layer = paint_cpu(&mut sub, &mut st.res, &st.ids, fr.scene);
+                                let mut px = layer.data_as_u8_slice().to_vec();
+                                apply_matte(&mut px, mask.data_as_u8_slice(), mode);
+                                (premul_pixmap(px, w, h), Affine::IDENTITY, (0, 0, w, h))
+                            }
+                            // a 105 never closes a matte's source: 118 does
+                            Close::MatteSource(_) => return None,
                         };
                         let rid = ResourceId::new();
                         st.ids.insert(rid, st.res.register_image(Arc::new(pm)));
@@ -586,6 +622,20 @@ fn run(st: &mut State, cmds: &[f32], strings: &[u8], w: u16, h: u16, scale: f32,
                         fx: Some(Close::Displace(grid, (pw_, ph_, sw_, sh_), (x0, y0),
                             cur * Affine::translate(((ox + x0) as f64, (oy + y0) as f64)))),
                     });
+                    layers.push(true);
+                }
+                117 => {
+                    // the matte draws into the parent's pixel space, the size of the output
+                    let [mode] = rd.take::<1>()?;
+                    let off = frames.last()?.off;
+                    frames.push(Frame { scene: Scene::new(), off, fx: Some(Close::MatteSource(mode as u32)) });
+                }
+                118 => {
+                    let fr = frames.pop()?;
+                    let Some(Close::MatteSource(mode)) = fr.fx else { return None };
+                    let mut sub = RenderContext::new_with(w, h, settings(threads));
+                    let mask = paint_cpu(&mut sub, &mut st.res, &st.ids, fr.scene);
+                    frames.push(Frame { scene: Scene::new(), off: fr.off, fx: Some(Close::Matte(mask, mode)) });
                     layers.push(true);
                 }
                 116 => {
