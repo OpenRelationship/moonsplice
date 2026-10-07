@@ -76,19 +76,22 @@ P["core/moonsplice/lint.lua"] = {
 }
 
 P["core/runtime/resolve.lua"] = {
-  note = "R.media (318 lines) stays whole in resolve/init.lua; what it calls moves out",
+  note = "R.media (318 lines) stays whole in resolve/init.lua; the helpers it calls become modules that return "
+    .. "their functions (files, probe, voice, offline), and R.localize, R.precomp_rows and R.layout go to layout.lua. "
+    .. "Cut by hand: the cutter's shared locals cannot carry functions a part defines and the rest calls",
   rest = "core/runtime/resolve/init.lua",
   modules = {
+    ["core/runtime/resolve/files.lua"] = { "^sh$", "^sha1$", "^cache_root$", "^exists$", "^MEDIA_EXT$", "^localize$" },
+    ["core/runtime/resolve/layout.lua"] = { "^R%.localize$", "^R%.precomp_rows$", "^R%.layout$" },
+    ["core/runtime/resolve/probe.lua"] = { "^probed$", "^file_size$", "^probe_", "^ffprobe_duration$",
+      "^bake_energy$" },
     ["core/runtime/resolve/voice.lua"] = { "^elevenlabs_key$", "^VOICES$", "^verify_audio$", "^tts_",
       "^chars_to_words$", "^moonsplice_audio_bin$", "^music_generate$", "^sfx_generate$", "^normword$",
       "^align_generate$" },
-    ["core/runtime/resolve/probe.lua"] = { "^probed$", "^file_size$", "^probe_", "^ffprobe_duration$",
-      "^bake_energy$" },
-    ["core/runtime/resolve/fetch.lua"] = { "^cache_root$", "^exists$", "^MEDIA_EXT$", "^localize$",
-      "^R%.localize$", "^R%.layout$" },
     ["core/runtime/resolve/offline.lua"] = { "^WHY_OFFLINE$", "^R%.why_offline$", "^went_offline$" },
   },
 }
+
 
 P["core/runtime/serve.lua"] = {
   note = "serve's JSON encoder duplicates moonsplice.json; prefer deleting it for that module over moving it",
