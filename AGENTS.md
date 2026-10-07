@@ -9,7 +9,7 @@ The locked decisions that implement it are `.robot/docs/canon.robot`, and the da
 When a decision could go either way, the answer is usually in the design doc.
 
 This is the one markdown file in the repository, and the one file allowed past 400 lines (`.robot/rules.robot`
-says so). Everything else that documents Moonsplice is a Robot suite in `.robot/docs/`. `CLAUDE.md` links here.
+says so). Everything else that documents Moonsplice is a Robot suite in `.robot/docs/`. `CLAUDE.md` and `README.md` link here.
 
 ---
 

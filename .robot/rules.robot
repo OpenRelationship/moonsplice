@@ -33,7 +33,8 @@ Every File Is Within The Limit
 
 There Is No Markdown But AGENTS.md
     [Documentation]    Documentation is Robot: a page is a suite whose sections are test cases tagged doc, each
-    ...    made checkable when it can be. AGENTS.md (CLAUDE.md links to it) is the one exception, and the one file
+    ...    made checkable when it can be. AGENTS.md is the one exception (CLAUDE.md and README.md, GitHub's front
+    ...    page, exist only as links to it), and the one file
     ...    exempt from the limit: the bet and the practical knowledge every agent reads whole (owner, 2026-10-07).
     [Tags]    law
     No Markdown
@@ -41,7 +42,7 @@ There Is No Markdown But AGENTS.md
 The Root Is The Tree Above
     [Tags]    law
     Root Holds Only    moonsplice    core    native    editor    comps    assets    test    tablua    .robot    .claude
-    ...    .gitignore    .gitmodules    LICENSE    AGENTS.md    CLAUDE.md
+    ...    .gitignore    .gitmodules    LICENSE    AGENTS.md    CLAUDE.md    README.md
 
 Robot Lives In .robot
     [Tags]    law
