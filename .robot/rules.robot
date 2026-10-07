@@ -33,9 +33,10 @@ Every File Is Within The Limit
 
 There Is No Markdown But AGENTS.md
     [Documentation]    Documentation is Robot: a page is a suite whose sections are test cases tagged doc, each
-    ...    made checkable when it can be. AGENTS.md is the one exception (CLAUDE.md and README.md, GitHub's front
-    ...    page, exist only as links to it), and the one file
+    ...    made checkable when it can be. AGENTS.md is the one exception (CLAUDE.md is a link to it), and the one file
     ...    exempt from the limit: the bet and the practical knowledge every agent reads whole (owner, 2026-10-07).
+    ...    README.md is GitHub's front page for people: it introduces Moonsplice and links to the docs, and
+    ...    documents nothing of its own.
     [Tags]    law
     No Markdown
 

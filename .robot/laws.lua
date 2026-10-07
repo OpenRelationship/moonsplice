@@ -73,12 +73,12 @@ function M.library(root)
 
   lib:add("No Markdown", function()
     local bad = {}
-    -- AGENTS.md is the one exception: the file every agent reads first. CLAUDE.md (for Claude Code) and README.md
-    -- (GitHub's front page) may exist only as links to it
-    local linked = { ["CLAUDE.md"] = true, ["README.md"] = true }
+    -- AGENTS.md is the one exception: the file every agent reads first, and CLAUDE.md is a link to it. README.md
+    -- is GitHub's front page for people (owner, 2026-10-07): it introduces and links, and documents nothing
+    local linked = { ["CLAUDE.md"] = true }
     for _, p in ipairs(all()) do
       local md = p:lower():match("%.md$") or p:lower():match("%.markdown$")
-      if md and p ~= "AGENTS.md" then
+      if md and p ~= "AGENTS.md" and p ~= "README.md" then
         local h = linked[p] and io.popen("readlink " .. root .. "/" .. p)
         local to = h and h:read("*l"); if h then h:close() end
         if to ~= "AGENTS.md" then bad[#bad + 1] = p end

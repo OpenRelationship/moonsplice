@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 320" fill="none">
+  <!-- The README's banner: the mark and name on the left, a comp as rows on the right. -->
+  <rect width="1280" height="320" fill="#0B0D12"/>
+  <g opacity="0.07" stroke="#F7F8F8">
+    <path d="M0 64H1280M0 128H1280M0 192H1280M0 256H1280"/>
+  </g>
+  <g transform="translate(72 104) scale(1.75)" fill="#F7F8F8">
+    <path d="M23.600 5.288A28.001 28.001 0 1 1 23.600 58.712A40.433 40.433 0 0 0 23.600 5.288Z"/>
+    <path d="M16.320 9.600A27.213 27.213 0 0 1 16.320 54.400A39.340 39.340 0 0 0 16.320 9.600Z" opacity="0.8"/>
+    <path d="M10.160 15.200A19.893 19.893 0 0 1 10.160 48.800A26.940 26.940 0 0 0 10.160 15.200Z" opacity="0.6"/>
+    <path d="M6.520 20.800A13.262 13.262 0 0 1 6.520 43.200A18.483 18.483 0 0 0 6.520 20.800Z" opacity="0.4"/>
+    <path d="M4.860 25.920A7.411 7.411 0 0 1 4.860 38.080A12.524 12.524 0 0 0 4.860 25.920Z" opacity="0.25"/>
+  </g>
+  <text x="200" y="168" fill="#F7F8F8" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="64" font-weight="600" letter-spacing="-2">moonsplice</text>
+  <text x="203" y="212" fill="#9AA3B5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="24">Games and videos as rows a model can read and write.</text>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15">
+    <rect x="812" y="66" width="420" height="188" rx="10" fill="#141821" stroke="#262C38"/>
+    <text x="836" y="98" fill="#6B7894">table</text>
+    <text x="906" y="98" fill="#6B7894">id</text>
+    <text x="972" y="98" fill="#6B7894">prop</text>
+    <text x="1040" y="98" fill="#6B7894">t</text>
+    <text x="1090" y="98" fill="#6B7894">value</text>
+    <text x="836" y="132" fill="#C9D1E0">node</text>
+    <text x="906" y="132" fill="#C9D1E0">title</text>
+    <text x="972" y="132" fill="#C9D1E0">text</text>
+    <text x="1040" y="132" fill="#C9D1E0">0</text>
+    <text x="1090" y="132" fill="#C9D1E0">&quot;The harbour&quot;</text>
+    <text x="836" y="160" fill="#C9D1E0">key</text>
+    <text x="906" y="160" fill="#C9D1E0">title</text>
+    <text x="972" y="160" fill="#C9D1E0">y</text>
+    <text x="1040" y="160" fill="#C9D1E0">0.5</text>
+    <text x="1090" y="160" fill="#C9D1E0">540</text>
+    <text x="836" y="188" fill="#C9D1E0">key</text>
+    <text x="906" y="188" fill="#C9D1E0">boat</text>
+    <text x="972" y="188" fill="#C9D1E0">x</text>
+    <text x="1040" y="188" fill="#C9D1E0">2.0</text>
+    <text x="1090" y="188" fill="#C9D1E0">1180</text>
+    <text x="836" y="216" fill="#C9D1E0">expect</text>
+    <text x="906" y="216" fill="#C9D1E0">title</text>
+    <text x="972" y="216" fill="#C9D1E0">shown</text>
+    <text x="1040" y="216" fill="#C9D1E0">1.0</text>
+    <text x="1090" y="216" fill="#C9D1E0">true</text>
+    <text x="836" y="244" fill="#3EE0C6">key</text>
+    <text x="906" y="244" fill="#3EE0C6">boat</text>
+    <text x="972" y="244" fill="#3EE0C6">x</text>
+    <text x="1040" y="244" fill="#3EE0C6">4.0</text>
+    <text x="1090" y="244" fill="#3EE0C6">▍</text>
+  </g>
+</svg>

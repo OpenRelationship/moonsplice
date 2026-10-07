@@ -8,8 +8,9 @@ The design itself, argued in full, is `.robot/docs/design.robot` (run it: `luaji
 The locked decisions that implement it are `.robot/docs/canon.robot`, and the data model is `.robot/docs/rows.robot`.
 When a decision could go either way, the answer is usually in the design doc.
 
-This is the one markdown file in the repository, and the one file allowed past 400 lines (`.robot/rules.robot`
-says so). Everything else that documents Moonsplice is a Robot suite in `.robot/docs/`. `CLAUDE.md` and `README.md` link here.
+This is the one markdown file that documents Moonsplice, and the one file allowed past 400 lines
+(`.robot/rules.robot` says so). Everything else that documents it is a Robot suite in `.robot/docs/`. `CLAUDE.md`
+links here; `README.md` is GitHub's front page for people, which introduces and points here.
 
 ---
 
