@@ -613,6 +613,22 @@
         "systems"
       ],
       "description": "Harbour furniture built from scratch by Manifold from trees in the comp's assets: a turned can buoy with fender ring, lifting eyes and topmark; a mushroom bollard; 15 interlocking chain links; a dinghy shell with thwarts cut to the hull. Each solid's measurements (parts, genus, watertight, size) are checked."
+    },
+    {
+      "id": "composition",
+      "file": "comps/cases/composition.lua",
+      "title": "Composition",
+      "tests": [
+        "rows",
+        "clip",
+        "track",
+        "transition",
+        "speed",
+        "isolate",
+        "precomp",
+        "matte"
+      ],
+      "description": "Composition as rows: a reel (a track of three clips joined by a crossfade and a wipe), a clip whose keyed speed ramps 0.3 to 2.4 while it loops, two fading groups of overlapping circles (one isolated, fading as one picture), a precomp card instanced twice at different times and speeds (the second holding its last frame), and stripes seen through a text's alpha matte."
     }
   ]
 }
