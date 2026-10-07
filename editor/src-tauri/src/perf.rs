@@ -30,6 +30,9 @@ use std::time::{Duration, Instant};
 
 use serde::{Deserialize, Serialize};
 
+mod stats;
+pub use stats::*;
+
 /// How many frames are kept. At 30 fps this is the last two minutes, which is longer than
 /// anybody watches before deciding the preview is choppy.
 const KEPT: usize = 3600;
@@ -310,71 +313,6 @@ impl Perf {
     }
 }
 
-/// How busy the machine is, one minute averaged. Measurements are only comparable against
-/// each other when this is comparable, and on a laptop that is also compiling something it is
-/// not: every number a perf test prints comes with this next to it.
-pub fn load_average() -> f64 {
-    #[cfg(target_os = "linux")]
-    if let Ok(s) = std::fs::read_to_string("/proc/loadavg") {
-        if let Some(first) = s.split_whitespace().next() {
-            return first.parse().unwrap_or(0.0);
-        }
-    }
-    #[cfg(target_os = "macos")]
-    if let Ok(out) = std::process::Command::new("sysctl").args(["-n", "vm.loadavg"]).output() {
-        // `{ 21.39 16.75 16.23 }`
-        let text = String::from_utf8_lossy(&out.stdout);
-        if let Some(first) = text.split_whitespace().nth(1) {
-            return first.parse().unwrap_or(0.0);
-        }
-    }
-    0.0
-}
-
-/// Microseconds, at the three points worth knowing.
-#[derive(Debug, Clone, Copy, Default, Serialize)]
-pub struct Percentiles {
-    pub p50: u64,
-    pub p95: u64,
-    pub worst: u64,
-}
-
-impl Percentiles {
-    /// `sorted` must be sorted; an empty one is all zeroes, which reads as "nothing measured".
-    pub fn of(sorted: &[u64]) -> Percentiles {
-        if sorted.is_empty() {
-            return Percentiles::default();
-        }
-        let at = |q: f64| sorted[(((sorted.len() - 1) as f64) * q).round() as usize];
-        Percentiles {
-            p50: at(0.5),
-            p95: at(0.95),
-            worst: at(1.0),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Serialize)]
-pub struct PlaybackStats {
-    /// Everything since the app started.
-    pub served: u64,
-    pub hits: u64,
-    pub warmed: u64,
-    pub dropped: u64,
-    /// The window these percentiles came from.
-    pub frames: u64,
-    pub hit_rate: f64,
-    /// What a frame the picture was waiting for cost, end to end.
-    pub live: Percentiles,
-    /// The stages, over the frames that were actually rendered rather than served from cache.
-    pub wait: Percentiles,
-    pub render: Percentiles,
-    pub read: Percentiles,
-    pub encode: Percentiles,
-    pub worst: Option<FrameSpan>,
-    pub tracing: bool,
-}
-
 /// A stopwatch that reads in microseconds, because everything here is measured that way.
 pub struct Watch(Instant);
 
@@ -395,103 +333,4 @@ impl Watch {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-
-    fn span(total: u64, render: u64, encode: u64, live: bool) -> FrameSpan {
-        FrameSpan {
-            t_ms: 0,
-            w: 960,
-            h: 540,
-            live,
-            hit: false,
-            wait_us: 0,
-            render_us: render,
-            read_us: 0,
-            encode_us: encode,
-            total_us: total,
-            bytes: 60_000,
-        }
-    }
-
-    #[test]
-    fn percentiles_of_nothing_are_nothing() {
-        let p = Percentiles::of(&[]);
-        assert_eq!((p.p50, p.p95, p.worst), (0, 0, 0));
-    }
-
-    #[test]
-    fn the_worst_frame_is_kept_not_averaged_away() {
-        let perf = Perf::new();
-        for _ in 0..99 {
-            perf.record(span(8_000, 5_000, 3_000, true));
-        }
-        perf.record(span(300_000, 290_000, 10_000, true));
-        let s = perf.stats(200);
-        assert_eq!(s.frames, 100);
-        assert_eq!(s.live.p50, 8_000, "one bad frame does not move the middle");
-        assert_eq!(s.live.worst, 300_000, "and it is still there to be found");
-        assert_eq!(s.worst.map(|w| w.render_us), Some(290_000));
-    }
-
-    #[test]
-    fn a_cache_hit_is_not_counted_as_a_render() {
-        let perf = Perf::new();
-        for _ in 0..10 {
-            let mut s = span(120, 0, 0, true);
-            s.hit = true;
-            perf.record(s);
-        }
-        perf.record(span(40_000, 30_000, 9_000, true));
-        let s = perf.stats(100);
-        assert_eq!(s.hit_rate, 10.0 / 11.0);
-        // The stage percentiles are over rendered frames only, or ten zeroes would say the
-        // renderer is instant.
-        assert_eq!(s.render.p50, 30_000);
-    }
-
-    #[test]
-    fn the_diagnosis_names_the_stage_that_is_eating_the_budget() {
-        let perf = Perf::new();
-        for _ in 0..30 {
-            perf.record(span(50_000, 8_000, 40_000, true));
-        }
-        let said = perf.diagnosis(33.3).expect("it is behind, so it says so");
-        assert!(said.contains("encoding the picture"), "{said}");
-        assert!(said.contains("40 ms"), "{said}");
-
-        // And says nothing when there is nothing to say.
-        let ok = Perf::new();
-        for _ in 0..30 {
-            ok.record(span(9_000, 5_000, 3_000, true));
-        }
-        assert!(ok.diagnosis(33.3).is_none());
-    }
-
-    #[test]
-    fn a_trace_is_written_when_one_is_asked_for() {
-        let dir = std::env::temp_dir().join(format!("moonsplice-perf-{}", std::process::id()));
-        std::fs::create_dir_all(&dir).unwrap();
-        let path = dir.join("trace.json");
-        let perf = Perf::tracing_to(path.to_str().unwrap());
-        perf.record(span(20_000, 12_000, 6_000, true));
-        perf.record_ui(&[UiSpan {
-            name: "decode".into(),
-            at_ms: 1.0,
-            dur_ms: 4.0,
-            t_ms: Some(0),
-        }]);
-        let text = std::fs::read_to_string(&path).unwrap();
-        assert!(text.starts_with("[\n"), "a Chrome trace is an array");
-        for want in ["\"name\":\"render\"", "\"name\":\"encode\"", "\"name\":\"decode\""] {
-            assert!(text.contains(want), "{want} missing from\n{text}");
-        }
-        // It parses as a trace: closing the array is all a reader needs.
-        let closed = format!("{}]", text.trim_end().trim_end_matches(','));
-        let v: serde_json::Value = serde_json::from_str(&closed).expect("valid JSON");
-        // The frame, the two stages it actually spent time in, and the window's own span. A
-        // stage that cost nothing is not written: an empty bar teaches nothing.
-        assert!(v.as_array().is_some_and(|a| a.len() == 4), "{v}");
-        let _ = std::fs::remove_dir_all(&dir);
-    }
-}
+mod tests;
