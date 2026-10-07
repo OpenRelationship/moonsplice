@@ -125,7 +125,7 @@ Tier 2 — moonsplice check (rendered pixels)
     Skip    prose
 
 Tier 3 — moonsplice probe (perceptual / embeddings)
-    [Documentation]    The locked Mac-first stack (see .robot/docs/design.robot §5): **MobileCLIP2-S2** (frames,
+    [Documentation]    The locked Mac-first stack (see .robot/docs/canon.robot §5): **MobileCLIP2-S2** (frames,
     ...    text-queryable), **C-RADIOv3-B** (patch-level spatial + text via adaptor),
     ...    **X-CLIP-B** (temporal windows), **CLAP** (audio windows). Probe embeds the
     ...    rendered output (stride ~4/s + scene boundaries) into a sidecar

@@ -1,5 +1,5 @@
 -- Harbour Run in rows (.robot/docs/rows.robot): a game, and with no input log a film of itself
--- (.robot/docs/design.robot, amendment 2026-10-06). The fold is two systems, game.init and game.step; the HUD is
+-- (.robot/docs/canon.robot, amendment 2026-10-06). The fold is two systems, game.init and game.step; the HUD is
 -- text nodes a system fills from the state; the sea and the launch are a vector whose draw is code
 -- in a row; the course's geometry is `shared`. Rapier does the water: thrust is an impulse along
 -- the heading, drag and helm are damping and spin. Buoys keep their real light characteristics

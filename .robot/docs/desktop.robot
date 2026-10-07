@@ -5,7 +5,7 @@ Documentation    Moonsplice Studio — the desktop epic
 ...    preview in the centre, a Malleable agent on the right. Perception runs locally.
 ...
 ...    This file tracks the epic the way `.robot/docs/scene.robot` tracks the renderer — there is no
-...    issue tracker. Decisions here are provisional until they earn a line in `.robot/docs/design.robot`.
+...    issue tracker. Decisions here are provisional until they earn a line in `.robot/docs/canon.robot`.
 Metadata    Source    cadence@56ddad1:docs/DESKTOP.md
 
 *** Test Cases ***
@@ -15,7 +15,7 @@ Decisions taken (2026-09-21)
     ...    2. **Greenfield app.** A new app package; `desktop/` is read for patterns and retired,
     ...    \ \ \ not extended.
     ...    3. **LÖVE leaves the app, stays in the CLI.** The app ships scene-only. `moonsplice`
-    ...    \ \ \ keeps the love path. This is the revisit `.robot/docs/design.robot` §2 already named: "when a
+    ...    \ \ \ keeps the love path. This is the revisit `.robot/docs/canon.robot` §2 already named: "when a
     ...    \ \ \ release needs to drop the LÖVE dependency."
     ...    4. **monomono is the repo contract.** `just` door, buck2 graph, `AGENTS.md`, and the
     ...    \ \ \ spec-first lifecycle. The epic is planned as Gherkin features under `context/`.

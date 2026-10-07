@@ -1,4 +1,4 @@
-//! `moonsplice-play comp.lua`: play a game (.robot/docs/design.robot, amendment 2026-10-06).
+//! `moonsplice-play comp.lua`: play a game (.robot/docs/canon.robot, amendment 2026-10-06).
 //!
 //! Bevy owns the window, the keyboard and the mouse. The composition runs where it always does,
 //! in the engine (`moonsplice_engine::Session`, the same runtime `render` and the Studio use), on

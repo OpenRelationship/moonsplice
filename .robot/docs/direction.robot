@@ -198,7 +198,7 @@ Metadata    Source    cadence@56ddad1:docs/DIRECTION.md
 
 5. The whole engine, for games as well as videos
     [Documentation]    The agent should be able to use everything the engine has, and build a game as readily as a
-    ...    video. .robot/docs/design.robot (amendment 2026-10-06) makes that compatible with the canon: a game is a pure
+    ...    video. .robot/docs/canon.robot (amendment 2026-10-06) makes that compatible with the canon: a game is a pure
     ...    function of `t` and its input log, and a video is a game with no input.
     ...
     ...    **What the agent gets.** The full Lua API, not a tool per kind. It submits a composition or a game

@@ -172,14 +172,14 @@ Integration gaps
     ...
     ...    *12. `s:tts` had no users, no example and no test*
     ...    Nothing in `comps/` or `evals/` exercised it. The first real use hit #11 immediately. A node
-    ...    kind that is wired through `resolve.lua`, cached, alignment-aware and documented in .robot/docs/design.robot
+    ...    kind that is wired through `resolve.lua`, cached, alignment-aware and documented in .robot/docs/canon.robot
     ...    §6 but never once called is indistinguishable from a broken one until someone tries.
     ...
     ...    **Fix:** one eval case with a local/offline provider.
     ...
     ...    *13. Narration-driven timing has no supported pattern*
     ...    TTS duration is not deterministic — the same text synthesised twice differs in length — while
-    ...    comp duration is static by canon (.robot/docs/design.robot §1.3). So a comp whose visuals follow its own
+    ...    comp duration is static by canon (.robot/docs/canon.robot §1.3). So a comp whose visuals follow its own
     ...    narration cannot resolve its own timing: the render needs a duration the synthesis hasn't
     ...    produced yet, and re-synthesising later silently desyncs the visuals.
     ...

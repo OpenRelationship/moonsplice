@@ -33,7 +33,7 @@ Validation Lives In .robot
     Placement Should Be    .robot/claims/tabicl.robot    port    .robot/claims/tabicl.robot
 
 Every Markdown Page Becomes Robot
-    Placement Should Be    DESIGN.md    doc    .robot/docs/design.robot
+    Placement Should Be    DESIGN.md    doc    .robot/docs/canon.robot
     Placement Should Be    docs/ROWS.md    doc    .robot/docs/rows.robot
     Placement Should Be    agent/REFERENCE.md    doc    .robot/docs/reference.robot
 

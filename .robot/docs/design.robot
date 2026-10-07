@@ -1,167 +1,205 @@
 *** Settings ***
-Documentation    moonsplice — canon design decisions
+Documentation    Moonsplice: the bet
 ...
-...    Locked decisions. Change only with a written reason here.
-Metadata    Source    cadence@56ddad1:DESIGN.md
+...    An engine for games and videos where the representation is uniform enough that a model can treat creation
+...    itself as a prediction problem. Authoring becomes next-row prediction. The agent is not writing code against an
+...    opaque system. It is extending a table it fully understands.
+...
+...    *Representation is the whole game.* Every serious engine makes a bet about where its intelligence lives. Most
+...    put it in the code: a renderer, a scene graph of objects with methods, an editor full of special cases, and on
+...    top of that a person or a model writing more code against all of it. The system is powerful and opaque. To know
+...    what a scene is, you have to run it.
+...
+...    We put the bet somewhere else. If everything is data, everything is predictable. We force the whole engine into
+...    one tabular, data-oriented shape: the state, the behaviour, the edits, the results of every check, the history
+...    of every agent step. Rows and columns, with stable ids and plain values. We do this because it is the shape
+...    foundation models are getting good at:
+...    - Tabular prediction models eat rows and columns. A model like TabICL takes a table of examples and predicts a
+...    new row's label in context, with no training run. If our world is rows, it can rank the next move, spot the
+...    anomaly and fill in the gap.
+...    - Language models read rows well when the rows are small, typed, named and consistent. A comp printed as rows
+...    (moonsplice rows COMP --brief) is something a model can hold whole. A thousand-line render loop is not.
+...    - Anomaly is a row that does not fit. When state is a table, "something is wrong" becomes "this row is far from
+...    its neighbours". Findings and critic scores are rows too, so a model can learn which states lead to which.
+...    So the engine is legible to models by construction, not by documentation. We do not explain an opaque system
+...    to the model. We give it a system with nothing hidden.
+...
+...    *What predictable means.* Three things, and we want all three. Deterministic: a comp is a pure function of time
+...    t (for a game, of t and the input log up to t); any frame, in any order, is the same bytes every time. Legible:
+...    a model or a person can read the whole state as rows and know what is on screen, what moves, what a system sets
+...    and what the ask requires, without running anything. Forecastable: every step an agent takes is also rows (the
+...    state before, the move, the outcome), so a model can learn which move tends to work in a state like this one.
+...    Determinism makes legibility trustworthy. Legibility makes forecasting possible. Forecasting is the payoff.
+...
+...    *The unification.* Because everything is one tabular substrate, the same model that helps build a game helps
+...    edit a video. To the model they are the same kind of object, just different rows. A video is nodes, props, keys,
+...    motions, assets, facts from the footage and expectations. A game is the same rows plus an input table (the
+...    player's log) and a game table (rate and seed), with game.init and game.step as systems that fold the input at a
+...    fixed step. A 3D world is the same rows drawn by Bevy: entities are node ids, components are props, systems are
+...    small pure functions. A played session renders as a trailer, because a recording is the case where the input
+...    log is fixed. None of this needed a second engine; it fell out of keeping one representation. That is the
+...    ambitious version of the bet: one substrate, one set of moves, one learner and one record of experience for
+...    everything we make.
+...
+...    *Every choice serves the same master.* Keep it tabular. Keep it declarative. Keep it predictable.
+...    - Bevy, because ECS is a table: entities are row ids, components are columns, systems are functions over rows.
+...    It forces the data-oriented discipline that makes the world model-legible down to the renderer.
+...    - Lua, as the thin typed move layer: Lua tables are the authoring form of rows, and behaviour is a small pure
+...    function stored as text in a row, sandboxed. Behaviour stays data.
+...    - SQLite and JSON: the same rows in the harness's form and on the wire, converted losslessly, one digest.
+...    - Typed moves and selectors: an edit is a checked patch that names its target by a query over rows, never an
+...    imperative script or a file rewrite; the editor's gestures lower to the same moves the agent sends.
+...    - Expectations, findings, scores and claims: the ask, the checks and our beliefs are rows keyed like the steps
+...    that caused them, so outcomes join to causes.
+...    - TabICL, local, inside our own binary: a hook that ranks moves from the rows we keep, never the driver.
+...    - Robot Framework: tests, tasks and docs are keyword trees, which are rows too.
+...    - Tablua: one model, a short prompt, a few tools, a loop that ends when the model says it is done, and a
+...    transcript that is rows.
+...
+...    The test cases below are the principles, the anti-patterns, the questions to ask of a proposal and the ways the
+...    bet could lose. Each is skipped until someone makes it checkable, and the Skip says how it would be checked;
+...    making one into a real test is always welcome. The locked decisions that implement the bet are
+...    .robot/docs/canon.robot; the data model is .robot/docs/rows.robot; how to work here is AGENTS.md.
+Metadata    Owner    Shane, 2026-10-07
 
 *** Test Cases ***
-1. Core invariants
-    [Documentation]    1. **Seek, not playback** — composition = pure function of time `t`; any frame, any order.
-    ...    2. **Seconds, not frames** — fps is a render parameter.
-    ...    3. **Duration static** — declared in comp header, immutable at render time.
-    ...    4. **Determinism by construction** — renderer owns the VM: clock stubbed, RNG seeded,
-    ...    \ \ \ zero I/O during render. All network/asset work happens in the resolve phase.
-    ...    5. **Audio never touches the engine** — resolved clips + volume envelopes → ffmpeg
-    ...    \ \ \ `filter_complex` at encode; mux with `-c copy`.
-    ...
-    ...    **Amendment 2026-10-06: games.** The engine builds games as well as videos. Rules 1, 3 and 5
-    ...    extend to them as follows:
-    ...    - **Rule 1.** A game is a pure function of `t` *and the input log up to `t`*. The simulation
-    ...    \ \ steps at a fixed rate and is deterministic: seeded RNG, rapier with `enhanced-determinism`, no
-    ...    \ \ wall clock. Player input is a list of timed events, which are `happens` facts. Any frame is
-    ...    \ \ reproducible by replaying the log from the nearest snapshot. A video is the case with an empty
-    ...    \ \ or scripted log, so everything below still holds for it unchanged.
-    ...    - **Rule 3.** A game has no declared duration while it is played. A recording has the duration
-    ...    \ \ of its log.
-    ...    - **Rule 5.** Live play mixes sound in the host, in real time. Rendering a recording still goes
-    ...    \ \ through ffmpeg at encode.
-    ...
-    ...    Reason: the user wants the full engine available for interactive work. Making input part of the
-    ...    function's argument, rather than a side effect, keeps seek, goldens, the fact log and the
-    ...    agent's tools working for games. It also gives two things for free: a played session renders as
-    ...    a trailer, and the agent can script a log to make a game play itself on camera.
-    [Tags]    doc    source:cadence@56ddad1:DESIGN.md
+P1 Every Fact Has A Row
+    [Documentation]    If something is true about a comp, a step or a run, it is stored as a row somewhere a model can
+    ...    read, not only in a log line, a variable or a person's head. "The title is clipped 74 px at 22:58" is a
+    ...    finding row, not a sentence in a transcript.
+    [Tags]    principle
+    Skip    not yet checked: every lint and check message is emitted as a finding row (no free-text warnings)
+
+P2 Stable Ids And Plain Values
+    [Documentation]    A row is identified by a stable id and holds numbers, strings, booleans, or arrays and objects
+    ...    of those. No function values, pointers or handles. A node reference is the node's id.
+    [Tags]    principle
+    Skip    not yet checked: rows --json of every eval case holds only plain values
+
+P3 One Meaning In Every Form
+    [Documentation]    A row means the same thing in Lua, SQLite and JSON, and converting between them is lossless.
+    ...    A new form (a Bevy component, an editor view) is another view of the same rows, never a second source of
+    ...    truth.
+    [Tags]    principle
+    Skip    not yet checked: rows -o NEW.lua then rows NEW.lua gives the same digest for every eval case
+
+P4 Edits Are Moves
+    [Documentation]    State changes through typed, checked moves that are themselves rows: never a whole-file rewrite,
+    ...    a hidden setter, or an imperative script that walks the scene. A person's gesture in the editor lowers to
+    ...    the same moves.
+    [Tags]    principle
+    Skip    not yet checked: the editor writes comps only through lower.rs's moves
+
+P5 Behaviour Is Data
+    [Documentation]    When something must run, it is a small pure function stored as text in a row, run in a sandbox,
+    ...    reading the frame through the engine's query and returning rows, with no I/O, clock or randomness of its
+    ...    own. Prefer a declarative row (a key, a motion, a bind to a fact) over a system whenever one exists.
+    [Tags]    principle
+    Skip    not yet checked: a system that writes to the host's tables or to q.state is a finding (AGENTS.md, gap 4)
+
+P6 Determinism By Construction
+    [Documentation]    Seek, not playback: any frame, any order, the same bytes. Seconds, not frames: fps is a render
+    ...    parameter, and a time becomes a frame through one rule. Network and asset work happen in the resolve phase,
+    ...    never during render. Games fold their input log at a fixed step with seeded randomness. Output that depends on
+    ...    wall time, thread scheduling or table iteration order is a bug even when nobody can see it yet.
+    [Tags]    principle
+    Skip    not yet checked: hash twice, and in reverse frame order, gives the same per-frame md5 for every case
+
+P7 Outcomes Are Rows
+    [Documentation]    Findings, critic scores, step outcomes (complete, neutral, no_effect, broken) and claim verdicts
+    ...    are rows keyed like the steps that produced them. Prefer an outcome a learner can read over a message a
+    ...    person has to interpret.
+    [Tags]    principle
+    Skip    not yet checked: every tablua step has an outcome row and a findings snapshot
+
+P8 The Ask Is Rows
+    [Documentation]    Turn what was asked into expect rows before the first move. A request that cannot be stated as
+    ...    rows is a request we do not understand yet.
+    [Tags]    principle
+    Skip    not yet checked: every trial's comp has expect rows before step 1
+
+P9 Legible Source
+    [Documentation]    The code itself is legible to a model: no file over 400 lines, split by responsibility, one
+    ...    module one job, names that say what a thing is. A model that cannot hold a file whole cannot reason about
+    ...    it whole. This one is checked.
+    [Tags]    principle
+    Every File Is Within The Limit
+
+P10 The Schema Is A Contract
+    [Documentation]    core/moonsplice/rows.lua owns the schema (msr/1) and .robot/docs/rows.robot describes it. A change
+    ...    to a table's columns changes that doc first, then both sides, Moonsplice and tablua. Columns are never
+    ...    added quietly.
+    [Tags]    principle
+    Skip    not yet checked: the tables and columns rows.lua emits match those rows.robot lists
+
+P11 Believe Only What You Measured
+    [Documentation]    Before saying a change works, is fixed or is better when something will be built on it, write
+    ...    the claim as a Robot test with its kill number and a red proof that fails at its assertion, commit it, then
+    ...    measure. Say which level was shown: consistent, correct, informative or useful.
+    [Tags]    principle
+    Skip    checked by the claims themselves (.robot/claims, luajit .robot/claims.lua reds)
+
+P12 Data First, Then The Feature
+    [Documentation]    A new capability starts as rows: what table, what columns, what moves, what findings. The
+    ...    renderer, the editor and the agent's tools come after, as readers and writers of those rows. A feature that
+    ...    can only be reached through code is not finished.
+    [Tags]    principle
+    Skip    not yet checked: every node kind and move in rows.robot is reachable by a patch
+
+Anti-Patterns
+    [Documentation]    Each of these quietly breaks the bet.
+    ...    - The opaque blob: a prop whose value is a big serialized structure nobody can query. Split it into rows.
+    ...    - The function value: a closure, callback or handle in state. Store source text, or an id.
+    ...    - The hidden clock: os.time, math.random, frame counters or anything wall-clock in a comp, a system or the
+    ...    render path.
+    ...    - Iteration order as output: JSON, briefs or hashes in whatever order a hash table returns. Sort.
+    ...    - The side channel: state in a module variable, a temp file or the editor's memory that is not in the
+    ...    rows. If the agent cannot read it, the agent cannot predict it.
+    ...    - Prose outcomes: "looks good" in a transcript instead of a score row; a warning printed instead of a
+    ...    finding.
+    ...    - The whole-file rewrite: regenerating a comp or a module to make one change. Make the move.
+    ...    - The special-case engine: a second code path for games, 3D or the editor. Add rows, not engines.
+    ...    - Caps instead of information: stopping an agent with step, turn or token limits instead of giving it
+    ...    better information to decide when it is done.
+    [Tags]    doc
     Skip    prose
 
-2. Hosts
-    [Documentation]    - **Engine host (decision 2026-10-06, supersedes the LÖVE host):** `moonsplice-engine`
-    ...    \ \ (`engine/`, Rust + LuaJIT via mlua) runs `core/runtime/*.lua` for `render`, `hash`, `lint`,
-    ...    \ \ `check` and `serve`, and every frame is painted by `scene/`. LÖVE and `the vendored LÖVE fork`
-    ...    \ \ are deleted. Reason: the project is Rust + Lua only (.robot/docs/engine.robot), and LÖVE is C++; once
-    ...    \ \ the direct path painted every scene-owned comp, LÖVE was only a frame loop, a font metric
-    ...    \ \ and a JPEG decoder. Gate met: every case that renders is byte-identical to the scene goldens
-    ...    \ \ (25/43), `image` recaptured once because JPEG now decodes in Rust (zune-jpeg), and the Studio
-    ...    \ \ suites pass against the engine. A comp that uses a feature not yet ported (LÖVE-drawn kinds,
-    ...    \ \ GLSL hatches, perspective/camera, `t:drop` physics) fails with status 3 and a sentence naming
-    ...    \ \ the node and feature; .robot/docs/engine.robot phases 2-3 port them. `preview` is gone (use Studio).
-    ...    \ \ Golden hashes are scoped to platform + `MOONSPLICE_SCENE_THREADS`.
-    ...    - **Blend modes (decision 2026-10-06):** `blend` is the CSS set (vello's Mix: multiply ...
-    ...    \ \ luminosity) plus `add`. LÖVE's `subtract` and `replace` are authoring errors that name the
-    ...    \ \ nearest mode. Reason: they were LÖVE's GL blend equations; neither CSS nor vello (CPU or GPU)
-    ...    \ \ has them, and a mode one backend cannot draw is a mode the comp cannot rely on.
-    ...    - **web host** (preview only): Lua 5.4 via wasmoon (official Lua compiled to
-    ...    \ \ WebAssembly) plus a Canvas2D painter. Same host-free `core/moonsplice` compositions;
-    ...    \ \ seek is still `evaluate(t)`. This is not the encode path — ffmpeg and native
-    ...    \ \ helpers stay on LÖVE fork. Reason: shipping the Metal/LuaJIT fork through
-    ...    \ \ Emscripten would throw away FFI dylibs and the virtual backbuffer; the painter
-    ...    \ \ contract already exists so a second host can be small.
-    ...    - **Scene rasterizer (decision 2026-09-16, supersedes the line below):** the
-    ...    \ \ evaluated node tree paints into ONE rasterizer, `scene/` (`moonsplice-scene`,
-    ...    \ \ vello_cpu + parley), streamed as a flat command list over the C ABI. One
-    ...    \ \ antialiaser, one font stack, one gamma. LÖVE shrinks to a frame loop and the
-    ...    \ \ ffmpeg pipe; when every node in a comp is scene-owned the renderer skips the
-    ...    \ \ canvas and GPU readback entirely (`PROF direct=1`). Node kinds move over one at
-    ...    \ \ a time behind `MOONSPLICE_SCENE=1`; kinds the crate cannot paint yet fall back to
-    ...    \ \ love per node, with a z-order-preserving flush. See `.robot/docs/scene.robot` for
-    ...    \ \ coverage, opcodes and the measurements that justified the direction.
-    ...    - **Default renderer (decision 2026-09-16, gate of .robot/docs/scene.robot item 7):**
-    ...    \ \ the scene rasterizer is the default; `MOONSPLICE_SCENE=0` is the fallback. Gate
-    ...    \ \ met: 42/42 renderable evals green and eyeballed in scene mode, scene goldens
-    ...    \ \ captured (`drop` needs the LÖVE 12 physics API and is the one case this Mac
-    ...    \ \ cannot run under Homebrew 11.5). Love now does three things for `render`:
-    ...    \ \ the frame loop + ffmpeg pipe, the GLSL escape hatches (`shadertoy`,
-    ...    \ \ `worley`, `s:draw`, perspective homography, world/wgpu) painted into slots,
-    ...    \ \ and `preview`.
-    ...    - ~~**LÖVE-as-shell vs mlua (decided 2026-09-16): LÖVE stays the shell for now.**~~
-    ...    \ \ Reversed 2026-10-06 by the engine host above.
-    ...    \ \ Reason: the escape hatches above still need `love.graphics` canvases, and
-    ...    \ \ they are used by shipped evals (fx, camera, perspective_*, world3d, draw).
-    ...    \ \ An mlua host for `render`/`hash` becomes worth it only when those hatches
-    ...    \ \ are either CPU-ported (perspective: a projective warp in Rust; world: wgpu
-    ...    \ \ already, needs only a slot without love) or declared preview-only. Until
-    ...    \ \ then a second host would be a second painter to keep in parity. Revisit when
-    ...    \ \ a release needs to drop the LÖVE dependency (Linux/Windows bundles).
-    ...    - ~~A Rust renderer is not a planned replacement host.~~ Rust owns distribution,
-    ...    \ \ the native helpers, and the rasterizer. The LÖVE-compatible `love.*` surface
-    ...    \ \ remains for `s:draw` escape hatches, `shadertoy`/`worley`, perspective
-    ...    \ \ surfaces and the 3D world layer, all composited through image slots.
-    ...    - Authoring core = Lua-native scene graph + signals + coroutine timeline
-    ...    \ \ (`waitUntil` events). React model (`react-moonsplice` via react-lua/react-luau host
-    ...    \ \ config) = later optional skin, never the core.
-    ...    \ \ Optional `e.comp { inputs = { bg = { kind = "video" } } }` lets a host bind
-    ...    \ \ media without rewriting Lua: `scene(s)` reads `s.input.bg` (a string path).
-    ...    \ \ Studio writes a sibling `<comp>.inputs.json`; the CLI accepts `--inputs FILE.json`
-    ...    \ \ and repeatable `--input KEY=PATH`. Merge is key-wise: defaults < sibling JSON <
-    ...    \ \ `--inputs` file < `--input` flags. Hardcoded `src=` remains valid. Missing
-    ...    \ \ required inputs error at compile (`moonsplice: input "bg" is not bound`). The host
-    ...    \ \ injects the resolved string table into `Comp:compile`; `core/moonsplice` stays disk-free.
-    [Tags]    doc    source:cadence@56ddad1:DESIGN.md
+How To Judge A Proposal
+    [Documentation]    A good design, feature or refactor can answer all seven.
+    ...    1. What rows does it add or change, in which tables, with what ids?
+    ...    2. Is it reachable by a typed move, and does the editor's gesture for it lower to the same move?
+    ...    3. Is it deterministic? What would its golden be?
+    ...    4. What findings or expectations make it checkable?
+    ...    5. Can a model read the result with rows --brief and understand it without running anything?
+    ...    6. Does it work for a video, a game and a world alike, or does it fork the engine?
+    ...    7. What claim would show it helps, and what number would kill that claim?
+    [Tags]    doc
     Skip    prose
 
-3. Encode (canon)
-    [Documentation]    Bundled ffmpeg subprocess only — never linked, never GStreamer. Three invocations per render:
-    ...    raw-RGBA video pass → `filter_complex` audio mix → `-c copy` mux. `ffprobe` at
-    ...    resolve. Pin and ship the ffmpeg build inside each Moonsplice distribution.
-    ...    Formats: mp4/h264 default; webm/vp9 + mov/prores4444 for alpha; png-sequence; gif.
-    [Tags]    doc    source:cadence@56ddad1:DESIGN.md
+Where The Bet Could Lose
+    [Documentation]    A bet worth making can lose. We keep the ways it could lose in view, and we measure them.
+    ...    - Tabular learning may not beat simpler baselines on our step rows. Measured: the TabICL Brier claim
+    ...    (.robot/claims/tabicl.robot) and tablua's learner-against-base-rate claims. If those are killed, the
+    ...    learner is a logging layer and we say so.
+    ...    - Some things may resist rows. Shader code, hand-drawn vector paths and physics are still code or blobs in
+    ...    places ({ fn = ... } props, escape hatches in image slots). Each is a debt to keep small and named, not a
+    ...    new norm.
+    ...    - Legible is not the same as easy. Rows can be uniform and still too many. The brief, the digest and the
+    ...    findings exist so a model reads a summary that is exact, not a dump.
+    ...    - Determinism has corners. Thread counts change pixels by a few bits, fonts differ per platform, and the
+    ...    runtime has known gaps (AGENTS.md, "Known gaps against the bet"). Goldens are scoped to platform and
+    ...    thread count, and every nondeterminism found is a bug to fix, not a tolerance to widen.
+    [Tags]    doc
     Skip    prose
 
-4. Decode (canon) — moonsplice-decode
-    [Documentation]    Lib-first Rust crate, zero IPC assumptions in core.
-    ...
-    ...    - **rsmpeg + vendored FFmpeg 8** shared libs (only stack covering
-    ...    \ \ h264/h265/vp9/av1/prores across mp4/mov/webm/mkv).
-    ...    - **BestSource-style verified index**: first-open linear pass → frame→(PTS, keyframe,
-    ...    \ \ position) table (+ opt-in per-frame 8-byte hash, "paranoid" mode); index cached on
-    ...    \ \ disk. Seek = keyframe-back + decode-forward + verify landed PTS; anomaly → linear
-    ...    \ \ fallback from known-good point. FFI-linking BestSource itself is an approved
-    ...    \ \ alternative to reimplementation.
-    ...    - **Hw decode via FFmpeg hwaccel layer** (one code path): VideoToolbox on macOS
-    ...    \ \ (ProRes hw on M1 Pro+), NVDEC on 4070 (sessions unlimited; 10-bit h264 = sw
-    ...    \ \ fallback), VAAPI on Linux, transparent sw fallback.
-    ...    - **Determinism**: decoded YUV is bit-exact by spec across conformant decoders (incl.
-    ...    \ \ hw). Only post-decode conversion diverges → ONE pinned YUV→RGB path we own;
-    ...    \ \ fixed-point/integer path when cross-machine hash-exactness required. Never hw
-    ...    \ \ scalers/CSC on the deterministic path.
-    ...    - **Cache**: per-stream sequential decode state machine (forward fast path within a
-    ...    \ \ render chunk), small per-stream NV12 LRU (never RGBA in cache), global cap
-    ...    \ \ 256MB–1GB, mpv-style packet cache for back-seeks as needed.
-    ...    - **Linkage — one crate, three consumers** (lib-first, zero IPC assumptions in core):
-    ...    \ \ 1. **love host (primary): cdylib with C ABI, loaded via LuaJIT FFI** (`ffi.load`)
-    ...    \ \ \ \ \ — in-process, no IPC; decoded frames land in memory LuaJIT wraps as ImageData.
-    ...    \ \ \ \ \ (mlua is the inverse direction — Rust hosting Lua — and applies only to the
-    ...    \ \ \ \ \ rust host; it cannot be injected into love, which already owns its LuaJIT VM.)
-    ...    \ \ 2. rust host: plain rlib in-process; mlua embeds LuaJIT/Luau to run comps.
-    ...    \ \ 3. isolation fallback: daemon + msgpack unix socket + shm ring buffer (crash
-    ...    \ \ \ \ \ isolation for hostile files; shm sustains multiple 4K60 streams). macOS
-    ...    \ \ \ \ \ IOSurface zero-copy = profiling-gated later optimization.
-    ...    - Rejected: GStreamer (random access fights pipeline model), libmpv render API
-    ...    \ \ (unsuited by design), vk-video (unmaintained), pure-Rust hevc/prores (doesn't exist).
-    [Tags]    doc    source:cadence@56ddad1:DESIGN.md
+Words
+    [Documentation]    comp: a composition, a video or a game, written as Lua that compiles to rows.
+    ...    rows: the comp in schema msr/1, tables comp, node, prop, key, motion, system, asset, fact, input, game, expect.
+    ...    move: a typed patch, the only way an agent edits a comp.
+    ...    finding: a row lint or check produced: tier, node, code, severity, span, measured value, threshold.
+    ...    fact: a row about time (holds or happens), exact when it has no src, perceived when it has one.
+    ...    todo: what the agent is asked to do, the key of every tablua log table. A task is only a Robot task.
+    ...    claim: a belief about the system, as a Robot test with a kill number and a red proof.
+    ...    gate: the engine's one line of truth about a comp: digest, errors, warnings, expectations held.
+    [Tags]    doc
     Skip    prose
-
-5. Perceptual layer (canon) — moonsplice probe
-    [Documentation]    Mac-first stack (locked 2026-08-01):
-    ...
-    ...    | role | model | note |
-    ...    |------|-------|------|
-    ...    | frames / text-query | **MobileCLIP2-S2** | CoreML/ANE, single-digit ms/frame |
-    ...    | spatial / patch lint | **C-RADIOv3-B** | commercial-OK license; DINOv3 runs hot locally |
-    ...    | temporal | **X-CLIP-B** | vanilla transformers; V-JEPA2 too heavy locally |
-    ...    | audio | **CLAP** | same stack as 11l media-DNA pipeline |
-    ...
-    ...    Probe → embedding sidecar (stride frames + patch grids + audio windows + derived:
-    ...    motion energy, cut/freeze/black via embedding deltas) → `moonsplice query` timestamped
-    ...    hits; comp asserts (`assert.visible("logo", 2, 4)`) compile to calibrated
-    ...    probability thresholds at check time. License tripwires: VideoCLIP-XL (NC),
-    ...    RADIOv2.5/E-RADIO (NC — C-RADIO only).
-    [Tags]    doc    source:cadence@56ddad1:DESIGN.md
-    Skip    prose
-
-6. Resolve phase + ElevenLabs
-    [Documentation]    Pre-render, network allowed, content-hash cached. ElevenLabs first-class: TTS
-    ...    (`eleven_v3`), SFX, Music → clip durations known before render; Scribe word
-    ...    timestamps → `waitUntil('word:…')` sync + karaoke captions for free.
-    [Tags]    doc    source:cadence@56ddad1:DESIGN.md
-    Skip    prose
-

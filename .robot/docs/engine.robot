@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation    The engine: Rust + Lua on Bevy, our own motion-graphics renderer
 ...
-...    Status: plan, 2026-10-06 (renderer decision revised the same day: Bevy as the one renderer). Superseded .robot/docs/design.robot §2 "LÖVE as shell" on 2026-10-06 (Phase 1 done, LÖVE removed).
+...    Status: plan, 2026-10-06 (renderer decision revised the same day: Bevy as the one renderer). Superseded .robot/docs/canon.robot §2 "LÖVE as shell" on 2026-10-06 (Phase 1 done, LÖVE removed).
 Metadata    Source    cadence@56ddad1:docs/ENGINE.md
 
 *** Test Cases ***
@@ -22,7 +22,7 @@ The rule: Rust and Lua
     ...    and Box2D (C, via LÖVE) all go. The exceptions are named here rather than discovered later:
     ...
     ...    - **The Lua VM itself** is C (mlua vendors Lua 5.4). That is the language we chose, not a leak.
-    ...    - **ffmpeg, as a subprocess**, for encode and the audio mix (.robot/docs/design.robot §3 already forbids linking
+    ...    - **ffmpeg, as a subprocess**, for encode and the audio mix (.robot/docs/canon.robot §3 already forbids linking
     ...    \ \ it). Decode is the one place ffmpeg is linked today (`decode/`, ffmpeg-the-third): there is no
     ...    \ \ production-quality pure-Rust H.264/HEVC/AAC decoder, so it stays, fenced in one crate, until
     ...    \ \ one exists (rav1d covers AV1 only). On macOS, VideoToolbox through objc2 is the alternative.

@@ -79,7 +79,7 @@ Explicit non-integrations
     [Documentation]    - love.graphics.newParticleSystem, hump.timer, raw Box2D at render time — stateful,
     ...    \ \ break seek. Replaced by B1/B3 designs.
     ...    - TÖVE revival — superseded by resvg (C2) unless animated vector morph demand appears.
-    ...    - GStreamer, libmpv — rejected in .robot/docs/design.robot §4.
+    ...    - GStreamer, libmpv — rejected in .robot/docs/canon.robot §4.
     ...    - **cpml** — superseded by `core/moonsplice/math3d.lua` (look-at, euler quats) plus the
     ...    \ \ `scene3d` crate (glam). Do not vendor cpml.
     ...    - **Lucide / Phosphor / Tabler as Lua** — icons are SVG. `s:svg` + resvg is the icon system.

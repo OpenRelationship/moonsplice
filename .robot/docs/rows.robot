@@ -105,7 +105,7 @@ Level 2: evaluation
     [Documentation]    `frame(t, input_log) -> rows`: props at rest, then keys at t, then the game's fold to t, then the
     ...    systems in `order`. A system reads only through `q` (`q.get(id, name)`, `q.y(id)`, `q.facts`,
     ...    `q.state`) and returns rows; it cannot hold handles or write anything else. What systems return is
-    ...    cleared before the next frame (.robot/docs/design.robot rule 1, games amendment). Same rows in, same frame out.
+    ...    cleared before the next frame (.robot/docs/canon.robot rule 1, games amendment). Same rows in, same frame out.
     [Tags]    doc    source:cadence@56ddad1:docs/ROWS.md
     Skip    prose
 

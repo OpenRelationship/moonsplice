@@ -3,6 +3,8 @@ Documentation    Moonsplice: games and videos as Lua comps, a comp being a pure 
 ...    for a game). Tablua, the agent that builds them, is a submodule at tablua/. These are the laws of this
 ...    repository, each a test over the files git tracks; tablua/ keeps its own.
 ...
+...    AGENTS.md states the bet this repository makes and how to work in it; read it first. CLAUDE.md links to it.
+...
 ...    The tree, and nothing else at the root:
 ...    moonsplice    the launcher: execs core/cli (luajit) or the engine
 ...    core/    Lua, one folder per area: moonsplice (the authoring API comps call), runtime (the engine's Lua:
@@ -29,16 +31,17 @@ Every File Is Within The Limit
     [Tags]    law
     Every File Is Within The Limit
 
-There Is No Markdown
+There Is No Markdown But AGENTS.md
     [Documentation]    Documentation is Robot: a page is a suite whose sections are test cases tagged doc, each
-    ...    made checkable when it can be. Agents read .robot/rules.robot at the start of a session (.claude/settings.json).
+    ...    made checkable when it can be. AGENTS.md (CLAUDE.md links to it) is the one exception, and the one file
+    ...    exempt from the limit: the bet and the practical knowledge every agent reads whole (owner, 2026-10-07).
     [Tags]    law
     No Markdown
 
 The Root Is The Tree Above
     [Tags]    law
     Root Holds Only    moonsplice    core    native    editor    comps    assets    test    tablua    .robot    .claude
-    ...    .gitignore    .gitmodules    LICENSE
+    ...    .gitignore    .gitmodules    LICENSE    AGENTS.md    CLAUDE.md
 
 Robot Lives In .robot
     [Tags]    law

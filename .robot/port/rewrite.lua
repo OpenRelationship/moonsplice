@@ -35,7 +35,7 @@ M.paths = {
   { "bin/moonsplice-agent", "moonsplice agent" },
   { "bin/moonsplice-", "bin/moonsplice-" },   -- the parked wrappers keep their name, so leftovers lists them
   { "bin/moonsplice", "moonsplice" },
-  { "DESIGN.md", ".robot/docs/design.robot" },
+  { "DESIGN.md", ".robot/docs/canon.robot" },
   { "CHECKS.md", ".robot/docs/checks.robot" },
   { "INTEGRATIONS.md", ".robot/docs/integrations.robot" },
   { "CLAUDE.md", ".robot/docs/agents.robot" },

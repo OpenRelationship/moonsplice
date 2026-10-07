@@ -96,7 +96,7 @@ M.rules = {
   { "^bin/", "park", why = "Python, Studio or vision wrappers: their programs are parked" },
 
   -- every markdown page becomes Robot documentation
-  { "^DESIGN%.md$", "doc", ".robot/docs/design.robot" },
+  { "^DESIGN%.md$", "doc", ".robot/docs/canon.robot" },
   { "^CHECKS%.md$", "doc", ".robot/docs/checks.robot" },
   { "^INTEGRATIONS%.md$", "doc", ".robot/docs/integrations.robot" },
   { "^README%.md$", "doc", ".robot/docs/readme.robot" },

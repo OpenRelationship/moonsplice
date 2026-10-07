@@ -212,12 +212,23 @@ function M.library(root)
     if #miss > 0 then error(#miss .. " oversized files have no split plan:\n  " .. table.concat(miss, "\n  "), 0) end
   end)
 
+  -- after the port, a plan is measured against the file as it is in this checkout (fixes land before cuts);
+  -- before it, against the ported text of the pinned commit
+  local function current(to)
+    local f = io.open(root .. "/" .. to, "rb")
+    if f then
+      local text = f:read("*a"); f:close()
+      return { text = text, lines = count_lines(text) }
+    end
+    return stage()[to]
+  end
+
   lib:add("Every Split Plan Fits", function()
     local bad = {}
-    local all = stage()
     for to, plan in pairs(splits) do
-      local s = all[to]
+      local s = current(to)
       if not s then bad[#bad + 1] = to .. ": no such ported file"
+      elseif s.lines <= laws.limit then -- cut already: the plan is done
       else
         local sizes, used = outline.measure(s.text, to:match("%.(%w+)$"), plan)
         for path, n in pairs(sizes) do
@@ -231,11 +242,11 @@ function M.library(root)
   end)
 
   lib:add("Show Split Sizes", function()
-    local all, keys = stage(), {}
+    local keys = {}
     for to in pairs(splits) do keys[#keys + 1] = to end
     table.sort(keys)
     for _, to in ipairs(keys) do
-      local s = all[to]
+      local s = current(to)
       if s then
         local sizes = outline.measure(s.text, to:match("%.(%w+)$"), splits[to])
         local parts = {}

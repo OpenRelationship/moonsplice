@@ -2,7 +2,7 @@
 Documentation    Moonsplice — project instructions for agents
 ...
 ...    Programmatic video from Lua. A composition is a pure function of time; the
-...    renderer seeks any frame in any order. Canon decisions live in `.robot/docs/design.robot`;
+...    renderer seeks any frame in any order. Canon decisions live in `.robot/docs/canon.robot`;
 ...    change them only with a written reason there.
 Metadata    Source    cadence@56ddad1:CLAUDE.md
 

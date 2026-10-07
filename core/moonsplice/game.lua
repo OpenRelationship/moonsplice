@@ -1,4 +1,4 @@
--- Games: a composition that is a pure function of t *and its input log* (.robot/docs/design.robot, amendment
+-- Games: a composition that is a pure function of t *and its input log* (.robot/docs/canon.robot, amendment
 -- 2026-10-06). Host-free like the rest of core/moonsplice: the host injects what it has (a
 -- physics world, through `host.physics`) and the input log.
 --

@@ -256,7 +256,7 @@ Documentation    Moonsplice Studio — the desktop epic (continued)
     Skip    prose
 
 7. Phase 4 — dropping LÖVE from the app
-    [Documentation]    `.robot/docs/design.robot` §2 records that love now does three things: the frame loop plus ffmpeg pipe, the
+    [Documentation]    `.robot/docs/canon.robot` §2 records that love now does three things: the frame loop plus ffmpeg pipe, the
     ...    GLSL escape hatches, and `preview`. To ship the app without it:
     ...
     ...    - **Perspective** — port the homography to a CPU projective warp in Rust. `.robot/docs/scene.robot` costs

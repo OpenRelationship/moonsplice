@@ -183,7 +183,7 @@ Plan for the remaining gaps (2026-09-16)
     ...    `MOONSPLICE_SCENE=0` opts out); `moonsplice golden` defaults to the `.scene.md5` files.
     ...    LÖVE-as-shell vs mlua: LÖVE stays the shell while the GLSL escape hatches
     ...    (shadertoy, worley, s:draw, perspective, world) still paint through love
-    ...    canvases into slots — see .robot/docs/design.robot §2 for the reasoning and the revisit
+    ...    canvases into slots — see .robot/docs/canon.robot §2 for the reasoning and the revisit
     ...    condition. Original plan:
     ...    Gate: all 42 evals green in scene mode, goldens recaptured, `moonsplice eval --open`
     ...    eyeballed. Then direct is the default and the canvas is the fallback. Only
