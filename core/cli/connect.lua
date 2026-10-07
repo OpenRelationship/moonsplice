@@ -9,6 +9,9 @@
 --                                   needs the person's own terminal, so an agent cannot approve its own call
 --   connect --call OP [ARGS.json]   one call, for an agent driving the command line: the same rules as a run's
 --   connect --record SERVICE        the app stored the fields itself: check they are there and record it
+--   connect --approve SERVICE OP --from-app --once|--always|--deny   the app's own path for the person's answer (the
+--                                   app is their interface); like every file here, an agent with a shell could
+--                                   reach it, so the terminal check guards the default path, not a boundary
 --   connect --forget SERVICE
 -- --json prints rows. With no terminal (an agent is driving), `connect SERVICE` and `--approve` print what the
 -- person must do and exit 3: a credential or an approval never comes from an agent.
@@ -90,10 +93,12 @@ end
 
 local function approve(C, o, service, op)
   if not (service and op) then io.stderr:write("usage: moonsplice connect --approve SERVICE OP\n") return 2 end
-  if not tty() then
+  local answer = o.always and "always" or o.deny and "deny" or o.once and "once"
+  if o["from-app"] then
+    if not answer then io.stderr:write("moonsplice connect: --from-app needs --once, --always or --deny\n") return 2 end
+  elseif not tty() then
     return refuse({ why = "approving " .. op, command = ("--approve %s %s"):format(service, op) })
   end
-  local answer = o.always and "always" or o.deny and "deny" or o.once and "once"
   if not answer then
     local method = C.port:method(op) or "?"
     io.write(("Let agents run %s %s? [o]nce, [a]lways, [d]eny: "):format(method, op))
@@ -102,8 +107,7 @@ local function approve(C, o, service, op)
     answer = r == "o" and "once" or r == "a" and "always" or "deny"
   end
   C.state:approve(service, op, answer)
-  print(("%s: %s"):format(op, answer))
-  return 0
+  return out({ service = service, op = op, answer = answer }, o.json, ("%s: %s"):format(op, answer))
 end
 
 -- one call for an agent at the command line: what a run's connect tool does, with the same asks
