@@ -127,7 +127,7 @@ P["core/moonsplice/demo.lua"] = {
 P["core/runtime/rowsmode.lua"] = {
   rest = "core/runtime/rowsmode.lua",
   modules = {
-    ["core/runtime/brief.lua"] = { "^brief$", "^source_of$", "^tables$" },
+    ["core/runtime/brief.lua"] = { "^brief$" },
     ["core/runtime/expect.lua"] = { "^EXPECT_", "^expect_why$", "^M%.expect$", "^M%.gate$" },
   },
 }
