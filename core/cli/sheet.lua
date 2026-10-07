@@ -65,8 +65,13 @@ function M.run(cli, args)
   local text = read("ffmpeg -hide_banner -filters 2>/dev/null"):find(" drawtext ") ~= nil
   -- the frame times: n regular picks, then every --at, sorted, one frame per distinct time
   local times, seen = {}, {}
+  -- the last frame starts one frame before the end: a seek past it yields no frame, and ffmpeg still exits 0
+  local num, den = read(("ffprobe -v error -select_streams v:0 -show_entries stream=r_frame_rate -of csv=p=0 %s")
+    :format(q(tmp .. "/out.mp4"))):match("(%d+)/(%d+)")
+  local fps = num and tonumber(den) > 0 and tonumber(num) / tonumber(den) or 30
+  local last = math.max(0, dur - 1 / fps - 0.001)
   local function take(t)
-    t = math.max(0, math.min(t, dur - 0.02))
+    t = math.max(0, math.min(t, last))
     local k = ("%.3f"):format(t)
     if not seen[k] then seen[k] = true; times[#times + 1] = tonumber(k) end
   end
@@ -113,6 +118,13 @@ function M.run(cli, args)
     table.concat(inputs, " "), q(filter), q(out)))
   os.execute("rm -rf " .. q(tmp))
   if rc ~= 0 and rc ~= true then return 1 end
+  local made = io.open(out, "rb")
+  if not made or made:seek("end") == 0 then
+    if made then made:close() end
+    io.stderr:write(("moonsplice sheet: ffmpeg wrote no image at %s\n"):format(out))
+    return 1
+  end
+  made:close()
   print(('{"picks":[%s],"seconds":%.3f,"sheet":"%s","labelled":%s}'):format(table.concat(picks, ","), now() - t0, out,
     text and "true" or "false"))
   return 0
