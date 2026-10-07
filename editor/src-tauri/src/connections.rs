@@ -66,6 +66,8 @@ pub struct ConnectAsk {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Connection {
     pub service: String,
+    #[serde(default)]
+    pub name: Option<String>,
     #[serde(default, deserialize_with = "list")]
     pub fields: Vec<String>,
     #[serde(default)]

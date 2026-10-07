@@ -77,9 +77,9 @@ export function Connections() {
               key={c.service}
               className="flex items-center gap-2.5 rounded-[var(--radius-sm)] bg-[var(--ink-2)] px-2 py-1.5"
             >
-              <Logo service={c.service} name={c.service} />
+              <Logo service={c.service} name={c.name ?? c.service} />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-[12.5px] text-[var(--text-1)]">{c.service}</p>
+                <p className="truncate text-[12.5px] text-[var(--text-1)]">{c.name ?? c.service}</p>
                 <p className="truncate font-mono text-[10.5px] text-[var(--text-3)]">
                   {c.fields.join(", ")}
                 </p>

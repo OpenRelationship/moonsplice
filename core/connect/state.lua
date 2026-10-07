@@ -9,7 +9,7 @@
 --   st:asks(open_only?) -> rows    st:settle(kind, service, op?, status)   status "done" | "denied"
 --   st:approve(service, op, answer)  answer "once" | "always" | "deny"
 --   st:approval(service, op) -> "once" | "always" | "deny" | nil    a "once" is used up by the call it allows
---   st:connected(service, fields)  st:forget(service)  st:connections() -> rows
+--   st:connected(service, fields, name?)  st:forget(service)  st:connections() -> rows
 local json = require("ports.json")
 
 local M = {}
@@ -102,11 +102,11 @@ function S:approval(service, op)
   return nil
 end
 
-function S:connected(service, fields)
+function S:connected(service, fields, name)
   self:load()
   local kept = {}
   for _, r in ipairs(self.rows.connection) do if r.service ~= service then kept[#kept + 1] = r end end
-  kept[#kept + 1] = { service = service, fields = fields, at = now() }
+  kept[#kept + 1] = { service = service, name = name, fields = fields, at = now() }
   self.rows.connection = kept
   self:save()
   self:settle("connect", service, nil, "done")

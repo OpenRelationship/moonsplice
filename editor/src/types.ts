@@ -252,6 +252,7 @@ export interface ConnectAsk {
 
 export interface Connection {
   service: string;
+  name?: string | null;
   fields: string[];
   at?: string | null;
 }

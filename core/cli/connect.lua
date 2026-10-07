@@ -83,7 +83,7 @@ function M.record(C, service, as_json)
   end
   local names = {}
   for _, f in ipairs(need.fields) do names[#names + 1] = f.name end
-  C.state:connected(service, names)
+  C.state:connected(service, names, need.name)
   local ok, err = C.port:check(service)
   local test = ok and "passed" or (err and err.code == "not_found" and "none") or "failed"
   local said = test == "passed" and "the test call passed" or test == "none" and "no test call is known"
@@ -133,7 +133,8 @@ local function call(C, o, op, file)
     if answer == "deny" then
       return out({ denied = op }, o.json, "The person declined " .. op .. ".") and 4
     elseif answer ~= "once" and answer ~= "always" then
-      return waiting({ kind = "approve", service = service, op = op, method = method }, 4)
+      local need = C.port:needs(service)
+      return waiting({ kind = "approve", service = service, name = need and need.name, op = op, method = method }, 4)
     end
   end
   local value, err = C.port:call(op, args)

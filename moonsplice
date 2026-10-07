@@ -1,4 +1,8 @@
 #!/bin/sh
 # Moonsplice's one command: core/cli in LuaJIT. `./moonsplice` alone lists what it does.
 root=$(cd "$(dirname "$0")" && pwd)
+# An app opened from the Finder gets only the system's PATH, without Homebrew, so the editor's calls would not find
+# luajit (or ffmpeg after it); the usual install places go at the end, after whatever the caller set.
+PATH="$PATH:/opt/homebrew/bin:/usr/local/bin"
+export PATH
 exec luajit "$root/core/cli/init.lua" "$root" "$@"
