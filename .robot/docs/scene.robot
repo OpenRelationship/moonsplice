@@ -78,6 +78,8 @@ Coverage
     ...    | spritesheet, spine, chart, ornament, particles, draw, surface | ✅ | drawn through `core/runtime/sceneg.lua`, the `love.graphics` subset recorded into the stream |
     ...    | displace | ✅ | opcode 115: `scene/src/displace.rs` |
     ...    | world/mesh/camera/light | ✅ via slot | `scene3d/` (wgpu) renders into an image slot |
+    ...    | layers (clip, precomp, track, `isolate = true`) | ✅ | the subtree streams between one blend / opacity (110) / effects (111) push and its pop, so it composites once (.robot/docs/rows.robot, "Composition"; `core/runtime/layers.lua` plans them); a crossfade adds the incoming clip (compose plus) inside the track's layer |
+    ...    | track matte (`matte`, `matte_mode`) | ✅ | opcodes 117/118: the matte and the layer draw into two output-sized scratch frames; 105 multiplies the layer by the matte's alpha or luma (over black), inverted if asked, and composites it |
     [Tags]    doc    source:cadence@56ddad1:docs/SCENE.md
     Skip    prose
 

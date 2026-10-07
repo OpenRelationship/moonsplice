@@ -59,7 +59,7 @@ Keys and motion
     ...    - key { id, prop, t, value, ease? }. Before the first key the prop holds the first key's value; after the last, the last. Two keys at one (id, prop, t) are an error.
     ...    - t is seconds or a fact reference: "beat:12" (the 12th beat of any asset with derive beats), "beat:3+0.25" (offset s), "word:tide#2" (2nd "tide" from derive words), "onset:N", "silence:N".
     ...    - ease "step", and every key on text, src or font, switches at its time; before it the prop is at rest.
-    ...    - Animatable: x y w h r rx rotation scale opacity color size progress tracking reveal outline weight amp freq mix; effect_*; fx_*; yaw pitch roll dolly fov aperture maxcoc focus_u focus_v truck_u truck_v look_x look_y look_z cam_x cam_y cam_z z. Keys on text/src/font step. Anything else: a node prop or a system.
+    ...    - Animatable: x y w h r rx rotation scale opacity color size progress tracking reveal outline weight amp freq mix; effect_*; fx_*; yaw pitch roll dolly fov aperture maxcoc focus_u focus_v truck_u truck_v look_x look_y look_z cam_x cam_y cam_z z; a clip's speed and time. Keys on text/src/font step. Anything else: a node prop or a system.
     ...    - Eases: linear; quad cubic sine expo back elastic bounce, each + In|Out|InOut; "spring(180,12)" (stiffness, damping[, mass]); "cubicBezier(0.2,0,0,1)".
     ...    - motion { id, prop, t0, t1, curve, params } for what is not key to key:
     ...    \ \ curve="path", prop="xy", params={points={{x,y},...}, ease}: a smooth path from the node's x,y at t0.
@@ -80,6 +80,38 @@ Systems and code
     ...    - A code prop is { fn = "<source>" } where source returns the function the kind expects: a vector's draw = { fn = [[ return function(v, t) ... end ]] }.
     ...    - A system row whose id is not a node and whose parent is a world spawns a Bevy entity for that frame (see 3D).
     [Tags]    doc    source:cadence@56ddad1:agent/REFERENCE.md
+    Skip    prose
+
+Composition: clips, tracks, transitions, precomps, isolation, mattes
+    [Documentation]    Summary: time containers (clip: start, duration, offset, speed or a speed ramp, time remap, loop, hold, reverse), tracks that lay clips end to end, transitions over their overlap, precomps of other rows comps, isolated layers, and track mattes.
+    ...    ```lua
+    ...    \ \ nodes = {
+    ...    \ \ \ \ { id = "reel", kind = "track", x = 40, y = 40, w = 720, h = 405, transition = { kind = "crossfade", duration = 0.6 } },
+    ...    \ \ \ \ { id = "dawn", kind = "clip", parent = "reel", duration = 3.2 },
+    ...    \ \ \ \ { id = "dawn_title", kind = "text", parent = "dawn", x = 48, y = 280, text = "Dawn", size = 84 },
+    ...    \ \ \ \ { id = "dusk", kind = "clip", parent = "reel", duration = 2.9, transition = { kind = "wipe", duration = 0.5, dir = "right" } },
+    ...    \ \ \ \ { id = "ramp", kind = "clip", x = 820, y = 70, start = 0.2, duration = 7.6, loop = true, length = 2 },
+    ...    \ \ \ \ { id = "ball", kind = "circle", parent = "ramp", x = 10, y = 30, r = 16, color = "#f2a541" },
+    ...    \ \ \ \ { id = "card1", kind = "precomp", src = "card.lua", x = 820, y = 420, start = 0.4 },
+    ...    \ \ \ \ { id = "fade", kind = "group", isolate = true },
+    ...    \ \ \ \ { id = "word", kind = "text", x = 40, y = 452, text = "TIDE", size = 220 },
+    ...    \ \ \ \ { id = "waves", kind = "group", matte = "word" },
+    ...    \ \ },
+    ...    \ \ keys = { { "dawn_title", "x", 0.15, 90 }, { "dawn_title", "x", 1, 48, "expoOut" }, \ \ -- local to dawn
+    ...    \ \ \ \ { "ramp", "speed", 0.2, 0.3 }, { "ramp", "speed", 4.6, 2.4, "sineInOut" }, \ \ \ \ \ \ \ \ \ -- comp time: a ramp
+    ...    \ \ \ \ { "ball", "x", 0, 10 }, { "ball", "x", 2, 390 }, { "card1/label", "opacity", 2.8, 0 } },
+    ...    ```
+    ...    - clip{start=0 (parent seconds, or a fact: "beat:8"), duration (parent s; none = to the end), offset=0 (local s at start: trims the head), speed=1 (key it for a ramp: it is integrated), time (key it to remap: the local s at each parent s; replaces offset and speed), loop + length (local s that repeat), hold=false|true|"start"|"end" (freeze the first/last frame outside the range), reverse (needs duration), isolate=true, and a group's x y scale rotation opacity}. Children: parent = the clip.
+    ...    - Time: a clip's own keys (x, opacity, speed, time) are in its PARENT's time. Everything under it is in its LOCAL time: keys, motion, a video's from/media_start, particles' emit, a world, and a system with clip = "<id>". Clips nest and compose. Outside its range the clip and everything in it draw nothing. `rows --brief` prints each clip's comp range and every key as `0@1.00s (comp 5.00s)`.
+    ...    - Sound under a clip is placed in comp time when built, trimmed to the clip; only a clip at speed 1 (no ramp, remap, loop or reverse) may hold audio.
+    ...    - track{x,y,w,h (its frame; default the comp), start=0, transition = default for every cut}: holds only clips, which play end to end in draw order: each starts where the one before ends, less its transition's duration (the overlap). A clip in a track has no start (an error): use gap (space before it) or overlap (with no transition). Every clip but the last needs a duration. Trim with set_prop duration, reorder with move_clip: the rest ripple. What falls outside the track's box is cut.
+    ...    - transition = { kind, duration, ease, dir, color } on the incoming clip (or on the track; false = a cut). crossfade (an exact dissolve), dip (through color, default black), wipe (the edge travels in dir, default right), push (both move in dir, default left), slide (the incoming slides over), zoom. Ease: linear for crossfade and dip, cubicInOut otherwise.
+    ...    - precomp{src = a rows comp file (relative to this comp's file), and every clip prop}: a clip of that comp. length and duration default to its duration, w,h to its size; cut to its box; its background is not drawn. Its nodes are <id>/<child>: key them from here in its local time; its systems and expectations run in its local time. A game cannot be a precomp.
+    ...    - isolate: a clip, precomp or track draws as one layer, its opacity, blend and effects applied once (isolate = false opts out); a group only with isolate = true. A fading group without it fades each child, and overlaps show through.
+    ...    - matte = "<node id>", matte_mode = "alpha"|"alpha_inverted"|"luma"|"luma_inverted": this node (a group or clip as one layer) shows only through that node, which is not drawn itself.
+    ...    - q.time(id) is a clip's local time. Games take no clips, tracks or precomps.
+    ...    - Exemplar: comps/cases/composition.lua (reel with crossfade and wipe, speed ramp, isolated fade, precomp twice, alpha matte).
+    [Tags]    doc    source:cadence@f91db8b:agent/REFERENCE.md
     Skip    prose
 
 Games: the game table plus systems game.init and game.step
@@ -115,13 +147,15 @@ Games: the game table plus systems game.init and game.step
     Skip    prose
 
 The moves (moonsplice patch COMP PATCHES.json --json)
-    [Documentation]    Summary: every typed move (add_node, set_prop, keys, bind, systems, derive, solid, remove) with its payload, and what a patch replies.
+    [Documentation]    Summary: every typed move (add_node, set_prop, keys, bind, systems, derive, solid, move_clip, remove) with its payload, and what a patch replies.
     ...    PATCHES.json is a list; each item has move = one of:
     ...    - {move="add_node", node={id, kind, parent?, order?, ...props}}
     ...    - {move="set_prop", id, name, value} \ (value null removes the prop; name may be parent or order)
     ...    - {move="add_key", id, name, t, value, ease?} · {move="move_key", id, name, t, to_t?, value?, ease?} · {move="drop_key", id, name, t}
     ...    - {move="bind", id, name, t, fact="beat:4"} \ (moves that key to the fact's time)
-    ...    - {move="add_system", name, source, order?} · {move="edit_system", name, source?, order?}
+    ...    - {move="add_system", name, source, order?, clip?} · {move="edit_system", name, source?, order?, clip?} \ (clip: run in that clip's local time; "" clears)
+    ...    - {move="move_clip", id, index | before | after} \ (a clip's place in its track; the rest ripple)
+    ...    - keys may name a precomp's inner node, "card1/label", in the precomp's local time
     ...    - {move="derive", asset={id, src, derive={...}}}
     ...    - {move="solid", asset={id, solid=TREE}} \ (a solid built by Manifold; see "Solids" below)
     ...    - {move="remove", id} (the node, its children, props, keys, motion and references) · {move="remove", system=name}
@@ -132,7 +166,7 @@ The moves (moonsplice patch COMP PATCHES.json --json)
 
 Node kinds: { id=, kind="<kind>", ...props }
     [Documentation]    Summary: every 2D node kind and its props (text, rect, image, video, audio, vector, html, ...), common props, blends, colours.
-    ...    All visual nodes: x, y (px), anchor="topleft"|"center", opacity=1, rotation=0 (rad), scale=1, parent, blend, clip_node, clip_invert, effects, shadow, id. Rotate/scale pivot = x,y (anchor="center" pivots on the middle). circle x,y = centre.
+    ...    All visual nodes: x, y (px), anchor="topleft"|"center", opacity=1, rotation=0 (rad), scale=1, parent, blend, clip_node, clip_invert, matte, matte_mode, effects, shadow, id. Rotate/scale pivot = x,y (anchor="center" pivots on the middle). circle x,y = centre.
     ...    - rect{x,y,w,h,color,rx} ; surface{w,h required, same as rect}.
     ...    - circle{x,y,r,color}.
     ...    - text{x,y,text,size=32,font=path,color=white,wrap=px,leading=mult,tracking=px,reveal=0..1,outline,outline_color,weight}. Tags: {c:#rrggbb}..{/c} {b}..{/b} {i}..{/i}. outline ~0.3-1.2, weight 0-0.3.
@@ -142,7 +176,7 @@ Node kinds: { id=, kind="<kind>", ...props }
     ...    - image{src,x,y,w,h (default comp size),rx}; image{prompt="...",seed,w,h} generates a still once (MiniMax image-01; needs a MiniMax key, else the build fails); svg{src,w,h required}; page{src|html,w,h}.
     ...    - html{html=markup|src, w,h required, progress}: {{progress}} / {{progress_int}} substituted; tween progress.
     ...    - vector{x,y,w,h required, draw=function(v,t) ... end}: local coords, clipped. v:rect(x,y,w,h,c,radius) v:circle(cx,cy,r,c) v:move(x,y) v:line(x,y) v:curve(x1,y1,x2,y2,x,y) v:fill(c) v:stroke(width,c) v:polyline({x1,y1,x2,y2,...},width,c) v:gradient(x,y,w,h,x0,y0,x1,y1,c0,c1) v:radial(cx,cy,r,c0,c1) v:grain(amount,seed).
-    ...    - group{x,y,scale,rotation,opacity}: children parent=g, x,y relative to it; opacity multiplies.
+    ...    - group{x,y,scale,rotation,opacity,isolate}: children parent=g, x,y relative to it; opacity multiplies, per child unless isolate = true (one layer). clip, track, precomp: see Composition.
     ...    - flex{items={nodes},x,y,w,h,dir="row"|"column",justify="start|center|end|between|around|evenly",align="start|center|end|stretch",gap,pad,wrap}: static, sets items' x,y.
     ...    - fx{x,y,w,h required, chain={names}, amounts}: children parent=plate (plate-local px). chain names: bloom glow blur vignette chroma grain tonemap pixelate posterize filmgrain kawase worley shadertoy. Amounts: bloom= glow= blur= ... worley= (key fx_<name>; filmgrain uses grain, kawase blur). shadertoy=GLSL mainImage string (iChannel0, iTime, iResolution; GPU build only).
     ...    - particles{x,y,n (req),seed=1,life=1.2,emit=0 (comp-absolute start s),emit_window=0.2,heading=-pi/2,spread=pi,speed=240,gravity=520,r=3.5,color}.
@@ -210,12 +244,14 @@ Local media (absolute paths)
     Skip    prose
 
 Pitfalls (each fails build, lint or check)
-    [Documentation]    Summary: every finding the engine raises (expectations, overflow, cropping, contrast, frozen, overridden keys, solids) and what to do about it.
+    [Documentation]    Summary: every finding the engine raises (expectations, overflow, cropping, contrast, frozen, overridden keys, solids, composition) and what to do about it.
     ...    - Lint expect_failed (error): the comp's expect rows are what the ask requires (a node that must exist, a text that must read, a value at a time). You cannot edit or remove them, and removing or hiding what they name is an error, never progress. When a critic says "kill" or "remove" something an expectation names, restyle, move or retime it instead.
     ...    - Lint key_overridden (error): systems run after the keys every frame, so a key on a prop a system sets never shows. `moonsplice rows COMP --brief` prints "<system> sets <props> every frame" under each node a system drives: change that system (edit_system), not the node's keys.
     ...    - Check text_overflow (error): a text's real box (measured with its font) runs past the edge of the panel it sits in (the smallest rect, surface, world, image or video holding its start) or the frame. A bigger size or a longer string needs a wider panel, or a smaller size.
     ...    - Lint subject_cropped (warn): a small mesh in a world is cut by, or leaves, the camera's view for over 20% of the piece. Things move (a buoy rides the tide): frame the camera for the whole range of motion, not the first frame.
     ...    - Lint solid_parts (warn): a solid came out in more pieces than meant: something floats free (even a 1 cm gap). Overlap it, or, for pieces meant apart (a chain), declare parts = n on the asset. solid_empty / solid_not_watertight are errors.
+    ...    - Lint clip_out_of_range (error): a clip never plays inside the comp, so nothing in it shows. transition_too_long (error): a transition outlasts the clip before or after it. key_outside_clip (warn): a key under a clip at a local time the clip never shows (keys there are LOCAL). track_overlap (warn): a clip overlaps the one before with no transition.
+    ...    - Build (composition): start on a clip in a track; a non-clip in a track; loop without length; reverse without duration; a transition on a track's first clip or outside a track; audio under a clip not at speed 1; a precomp of a game, or of itself; any clip in a game.
     ...    - Build: blend "subtract"/"replace"; a key past duration; two keys at one (id, prop, t); a key on a non-animatable prop; a fact reference no asset produces; unknown ease; video/image/audio without src; surface/svg/html/vector/fx/world/lottie/displace without w,h.
     ...    - Pure: os.time/clock/date and io.* error. No math.random in code (frames render in any order); games use g.random.
     ...    - Only anchors "topleft"/"center" (right/bottom: compute x,y). `ls` is ignored: letter-spacing is tracking. Relative paths resolve from the cwd: use absolute paths.

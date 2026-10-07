@@ -30,7 +30,7 @@ Level 1: the comp as rows (schema msr/1)
     ...    | `prop` | `id, name` | `value` | a node's prop at rest (x, y, w, h, text, font, color, src, shape, pos, ...) |
     ...    | `key` | `id, name, t` | `value, ease` | a keyframe: from the previous key of (id, name) to this one, eased; `t` may be a fact reference (`beat:12`, `word:tide`) resolved at compile |
     ...    | `motion` | `id, name, t0` | `t1, curve, params` | motion that is not key to key: `curve` is `path`, `wiggle`, `follow`, `spring` or `drop`, `params` its settings; what the object API's `t:path`/`t:wiggle`/... record |
-    ...    | `system` | `name` | `order, source` | a pure function `(t, state, q) -> rows`, run every frame after the keys; its rows are live props for that frame only. `game.init` / `game.step` are the game's fold; `shared` runs once and what it returns is `shared` to every other system and code prop |
+    ...    | `system` | `name` | `order, source, clip` | a pure function `(t, state, q) -> rows`, run every frame after the keys; its rows are live props for that frame only. `game.init` / `game.step` are the game's fold; `shared` runs once and what it returns is `shared` to every other system and code prop. `clip`, when set, names a clip whose local time `t` is, and the system runs only while that clip plays (Composition, below) |
     ...    | `asset` | `id` | `src, derive, solid, parts` | a media source and its derive ops (core/runtime/derive.lua), or a solid: `solid` is a CSG tree built by Manifold (.robot/docs/solids.robot), `parts` the number of pieces it is meant to have when more than one |
     ...    | `fact` | `pred, args, t0` | `t1, src, conf` | FACTS.md's grammar: `holds`/`happens`, `src` empty means exact |
     ...    | `input` | `t, n` | `down, up, x, y, press, release` | a game's input log (core/moonsplice/game.lua) |
@@ -71,7 +71,7 @@ Level 1: the comp as rows (schema msr/1)
     ...    columns. Two dumps of one comp are byte-equal.
     ...
     ...    Kinds are the engine's kinds (rect, text, video, image, kinetic, vector, particles, fx, world,
-    ...    mesh, light, camera, ...). 3D entities are nodes whose `parent` is a `world` node; their props are
+    ...    mesh, light, camera, clip, track, precomp, ...). 3D entities are nodes whose `parent` is a `world` node; their props are
     ...    Bevy's (`shape, pos, rot, size, material, light`). There is no second namespace for 3D.
     ...
     ...    The authoring form in Lua:
@@ -102,11 +102,88 @@ Level 1: the comp as rows (schema msr/1)
     Skip    prose
 
 Level 2: evaluation
-    [Documentation]    `frame(t, input_log) -> rows`: props at rest, then keys at t, then the game's fold to t, then the
-    ...    systems in `order`. A system reads only through `q` (`q.get(id, name)`, `q.y(id)`, `q.facts`,
+    [Documentation]    `frame(t, input_log) -> rows`: each clip's local time (Composition, below), then props at rest,
+    ...    then keys, each at the time of the clip it is under, then the game's fold to t, then the systems in `order`. A system reads only through `q` (`q.get(id, name)`, `q.y(id)`, `q.facts`,
     ...    `q.state`) and returns rows; it cannot hold handles or write anything else. What systems return is
     ...    cleared before the next frame (.robot/docs/canon.robot rule 1, games amendment). Same rows in, same frame out.
     [Tags]    doc    source:cadence@56ddad1:docs/ROWS.md
+    Skip    prose
+
+Composition
+    [Documentation]    2026-10-07. A comp is not one timeline: an edit is shots inside shots. Four node kinds and three
+    ...    props make that rows, with no new table and one new move.
+    ...
+    ...    **Clips.** A `clip` node is a group with its own time. Its props: `start` (seconds in its parent's
+    ...    time, or a fact reference such as `beat:8`), `duration` (parent seconds; none runs to the end),
+    ...    `offset` (the local time at its start, which trims the head), `speed` (1; keyed, it is a speed ramp
+    ...    and is integrated), `time` (keyed, a remap: the local time at each parent time, replacing `offset` and
+    ...    `speed`), `loop` with `length` (the local seconds that repeat), `hold` (`true`, `"start"` or `"end"`:
+    ...    the first or last frame shows outside the range instead of nothing) and `reverse` (needs
+    ...    `duration`). A clip's own keys (x, opacity, speed, time) are in its parent's time; every key, motion,
+    ...    video `from`/`media_start`, particle `emit`, world and clip system under it is in its **local** time,
+    ...    and rows keep those key times local. Outside its range a clip and everything in it draw nothing.
+    ...
+    ...    The mapping is evaluated every frame, from the parent's time down (`core/moonsplice/clip.lua`), never
+    ...    baked into the key times at compile. So clips nest and their mappings compose (a 2x clip inside a
+    ...    0.5x clip plays at comp speed), a speed ramp inside a looping clip inside a track is still one
+    ...    function of t, and any frame seeks exactly: a keyed speed is integrated over its parent time from the
+    ...    clip's start with a fixed Simpson rule, so a frame's local time depends on t alone. Sound is the
+    ...    exception: it is mixed by ffmpeg at encode (.robot/docs/canon.robot, core invariant 5), so a sound under clips is
+    ...    placed in comp time once when the comp is built, trimmed to the clip, and refused under any clip not
+    ...    at speed 1.
+    ...
+    ...    **Tracks.** A `track` (`core/moonsplice/track.lua`) holds only clips and plays them end to end in draw
+    ...    order: each starts where the one before ends, less the overlap its transition needs (`gap` leaves space
+    ...    before a clip, `overlap` overlaps it with no transition). A clip in a track does not say `start`:
+    ...    writing one is an error, not an override, because the track's whole point is that reordering
+    ...    (`move_clip`) or trimming (`set_prop duration`) one clip is one move and the rest ripple, which an
+    ...    override would break silently. Every clip but the last needs a `duration`. A track has a frame, `w` x
+    ...    `h` (the comp's, or the precomp's it is written in, by default), where pushes start and wipes run;
+    ...    what falls outside it is cut.
+    ...
+    ...    **Transitions.** `transition = { kind, duration, ease, dir, color }` on the incoming clip, or on the
+    ...    track for every cut (`false` on a clip makes that one a cut). Its duration is the overlap. `crossfade`
+    ...    is an exact dissolve: inside the track's layer the outgoing clip draws at 1-p and the incoming is
+    ...    added at p, so an opaque cut never dips toward the background. `dip` goes through `color` (black),
+    ...    `wipe` reveals the incoming as its edge travels in `dir` (right), `push` moves both in `dir` (left),
+    ...    `slide` moves the incoming over a still outgoing, `zoom` scales the outgoing up and the incoming in
+    ...    while dissolving. Ease defaults: linear for crossfade and dip, cubicInOut for the rest.
+    ...
+    ...    **Precomps.** A `precomp` node is a clip of another rows comp, `src` (relative to the comp that
+    ...    names it). Its `length` and `duration` default to that comp's duration and its `w`, `h` to its
+    ...    size; it is cut to that box, and its background is not drawn. Its nodes are made again under the
+    ...    instance with namespaced ids, `<instance>/<id>` (`card1/label`), so two instances never collide; its
+    ...    keys, motion, systems and expectations run in the instance's local time (an expectation's `at` is the
+    ...    inner comp's time, checked at the comp time the instance shows it). The outer comp's rows hold only
+    ...    the instance node; a key may still name `card1/label`, in the instance's local time. A game cannot be
+    ...    a precomp, and a precomp that includes itself is an error. The host reads the file
+    ...    (`core/runtime/resolve.lua` precomp_rows, through compile's load_rows hook; `core/moonsplice/rows/precomp.lua`
+    ...    opens it), so core/moonsplice stays host-free.
+    ...
+    ...    **Layers.** A clip, precomp or track draws its subtree as one layer and composites it once, with its
+    ...    opacity, blend and effects (`isolate = false` opts out); a group does the same with `isolate =
+    ...    true`. Clips are layers by default because a clip is a shot, and a shot fades as one picture; groups
+    ...    are not, so no existing comp changes. Every clip a transition touches is a layer.
+    ...
+    ...    **Mattes.** `matte = "<node id>"`, `matte_mode = "alpha" | "alpha_inverted" | "luma" |
+    ...    "luma_inverted"`: the node (as one layer, if it is a group or clip) shows only through that node,
+    ...    which is not drawn itself. Luma is the matte over black. The rasterizer draws the matte and the layer
+    ...    into two scratch frames and multiplies (scene opcodes 117 and 118).
+    ...
+    ...    **Games** take no clips, tracks or precomps: a game's time is its simulation, stepped from 0 with its
+    ...    input, and cannot start late or run at another speed.
+    ...
+    ...    ```lua
+    ...    nodes = {
+    ...    \ \ { id = "reel", kind = "track", w = 1280, h = 720, transition = { kind = "crossfade", duration = 0.6 } },
+    ...    \ \ { id = "a", kind = "clip", parent = "reel", duration = 3 },
+    ...    \ \ { id = "b", kind = "clip", parent = "reel", duration = 3, transition = { kind = "wipe", duration = 0.5 } },
+    ...    \ \ { id = "card", kind = "precomp", src = "card.lua", start = 4, speed = 1.5, hold = "end" },
+    ...    },
+    ...    keys = { { "a", "speed", 0, 0.5 }, { "a", "speed", 2, 2, "sineInOut" } }, \ \ -- a ramp, in the track's time
+    ...    systems = { { name = "wake", order = 1, clip = "b", source = "return function(t, s, q) ... end" } },
+    ...    ```
+    [Tags]    doc    source:cadence@f91db8b:docs/ROWS.md
     Skip    prose
 
 Level 3: rendering
@@ -132,7 +209,11 @@ Level 5: validation
     ...    names the worst time and how many samples fail. So a count of error rows is a count of problems.
     ...    Solids add `solid_empty` and `solid_not_watertight` (errors) and `solid_parts` (a warning when the
     ...    pieces differ from the asset's `parts`, or number more than one with none declared). Expectations add
-    ...    `expect_failed` (an error). `key_overridden` (an error): a key on a prop a system sets every frame, which can never
+    ...    `expect_failed` (an error). Composition adds `clip_out_of_range` (an error: a clip never plays inside
+    ...    the comp, so nothing in it shows), `transition_too_long` (an error: a transition outlasts the clip
+    ...    before or after it), `key_outside_clip` (a warning: a key under a clip at a local time the clip never
+    ...    shows) and `track_overlap` (a warning: a clip overlaps the one before it with no transition).
+    ...    `key_overridden` (an error): a key on a prop a system sets every frame, which can never
     ...    show, since systems run after the keys. `text_overflow` (check, an error): a text's measured box runs past the
     ...    panel it sits in, or the frame. `subject_cropped` (lint, a warning): a small mesh in a world is cut
     ...    by or leaves the camera's view for over 20% of the piece, projected through the world's camera.
@@ -149,7 +230,8 @@ Level 6: the agent's moves (tablua)
     ...    | `set_prop` | id, name, value | upsert one prop |
     ...    | `add_key` / `move_key` / `drop_key` | id, name, t, value, ease | keyframes |
     ...    | `bind` | id, name or key, fact reference | tie a value or time to a fact |
-    ...    | `add_system` / `edit_system` | name, order, source | one small pure function |
+    ...    | `add_system` / `edit_system` | name, order, source, clip | one small pure function; `clip` runs it in that clip's local time (`""` clears it) |
+    ...    | `move_clip` | id, index or before or after | a clip's place in its track; the clips after it ripple |
     ...    | `derive` | asset id, ops | media work in the resolve phase |
     ...    | `solid` | asset id, solid tree | a solid built by Manifold; a mesh node shows it with `src = "asset:<id>"`, an entity with `solid = "asset:<id>"` |
     ...    | `remove` | id | delete a node and its props, keys and children |
@@ -157,8 +239,11 @@ Level 6: the agent's moves (tablua)
     ...
     ...    A value of the wrong type is rejected at the patch with its reason (`opacity needs a number, not
     ...    "0"`): numeric props take numbers, `text`/`src`/`font`/`anchor`/`blend`/`shape` take strings, colours
-    ...    take `"#rgb[a]"`, `"#rrggbb[aa]"` or `{r,g,b,a}`, and a null value clears a prop. A string that is
-    ...    exactly a number (`"500"`, `"0.9"`) given for a numeric prop or a key's `t` is stored as that number:
+    ...    take `"#rgb[a]"`, `"#rrggbb[aa]"` or `{r,g,b,a}`, and a null value clears a prop. A clip's `loop`,
+    ...    `reverse` and `isolate` take booleans, `hold` a boolean or `"start"`/`"end"`, `start` seconds or a fact
+    ...    reference, `matte_mode` one of its four names, and `transition` a table whose kind, duration, ease and
+    ...    dir are checked. A key may name a precomp's inner node (`card1/label`); the compile check proves it
+    ...    exists. A string that is exactly a number (`"500"`, `"0.9"`) given for a numeric prop or a key's `t` is stored as that number:
     ...    models writing JSON quote numbers often, and the reading is unambiguous.
     ...
     ...    A patch applies to the rows, the rows are linted and checked, and the response says what happened;
@@ -177,7 +262,7 @@ Level 6: the agent's moves (tablua)
     ...    | `moonsplice rows COMP --json` | `{schema: "msr/1", tables: {comp, node, prop, key, motion, system, asset, fact, input, game, expect}, digest, derived, solids}`; `derived` lists the facts the assets' derive produced (`{pred, args, t0, t1, src, asset}`), outside the digest; `solids` maps each solid asset to what it came out as (`parts, genus, watertight, empty, volume, area, triangles, min, max, size`, Y-up metres), also outside the digest: the tree is in the digest (an asset row), its measurements are derived from it |
     ...    | `moonsplice patch COMP PATCHES.json --json` | `{applied: [patch], rejected: [{patch, why}], touched: [{id, name}], digest_before, digest_after, findings: [finding]}`; COMP is written back in rows form; `touched` includes what a `remove` cascaded to; `findings` is the full list after the patches, never a delta |
     ...    | `moonsplice expect COMP ROWS.json --json` | `{added: [row], rejected: [{row, why}], digest_before, digest_after, findings: [finding]}`; the harness writes the ask's expectations once, before the first move. A row is added unless its id exists (existing rows, a seed's invariants, are never edited); a malformed row, one whose fact reference no asset makes, or one whose time falls outside the comp is rejected with why. A row may name a node the comp does not have yet: it is an `expect_failed` until a move makes it. Idempotent |
-    ...    | `moonsplice rows COMP --brief` | text, for a language model: one line per node in draw order (children indented) with its props, its keys with fact references resolved to seconds, and what systems set on it every frame; the systems by what they set and spawn (read from the evaluated comp, never declared); the expectations held or failing; the open errors and warnings of lint and check (check renders, about a second). The tables are for the sheet and the learner; a prompt is rendered from them as this |
+    ...    | `moonsplice rows COMP --brief` | text, for a language model: one line per node in draw order (children indented) with its props, its keys with fact references resolved to seconds, and what systems set on it every frame; each clip's comp range and mapping, and keys under a clip with their local and comp times (`0@1.00s (comp 5.00s)`); the systems by what they set and spawn (read from the evaluated comp, never declared); the expectations held or failing; the open errors and warnings of lint and check (check renders, about a second). The tables are for the sheet and the learner; a prompt is rendered from them as this |
     ...    | `moonsplice gate COMP --json` | `{state: {digest, errors, warnings, expect_held, expect_total, failing, line, passed}, findings}`: the engine's one line of truth (`state: digest 6123faea; errors 0; warnings 3; expect 14/14`), and whether a hand-in passes (no error, every expectation held). `patch` and `expect` replies carry the same `state`, and `patch` a `delta` (`closed contrast_measured t4, text_overflow t4 \\| opened none`) against the findings before it. A harness ends every result with them, so the newest message in an append-only transcript is always current |
     ...    | `moonsplice lint COMP --json`, `check COMP --json` | `{findings: [finding]}` |
     ...    | `moonsplice sheet COMP OUT.png --json` | `{picks: [t, ...], seconds}`: a contact sheet for the decider and the critic |
