@@ -209,14 +209,6 @@ export type TurnChunk =
   | { event: "result"; call: string; tool: string; ok: boolean; refused: boolean; size: number }
   | { event: "stop"; stop: string; reason?: string; steps: number }
   | {
-      event: "ask";
-      id: number;
-      tool: string;
-      args: unknown;
-      reason: string | null;
-      can_remember: boolean;
-    }
-  | {
       event: "answer";
       stop: string;
       reason?: string | null;

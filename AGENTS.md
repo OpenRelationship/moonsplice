@@ -246,8 +246,8 @@ store a credential anywhere else, and never accept one from an agent.
 - Every gesture lowers to typed moves (`src-tauri/src/lower.rs`); the editor never writes a comp any other way.
 - Its agent panel is a Tablua run: `src-tauri/src/run.rs` starts `./moonsplice studio` on the open composition,
   streams the run's steps into the chat, and the file watcher shows each move land; the run's connect asks come
-  up in the connect sheet. `src-tauri/src/agent` (and the `moonsplice-agent` binary and `headless`, which build on
-  its traits) still speak malleable, which is dropped; `port/done` stays red until they are rewritten or removed.
+  up in the connect sheet. Approvals are not in the chat; they are the sheet's. Malleable, the agent the app once
+  hosted in-process, is gone, with the `moonsplice-agent` binary and `headless` that built on it.
 - `editor/.tauri-plugin-mcp` is vendored by a build step, not committed.
 
 ## Working with tablua

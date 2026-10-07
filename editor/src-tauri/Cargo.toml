@@ -2,9 +2,6 @@
 name = "moonsplice-studio"
 version = "0.1.0"
 description = "Moonsplice Studio — the desktop app"
-# Two binaries live here now (the window and `moonsplice-agent`); `tauri dev` runs `cargo run`
-# with no `--bin`, which refuses to guess.
-default-run = "moonsplice-studio"
 edition = "2021"
 rust-version = "1.82"
 
@@ -24,10 +21,6 @@ sha2 = "0.10"
 notify = "8"
 notify-debouncer-full = "0.6"
 image = { version = "0.25", default-features = false, features = ["jpeg"] }
-# LuaJIT, the one Lua in the app: the engine runs in this process (moonsplice-engine, below) and
-# its runtime reaches the native helpers through LuaJIT's FFI. mlua links one Lua per build, so the
-# agent harness runs on it too -- packages/malleable is written to the subset both accept.
-mlua = { version = "0.11", features = ["luajit", "vendored", "serialize", "send"] }
 moonsplice-engine = { path = "../../native/engine" }
 keyring = { version = "3", features = ["apple-native"] }
 reqwest = { version = "0.12", default-features = false, features = ["blocking", "json", "rustls-tls"] }

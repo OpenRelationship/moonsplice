@@ -79,8 +79,6 @@ export const bridge = {
   export: (variation: string, quality?: string) =>
     invoke<string>("export", { variation, quality }),
 
-  answerAsk: (id: number, allow: boolean, remember?: "tool") =>
-    invoke<void>("answer_ask", { id, decision: { allow, remember: remember ?? null } }),
   stopTurn: () => invoke<void>("stop_turn"),
 
   setKey: (name: string, value: string) => invoke<void>("set_key", { name, value }),

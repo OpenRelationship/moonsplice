@@ -207,29 +207,9 @@ pub(super) fn brief(v: &serde_json::Value) -> String {
 }
 
 #[tauri::command]
-pub(super) fn answer_ask(studio: State<Studio>, id: u64, decision: Decision) -> Result<(), String> {
-    let tx = studio
-        .pending
-        .lock()
-        .unwrap()
-        .remove(&id)
-        .ok_or("that question has already been answered")?;
-    tx.send(decision).map_err(|_| "the turn has ended".into())
-}
-
-#[tauri::command]
 pub(super) fn stop_turn(studio: State<Studio>) {
     if let Some(c) = studio.turn.lock().unwrap().as_ref() {
         c.stop();
-    }
-    // Anything waiting at the gate is refused, so the loop ends rather than hangs.
-    let pending: Vec<_> = studio.pending.lock().unwrap().drain().collect();
-    for (_, tx) in pending {
-        let _ = tx.send(Decision {
-            allow: false,
-            reason: Some("the run was stopped".into()),
-            remember: None,
-        });
     }
 }
 
@@ -240,7 +220,7 @@ pub(super) fn ask_agent(
     app: AppHandle,
     variation: String,
     prompt: String,
-    #[allow(unused_variables)] history: Vec<Said>,
+    #[allow(unused_variables)] history: serde_json::Value,
     channel: Channel<serde_json::Value>,
 ) -> Result<(), String> {
     let comp = {

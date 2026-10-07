@@ -32,7 +32,7 @@ pub(super) fn root() -> Option<PathBuf> {
 }
 
 pub(super) fn cases(root: &Path) -> Vec<PathBuf> {
-    let mut out: Vec<PathBuf> = std::fs::read_dir(root.join("evals/cases"))
+    let mut out: Vec<PathBuf> = std::fs::read_dir(root.join("comps/cases"))
         .map(|rd| {
             rd.flatten()
                 .map(|e| e.path())

@@ -41,8 +41,8 @@ What already exists
     ...    \ \ CTranslate2. **Every model perceive uses already has a torch-free form.**
     ...    - `cloud/` — the Modal worker and its client, with the measurements that justify it.
     ...    - `core/moonsplice/` — host-free authoring API. Untouched by this epic.
-    ...    - Malleable at `jetway/submodules/malleable` — a Lua agent harness; Lua 5.4 inside the
-    ...    \ \ LuaJIT 5.1 subset, designed to embed in a host through `mlua`.
+    ...    - The agent is Tablua (submodules/tablua), run as `./moonsplice studio`; the malleable harness
+    ...    \ \ this page once named is gone.
     ...    - monomono at `jetway/submodules/monomono` — `moon` is also installed but unused here.
     ...
     ...    Not yet torch-free: **RAM++** (tagging), **SpeechBrain ECAPA** (diarization),

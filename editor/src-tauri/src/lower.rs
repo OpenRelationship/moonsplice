@@ -102,20 +102,6 @@ pub enum Edit {
         /// What to call it out loud: "Earth night", never a path and never `video7`.
         what: String,
     },
-    /// Put a whole block in the scene: a thing *and* the movements that bring it on and take it
-    /// off. `Place` writes one constructor and nothing else, which is right for a clip and wrong
-    /// for a title card, because a card with no way in and no way out is on screen for the whole
-    /// composition.
-    ///
-    /// Never read from JSON. The block is Lua, and the only Lua that reaches a composition is
-    /// Lua this app wrote from a structured request (see `crate::headless::draw_block`). A model
-    /// that could send this through `change` could write anything at all into the file.
-    #[serde(skip)]
-    Insert {
-        /// Whole lines, already indented one step in from the scene's own `end`.
-        lua: String,
-        what: String,
-    },
     /// The composition's own frame: how big it is, how long, how many pictures a second and what
     /// is behind everything. Each is left alone when it is `None`.
     SetComp {
@@ -145,7 +131,7 @@ impl Edit {
             | Edit::MoveTweenStart { node, .. }
             | Edit::Remove { node } => node,
             // Nothing yet. It is about to be something.
-            Edit::Place { .. } | Edit::Insert { .. } | Edit::SetComp { .. } => "",
+            Edit::Place { .. } | Edit::SetComp { .. } => "",
         }
     }
 
@@ -171,7 +157,7 @@ impl Edit {
             | Edit::Restack { node, .. }
             | Edit::MoveTweenStart { node, .. }
             | Edit::Remove { node } => Some(node),
-            Edit::Place { .. } | Edit::Insert { .. } | Edit::SetComp { .. } => None,
+            Edit::Place { .. } | Edit::SetComp { .. } => None,
         }
     }
 
@@ -205,7 +191,7 @@ impl Edit {
                 crate::words::property(key).to_lowercase(),
                 fmt_num(*t)
             ),
-            Edit::Place { what, .. } | Edit::Insert { what, .. } => format!("put {what} in"),
+            Edit::Place { what, .. } => format!("put {what} in"),
             Edit::SetComp {
                 width,
                 height,
@@ -297,7 +283,6 @@ pub fn lower(src: &str, edits: &[Edit], nodes: Option<&[NodeRef]>) -> EditResult
                 pin_prop(&out, node, *t, key, &lit, *covered, nodes)?
             }
             Edit::Place { kind, fields, .. } => place(&out, kind, fields)?,
-            Edit::Insert { lua, .. } => insert(&out, lua)?,
             Edit::SetComp {
                 width,
                 height,

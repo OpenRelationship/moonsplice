@@ -1,19 +1,16 @@
-// The seam. AI SDK UI expects a stream of UIMessageChunks; a turn lives in this binary and
-// speaks over a Tauri channel. `ChatTransport` is the one interface between them, which is why
-// there is no local HTTP server in this app — `.robot/docs/desktop.robot` §6.
+// The seam. AI SDK UI expects a stream of UIMessageChunks; a turn is a Tablua run
+// (`./moonsplice studio`, started by `src-tauri/src/run.rs`) whose steps come back over a Tauri
+// channel. `ChatTransport` is the one interface between them.
 //
-// The translation is small and deliberate:
+//   the run said                    the chat shows
+//   ------------                    --------------
+//   a step (call / result)          a dynamic tool part, so the trail of work is visible
+//   answer                          the model's last words, drawn as markdown
+//   stop = error | stopped          the text, plus a line saying why it ended
 //
-//   the agent said                  the chat shows
-//   --------------                  --------------
-//   call / result                   a dynamic tool part, so the trail of work is visible
-//   ask                             a data part the composer draws a yes/no on
-//   answer                          the assistant's text
-//   stop = budget | error           the text, plus a line saying why it ended
-//
-// It does not stream tokens, because `src/provider.lua` explicitly streams nothing and the
-// alternative is a second wire format to keep in step. What it streams is *work* — which is
-// what somebody watching an editing agent actually wants to see.
+// It does not stream tokens. What it streams is *work*, which is what somebody watching an
+// editing agent wants to see. Approvals and connections are not in the chat: they are rows the
+// connect sheet (`src/connect/`) brings to the front, whoever raised them.
 
 import type { ChatTransport, UIMessage, UIMessageChunk } from "ai";
 
@@ -22,13 +19,6 @@ import type { TurnChunk } from "../types";
 
 /** The custom parts this transport can put in a message. */
 export type StudioData = {
-  ask: {
-    id: number;
-    tool: string;
-    args: unknown;
-    reason: string | null;
-    can_remember: boolean;
-  };
   ended: { stop: string; reason?: string | null; steps?: number };
 };
 
@@ -55,14 +45,7 @@ export function historyOf(messages: UIMessage[]): { role: string; text: string }
 /** What a tool call is doing, said in the words the tools are named for. */
 export function working(tool: string): string {
   const named: Record<string, string> = {
-    holds: "Looking at the composition",
-    at: "Checking one moment",
-    shows: "Checking the picture",
-    change: "Changing the composition",
-    undo: "Putting it back",
-    export: "Rendering",
-    repaint: "Asking the pixel model",
-    // Tablua's verbs (`run.rs` reads them off the run's log)
+    // Tablua's verbs, as `run.rs` reads them off the run's log
     brief: "Reading the composition",
     look: "Looking at the picture",
     expect: "Writing down what it should do",
@@ -162,20 +145,6 @@ export function studioTransport(opts: TransportOptions): ChatTransport<StudioMes
                     dynamic: true,
                   });
                 }
-                break;
-              }
-              case "ask": {
-                controller.enqueue({
-                  type: "data-ask",
-                  id: `ask-${chunk.id}`,
-                  data: {
-                    id: chunk.id,
-                    tool: chunk.tool,
-                    args: chunk.args,
-                    reason: chunk.reason,
-                    can_remember: chunk.can_remember,
-                  },
-                });
                 break;
               }
               case "answer": {

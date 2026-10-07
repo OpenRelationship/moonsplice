@@ -96,7 +96,7 @@ fn play(engine: &Engine, w: u32, h: u32, secs: f64) -> Pass {
 const PANE: (u32, u32) = (960, 540);
 
 fn case(root: &Path, name: &str) -> PathBuf {
-    root.join("evals/cases").join(format!("{name}.lua"))
+    root.join("comps/cases").join(format!("{name}.lua"))
 }
 
 #[test]

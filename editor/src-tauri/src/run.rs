@@ -13,13 +13,25 @@
 use std::io::{BufRead, BufReader, Read};
 use std::path::PathBuf;
 use std::process::{Child, Command, Stdio};
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
 use serde_json::{json, Value};
 use tauri::ipc::Channel;
 
-use crate::agent::Cancel;
+/// The person's stop, shared with the thread that kills the run.
+#[derive(Clone, Default)]
+pub(crate) struct Cancel(Arc<AtomicBool>);
+
+impl Cancel {
+    pub(crate) fn stop(&self) {
+        self.0.store(true, Ordering::SeqCst);
+    }
+    pub(crate) fn stopped(&self) -> bool {
+        self.0.load(Ordering::SeqCst)
+    }
+}
 
 /// One `[step N] tool -> outcome` line, or nothing.
 pub(crate) fn step(line: &str) -> Option<(u32, String, String)> {

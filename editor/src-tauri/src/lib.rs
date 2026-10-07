@@ -13,12 +13,10 @@
 //! | project   | `moonsplice.json`                 | yes                  |
 //! | ephemeral | React (playhead, zoom, tab)    | never leaves the UI  |
 
-pub mod agent;
 pub mod engine;
 pub mod perf;
 pub mod queue;
 pub mod frames;
-pub mod headless;
 pub mod lower;
 pub mod net;
 pub mod project;
@@ -36,7 +34,7 @@ use serde::{Deserialize, Serialize};
 use tauri::ipc::Channel;
 use tauri::{AppHandle, Emitter, Manager, State};
 
-use crate::agent::{Cancel, Decision, Said};
+use crate::run::Cancel;
 use crate::engine::{Engine, EngineMeta};
 use crate::frames::{Frame, FrameCache, FrameKey};
 use crate::lower::{Edit, EditRefusal, NodeRef};
@@ -120,7 +118,6 @@ pub struct Studio {
     serve_dir: PathBuf,
     /// The turn in flight, and the question it is waiting on.
     turn: Mutex<Option<Cancel>>,
-    pending: Mutex<HashMap<u64, std::sync::mpsc::Sender<Decision>>>,
     /// What every sound the app has looked at looks like. See `waveform.rs`.
     shapes: Arc<waveform::Waveforms>,
 }
@@ -135,7 +132,6 @@ impl Studio {
             frames: std::sync::OnceLock::new(),
             serve_dir,
             turn: Mutex::new(None),
-            pending: Mutex::new(HashMap::new()),
             shapes: Arc::new(waveform::Waveforms::new()),
         }
     }
@@ -366,7 +362,6 @@ pub fn run() {
             drop_paths,
             export,
             ask_agent,
-            answer_ask,
             stop_turn,
             set_key,
             key_is_set,

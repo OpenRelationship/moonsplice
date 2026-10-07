@@ -10,10 +10,8 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import clsx from "clsx";
 
-import { bridge, why } from "../bridge";
 import { activeTab, useStudio } from "../state";
 import { Button, Empty, Icon } from "../ui/bits";
-import { describeAsk } from "./describe";
 import { Said } from "./Said";
 import { studioTransport, working, type StudioMessage } from "./transport";
 
@@ -25,7 +23,6 @@ const SUGGESTIONS = [
 
 export function Agent() {
   const tab = useStudio((s) => activeTab(s));
-  const say = useStudio((s) => s.say);
   const activeRef = useRef<string | null>(null);
   activeRef.current = tab?.variation ?? null;
 
@@ -82,7 +79,7 @@ export function Agent() {
         ) : (
           <ol className="flex flex-col gap-3">
             {messages.map((m) => (
-              <Message key={m.id} message={m} onSay={say} />
+              <Message key={m.id} message={m} />
             ))}
           </ol>
         )}
@@ -148,13 +145,7 @@ export function Agent() {
   );
 }
 
-function Message({
-  message,
-  onSay,
-}: {
-  message: StudioMessage;
-  onSay: (tone: "said" | "refused" | "working", text: string) => void;
-}) {
+function Message({ message }: { message: StudioMessage }) {
   if (message.role === "user") {
     return (
       <li className="rise self-end">
@@ -180,9 +171,6 @@ function Message({
         }
         if (part.type === "dynamic-tool") {
           return <Working key={i} name={part.toolName} state={part.state} />;
-        }
-        if (part.type === "data-ask") {
-          return <Approval key={i} data={part.data} onSay={onSay} />;
         }
         if (part.type === "data-ended") {
           return <Ended key={i} data={part.data} />;
@@ -228,67 +216,5 @@ function Ended({ data }: { data: { stop: string; reason?: string | null } }) {
       {word}
       {data.reason ? ` ${data.reason}` : null}
     </p>
-  );
-}
-
-/** The gate, drawn where the work is. A refusal is an answer, so "No" is not destructive
- *  styling — it is one of two ordinary choices. */
-function Approval({
-  data,
-  onSay,
-}: {
-  data: {
-    id: number;
-    tool: string;
-    args: unknown;
-    reason: string | null;
-    can_remember: boolean;
-  };
-  onSay: (tone: "said" | "refused" | "working", text: string) => void;
-}) {
-  const [answered, setAnswered] = useState<null | "yes" | "no">(null);
-
-  const answer = async (allow: boolean, remember?: "tool") => {
-    setAnswered(allow ? "yes" : "no");
-    try {
-      await bridge.answerAsk(data.id, allow, remember);
-    } catch (e) {
-      onSay("refused", why(e));
-    }
-  };
-
-  const summary = describeAsk(data.tool, data.args);
-
-  if (answered) {
-    return (
-      <p className="text-[11.5px] text-[var(--text-3)]">
-        {answered === "yes" ? "You allowed it." : "You turned it down."}
-      </p>
-    );
-  }
-
-  return (
-    <div
-      className="rise rounded-[var(--radius)] border p-2.5"
-      style={{ borderColor: "var(--pin-dim)", background: "var(--ink-2)" }}
-    >
-      <p className="text-[12.5px] text-[var(--text-1)]">{summary}</p>
-      {data.reason ? (
-        <p className="pt-0.5 text-[11.5px] text-[var(--text-3)]">{data.reason}</p>
-      ) : null}
-      <div className="flex items-center gap-1.5 pt-2">
-        <Button tone="solid" onClick={() => void answer(true)}>
-          Do it
-        </Button>
-        <Button tone="quiet" onClick={() => void answer(false)}>
-          Not this time
-        </Button>
-        {data.can_remember ? (
-          <Button tone="ghost" onClick={() => void answer(true, "tool")}>
-            Always
-          </Button>
-        ) : null}
-      </div>
-    </div>
   );
 }

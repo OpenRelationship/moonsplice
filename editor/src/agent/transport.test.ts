@@ -1,7 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
 import type { TurnChunk } from "../types";
-import { describeAsk } from "./describe";
 import { historyOf, studioTransport, textOf, working } from "./transport";
 
 vi.mock("../bridge", () => {
@@ -93,25 +92,16 @@ describe("the seam between the chat and the turn", () => {
     // give the transport's promise a tick to register the feed
     await Promise.resolve();
     mod.__feed({ event: "start", budget: 20 });
-    mod.__feed({ event: "call", step: 1, call: "c1", tool: "holds", ask: false });
-    mod.__feed({ event: "result", call: "c1", tool: "holds", ok: true, refused: false, size: 40 });
-    mod.__feed({
-      event: "ask",
-      id: 7,
-      tool: "change",
-      args: { why: "softened the bar" },
-      reason: null,
-      can_remember: true,
-    });
-    mod.__feed({ event: "call", step: 2, call: "c2", tool: "change", ask: true });
-    mod.__feed({ event: "result", call: "c2", tool: "change", ok: false, refused: true, size: 0 });
-    mod.__feed({ event: "answer", stop: "answered", answer: "You turned that down." });
+    mod.__feed({ event: "call", step: 1, call: "s1", tool: "brief", ask: false });
+    mod.__feed({ event: "result", call: "s1", tool: "brief", ok: true, refused: false, size: 0 });
+    mod.__feed({ event: "call", step: 2, call: "s2", tool: "set_prop", ask: false });
+    mod.__feed({ event: "result", call: "s2", tool: "set_prop", ok: false, refused: false, size: 0 });
+    mod.__feed({ event: "answer", stop: "answered", answer: "The bar is softer." });
 
     const chunks = (await collected) as { type: string }[];
     const types = chunks.map((c) => c.type);
     expect(types).toContain("tool-input-available");
     expect(types).toContain("tool-output-available");
-    expect(types).toContain("data-ask");
     expect(types).toContain("tool-output-error");
     expect(types.filter((x) => x === "text-delta")).toHaveLength(1);
     expect(types[types.length - 1]).toBe("finish");
@@ -137,33 +127,8 @@ describe("the seam between the chat and the turn", () => {
   });
 
   it("names what a tool is doing in words, never the tool", () => {
-    expect(working("holds")).toBe("Looking at the composition");
-    expect(working("change")).toBe("Changing the composition");
+    expect(working("brief")).toBe("Reading the composition");
+    expect(working("connect")).toBe("Using a connected service");
     expect(working("whatever")).toBe("whatever");
-  });
-});
-
-describe("what an approval asks", () => {
-  it("says the intention, not the arguments", () => {
-    expect(describeAsk("change", { why: "softened the bar", edits: [1, 2] })).toBe(
-      "Change the composition — softened the bar",
-    );
-    expect(describeAsk("change", { edits: [1] })).toBe("Change one thing in the composition");
-    expect(describeAsk("change", { edits: [1, 2, 3] })).toBe(
-      "Change 3 things in the composition",
-    );
-    expect(describeAsk("undo", {})).toBe("Put the composition back the way it was");
-    expect(describeAsk("export", { quality: "high" })).toBe(
-      "Render this composition at high quality",
-    );
-    expect(describeAsk("repaint", { instruction: "remove the sign" })).toBe(
-      "Alter the rendered picture — remove the sign",
-    );
-  });
-
-  it("never shows a JSON blob, even for something it does not know", () => {
-    const said = describeAsk("mystery", { secret: { deep: true } });
-    expect(said).toBe("Run mystery");
-    expect(said).not.toContain("{");
   });
 });

@@ -347,8 +347,8 @@ Phases
     ...    \ \ process's is never changed;
     ...    - stderr is kept per session, which is where "why it would not open" comes from.
     ...
-    ...    One Lua in the app: mlua links one Lua per build, so the Studio moved from Lua 5.4 to LuaJIT,
-    ...    and the agent harness (packages/malleable, written to the subset both accept) runs on it unchanged.
+    ...    One Lua in the app: the engine's LuaJIT. The agent is not Lua in the app any more: it is a Tablua run
+    ...    in its own process (`./moonsplice studio`, started by src-tauri/src/run.rs).
     ...    A session cannot be killed the way a child could. Dropping one hangs up without waiting, and a
     ...    composition stuck in a loop stays stuck until the app exits.
     ...

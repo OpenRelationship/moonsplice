@@ -278,7 +278,7 @@ fn an_unedited_comp_is_unchanged_byte_for_byte() {
     let Some(root) = root() else {
         return eprintln!("skipped: no checkout");
     };
-    let cases: Vec<PathBuf> = std::fs::read_dir(root.join("evals/cases"))
+    let cases: Vec<PathBuf> = std::fs::read_dir(root.join("comps/cases"))
         .unwrap()
         .flatten()
         .map(|e| e.path())

@@ -150,37 +150,6 @@ pub fn place(src: &str, kind: &str, fields: &[(String, String)]) -> EditResult<S
     Ok(format!("{}{}{}", &src[..body_end], line, &src[body_end..]))
 }
 
-/// A block of whole lines, written just before the scene's closing `end` -- the same place
-/// `place` writes its one line, so what was put in last paints in front.
-pub fn insert(src: &str, lua: &str) -> EditResult<String> {
-    let scene = Regex::new(r"scene\s*=\s*function\s*\(\s*(\w+)\s*\)").unwrap();
-    let found = scene.captures(src).ok_or(EditRefusal::NoVerb {
-        gesture: "put something in a composition that has no scene in it".into(),
-    })?;
-    let whole = found.get(0).expect("the match");
-    let var = found.get(1).expect("the scene's own name").as_str();
-    let body_end = find_function_end(src, whole.end()).ok_or(EditRefusal::NotALiteral {
-        what: "the scene".into(),
-    })?;
-    let indent = format!("{}  ", indent_at(src, body_end));
-    // The block is written against a scene called `s`; a composition that named its scene
-    // something else gets the block in its own word.
-    let mut block = String::new();
-    for line in lua.lines() {
-        let line = if var == "s" {
-            line.to_string()
-        } else {
-            line.replace("s:", &format!("{var}:"))
-        };
-        if line.trim().is_empty() {
-            block.push('\n');
-        } else {
-            block.push_str(&format!("{indent}{line}\n"));
-        }
-    }
-    Ok(format!("{}{}{}", &src[..body_end], block, &src[body_end..]))
-}
-
 /// The composition's own numbers, rewritten where `e.comp { ... }` says them.
 ///
 /// Only the head of the table is looked at -- everything before `scene =` -- so a `width` that

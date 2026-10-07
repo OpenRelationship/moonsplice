@@ -1,21 +1,5 @@
 use super::*;
 
-/// One of the project's things, by the name the left pane shows. The agent reads those names and
-/// asks in them, the same way it names a thing in a composition.
-pub(super) fn asset_named(p: &Project, asked: &str) -> Option<AssetView> {
-    let fold = |s: &str| s.trim().to_lowercase();
-    let want = fold(asked);
-    let all = p.view().assets;
-    if let Some(a) = all.iter().find(|a| fold(&a.name) == want || a.id == asked) {
-        return Some(a.clone());
-    }
-    let mut hits = all.iter().filter(|a| fold(&a.name).starts_with(&want));
-    match (hits.next(), hits.next()) {
-        (Some(a), None) => Some(a.clone()),
-        _ => None,
-    }
-}
-
 #[tauri::command]
 pub(super) fn apply_edits(
     app: AppHandle,
