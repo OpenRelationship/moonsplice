@@ -7,9 +7,11 @@ Documentation    Connecting other people's APIs
 ...    library, a post to a channel when the render is done. Connecting a service should take the person
 ...    one step, asked for at the moment it is needed, and the agent must never see the secret.
 ...
-...    This page is the plan (owner, 2026-10-07). Nothing here is built in Moonsplice yet. connectory
-...    already has the half that matters most: its connect port never holds a credential.
-Metadata    Status    plan
+...    Built 2026-10-07 (owner's goal): connectory's port (lua/connect.lua, lua/http.lua, its card lua/library.md),
+...    Tablua's connect tool (core/studio/connect.lua, schema 27), Moonsplice's host (core/connect/), the command
+...    line (./moonsplice connect, ./moonsplice studio) and the editor's sheet (editor/src/connect/,
+...    src-tauri/src/connections.rs). suites/connect runs it end to end. Where this page says plan, it says so.
+Metadata    Status    built; multiple accounts per service, OAuth and spending are not
 
 *** Test Cases ***
 What we take from Grok Bot
@@ -68,10 +70,12 @@ The flow
 The store
     [Documentation]    One store for the editor and the command line, so connecting once works everywhere:
     ...
-    ...    - **macOS:** the login Keychain, service `moonsplice`, account `<SERVICE>/<account>/<FIELD>`
-    ...    (`elevenlabs/default/ELEVENLABS_API_KEY`). The editor reads it through Tauri; the command line
-    ...    through `security find-generic-password`, so no daemon is needed. Other platforms use their own
-    ...    keychain (Secret Service, Windows Credential Manager) behind the same names.
+    ...    - **macOS:** the login Keychain, service `moonsplice`, account the field's name (`ELEVENLABS_API_KEY`;
+    ...    one account per service for now). Both the editor and the command line write through `security -i`,
+    ...    the value on its stdin and never an argument, so the item trusts `security` and the command line,
+    ...    which signs every call, reads it with `security find-generic-password` and no prompt.
+    ...    `MOONSPLICE_KEYCHAIN` names a keychain file instead (the tests use a throwaway one). Other platforms
+    ...    are a plan: their own keychain (Secret Service, Windows Credential Manager) behind the same names.
     ...    - **Environment second:** an environment variable of the field's name is used when the store has none,
     ...    so CI and a one-off shell need no keychain. The store never writes the environment.
     ...    - **Never a file in the project, never a row, never a log line.** AGENTS.md's convention (keys and
@@ -85,14 +89,14 @@ Connections and calls are rows
     [Documentation]    The bet (design.robot) says every fact has a row, and a connection is a fact. What is
     ...    stored as rows is everything but the value:
     ...
-    ...    - `connection`: service, account, the field names present, when connected, the last check
-    ...    (`connect.check(service)`, the directory's own test call) and its result.
-    ...    - `call`: the record connectory returns, keyed to the step that made it, so a learner can see which
-    ...    calls helped.
-    ...    - `approval`: service, operation (or a pattern of them), the answer (once, always, denied), by
-    ...    whom and when.
+    ...    - In Moonsplice's state (`~/.moonsplice/connect.json`, or `$MOONSPLICE_STATE`): `ask` (kind, service,
+    ...    the call, the fields' names and labels, the docs, why, open or settled), `approval` (service, call,
+    ...    once, always or deny, when, and when a once was used) and `connection` (service, field names, when).
+    ...    - In the run's Tablua file: `tablua_connect` (each call a step made: service, op, method, status,
+    ...    seconds, outcome) and `tablua_ask` (what the step asked the person for, and what they were told).
     ...
-    ...    The agent reads these like any other rows, so "is Stripe connected?" is a query, not a question.
+    ...    The agent reads these like any other rows, so "is Stripe connected?" is a query, not a question. A
+    ...    connection's check result is not a row yet; `--record` returns it.
     [Tags]    doc
     Skip    prose
 
@@ -108,38 +112,39 @@ Calls never run at render
 Approvals
     [Documentation]    A read (GET, and the calls a pack marks as reads) runs once the service is connected. Anything
     ...    else waits for the person the first time: allow once, always allow this operation (or this service),
-    ...    or deny. The editor shows it beside the agent's message; the command line asks at the terminal, and a
-    ...    driving agent gets "waiting for approval" with the command a person runs to answer. An agent can
-    ...    never approve its own call. Saved rules are `approval` rows the person can see and revoke.
+    ...    or deny. The editor shows it as a sheet; the command line asks at the terminal, and a driving agent gets
+    ...    "waiting" with the command a person runs to answer. The terminal check keeps an agent from approving
+    ...    its own call on the default path; the editor answers with `--approve ... --from-app`, which an agent
+    ...    with a shell could also reach, so it is a guard, not a boundary (an open question below). Saved
+    ...    answers are `approval` rows.
     [Tags]    doc
     Skip    prose
 
 The command line
     [Documentation]    ```
-    ...    ./moonsplice connect SERVICE [--account NAME] \ \ connect: asks for each missing field, without echo
-    ...    ./moonsplice connect --list \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ every connection, as rows (names only)
+    ...    ./moonsplice connect SERVICE \ \ connect: asks for each missing field, a secret without echo
+    ...    ./moonsplice connect --list | --asks \ \ connections, and what agents wait on the person for
+    ...    ./moonsplice connect --find WORDS | --calls SERVICE | --needs SERVICE \ \ the directory
     ...    ./moonsplice connect --check SERVICE \ \ \ \ \ \ \ \ \ \ \ the directory's test call
-    ...    ./moonsplice connect --forget SERVICE [--account NAME]
-    ...    ./moonsplice connect --find WORDS \ \ \ \ \ \ \ \ \ \ \ \ \ \ services and their calls
+    ...    ./moonsplice connect --approve SERVICE OP [--once|--always|--deny]
+    ...    ./moonsplice connect --call OP [ARGS.json] \ \ \ \ \ \ \ \ one call, for an agent driving the command line
+    ...    ./moonsplice connect --forget SERVICE
+    ...    ./moonsplice studio --comp COMP --ask TEXT \ \ a Tablua run with connect; its JSON line lists the asks
     ...    ```
     ...
-    ...    When stdin is not a terminal (an agent is driving), `connect SERVICE` does not read a secret from it:
-    ...    it prints the command for the person to run and exits 3. A secret is never piped through an agent.
+    ...    When stdin is not a terminal (an agent is driving), `connect SERVICE` and `--approve` do not read
+    ...    from it: they print the command for the person to run and exit 3. `--call` exits 4 while it waits on
+    ...    the person, with what they must do. A secret is never piped through an agent.
     [Tags]    doc
     Skip    prose
 
-Order of work
-    [Documentation]    1. The store: `core/host/secrets.lua` (keychain through `security`, then environment), with
-    ...    a test that a value never reaches rows or logs.
-    ...    2. `./moonsplice connect` on the command line, with the no-echo prompt and the driven-by-an-agent
-    ...    refusal.
-    ...    3. The agent's tools in tablua: find, operations, call, and `ask_connection`, which returns only
-    ...    whether the person connected.
-    ...    4. `connection`, `call` and `approval` rows in rows.robot (P10: the schema first), then approvals.
-    ...    5. The editor's sheet: the service's logo and name, masked fields, the docs link, and the approval
-    ...    prompt in the agent panel.
-    ...    6. OAuth for the services whose packs say `kind = "oauth"` and that need it (a loopback redirect
-    ...    from the editor). API keys come first; many services take either.
+What is not built yet
+    [Documentation]    - More than one account per service (work and personal): one keychain item per field name today.
+    ...    - OAuth for the services that need it (a loopback redirect from the editor); API keys work now.
+    ...    - Other platforms' keychains.
+    ...    - The editor's own agent: it still waits on its move from malleable to Tablua (port/done.robot), so in
+    ...    the app the sheet answers asks raised by a run from the command line (`./moonsplice studio`) or any
+    ...    other agent using `./moonsplice connect`.
     [Tags]    doc
     Skip    prose
 
@@ -149,5 +154,7 @@ Open questions
     ...    - Which calls count as reads when a pack does not say? The method is a start; some POSTs only read.
     ...    - Spending: does a connection carry a budget (a cap on calls or cost per run), and is hitting it a
     ...    finding?
+    ...    - An approval only the person can give: the app's answer goes through a path an agent with a shell
+    ...    could also take. A keychain-guarded or app-signed approval would make it a boundary.
     [Tags]    doc
     Skip    prose

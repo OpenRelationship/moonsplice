@@ -197,6 +197,8 @@ The first command builds the engine once (`cargo build --release` in `native/`),
 | `lint`, `check`, `gate` | Findings, and a one-line state: errors, warnings, expectations held. |
 | `render`, `hash`, `sheet` | An mp4, a hash per frame, or a contact sheet of chosen frames. |
 | `play COMP` | Play a game in a window. |
+| `studio --comp COMP --ask TEXT` | Run the agent on a comp. |
+| `connect SERVICE` | Connect one of 853 services the agent can use; the key goes to your keychain, never to the agent. |
 
 ## Documentation
 

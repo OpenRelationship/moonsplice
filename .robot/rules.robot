@@ -9,7 +9,7 @@ Documentation    Moonsplice: games and videos as Lua comps, a comp being a pure 
 ...    moonsplice    the launcher: execs core/cli (luajit) or the engine
 ...    core/    Lua, one folder per area: moonsplice (the authoring API comps call), runtime (the engine's Lua:
 ...    painter, resolve, render, serve, rows mode), host (Moonsplice as tablua's world: tools, asks, trials), cli
-...    (every command)
+...    (every command), connect (other people's apps: the keychain, asks and approvals)
 ...    native/    Rust, one cargo workspace (engine, scene, render, play, tabicl, solid, decode, track, layout,
 ...    embed, cli, scene3d), and native/apple (Swift for VideoToolbox and Vision)
 ...    editor/    the desktop app: Tauri (src-tauri, its own cargo project) and React (src), driving the engine

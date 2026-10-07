@@ -75,6 +75,7 @@ core/        Lua, one folder per area
   moonsplice/  the authoring API comps call: scene graph, timeline, rows (the schema), lint, game
   runtime/     the engine's Lua: painter, resolve, render, serve, rows mode
   host/        Moonsplice as tablua's world: tools, asks, trials
+  connect/     other people's apps: the keychain store, asks and approvals as rows, the hooks a run calls
   cli/         the command line
 native/      Rust, one cargo workspace: engine (LuaJIT host), scene (rasterizer), render and play (Bevy),
              tabicl (TabICLv2 in Candle), solid (Manifold), decode, track, layout, embed, cli, scene3d;
@@ -115,6 +116,8 @@ Nothing else goes at the root. A new top-level folder is a decision for the owne
 ./moonsplice render COMP -o OUT.mp4          hash COMP     sheet COMP OUT.png --json [--n 6]
 ./moonsplice tabicl                          JSON bodies on stdin, probabilities out
 ./moonsplice play COMP                       a game in a Bevy window
+./moonsplice connect SERVICE | --asks | ...  other people's apps (.robot/docs/connect.robot)
+./moonsplice studio --comp C --ask TEXT      a Tablua run on a comp, with connect
 luajit test/run.lua [word ...]               unit tests (core/**/*_test.lua, tablua's test/spec.lua)
 luajit .robot/run.lua [SUITE] [--tasks]      Robot suites: rules (default), docs/<page>, port, port/done
 luajit .robot/claims.lua                     the claims and their ledger
@@ -213,11 +216,13 @@ compile, and a coroutine timeline at render would break seeking any frame in any
 Two docs describe things that do not exist yet: signals and a coroutine timeline. Treat them as plans. Scripts
 already run once at compile and record keys; that is the storyboard, and no coroutine runs at render.
 
-`.robot/docs/connect.robot` is the plan for connecting other people's APIs through connectory
-(`submodules/connectory`): secrets in the keychain behind `secret(name)` and never in rows, files or the agent's
-context; the agent asks, the person types into a masked field (editor) or a no-echo prompt (`./moonsplice
-connect`); calls run in resolve or as agent steps, their answers become assets, and calls with consequences wait
-for approval. Build to it.
+`.robot/docs/connect.robot` describes how the agent reaches other people's apps through connectory
+(`submodules/connectory`), after Grok Bot's connectors: secrets in the keychain behind `secret(name)`, written
+through `security -i` and never in rows, files, arguments or the agent's context; the agent asks, the person types
+into a masked field (the editor's sheet) or an echo-off prompt (`./moonsplice connect`); calls that change something
+wait for the person's approval. `core/connect` is the host, Tablua's `studio.connect` the tool, `./moonsplice
+studio` a run with it wired in, and `luajit .robot/run.lua suites/connect` the end-to-end test. Never print, log or
+store a credential anywhere else, and never accept one from an agent.
 
 ## Working on the engine
 
