@@ -3,10 +3,16 @@
 -- itself in package.loaded before requiring the parts, and the parts read the shared locals from <TABLE>._.
 --
 --   luajit .robot/port/cut.lua FILE MODNAME TABLE SHARED...   e.g. core/moonsplice/rows.lua moonsplice.rows R copy num
+-- A part is required by its own path (core/runtime/x.lua -> x, core/moonsplice/a/b.lua -> moonsplice.a.b).
 -- Only plans without ranges; a giant function's branches are cut by hand.
 package.path = (arg[0]:match("^(.*)/[^/]+$") or ".") .. "/?.lua;" .. package.path
 local outline = require("outline")
 local splits = require("splits")
+
+local function modof(path)
+  local m = path:gsub("^core/runtime/", ""):gsub("^core/", ""):gsub("%.lua$", ""):gsub("/init$", "")
+  return (m:gsub("/", "."))
+end
 
 local file, modname, T = arg[1], arg[2], arg[3]
 local shared = {}
@@ -51,11 +57,11 @@ local exp = {}
 for _, n in ipairs(shared) do exp[#exp + 1] = n .. " = " .. n end
 rest[#rest + 1] = ""
 rest[#rest + 1] = "-- what the parts share, and the parts (they load after this table is registered as " .. modname .. ")"
-rest[#rest + 1] = T .. "._ = { " .. table.concat(exp, ", ") .. " }"
+rest[#rest + 1] = T .. "._ = {"
+for i = 1, #exp, 4 do rest[#rest + 1] = "  " .. table.concat(exp, ", ", i, math.min(i + 3, #exp)) .. "," end
+rest[#rest + 1] = "}"
 rest[#rest + 1] = "package.loaded[\"" .. modname .. "\"] = " .. T
-for _, p in ipairs(order) do
-  rest[#rest + 1] = "require(\"" .. modname .. "." .. p:match("([^/]+)%.lua$") .. "\")"
-end
+for _, p in ipairs(order) do rest[#rest + 1] = "require(\"" .. modof(p) .. "\")" end
 rest[#rest + 1] = ""
 rest[#rest + 1] = "return " .. T
 
@@ -70,10 +76,11 @@ for _, p in ipairs(order) do
   for _, n in ipairs(shared) do if body:find("%f[%w_]" .. n .. "%f[^%w_]") then used[#used + 1] = n end end
   local out = { "-- Part of " .. modname .. " (" .. plan.rest .. "): see its head for the module's contract.",
     "local " .. T .. " = require(\"" .. modname .. "\")" }
-  if #used > 0 then
-    local rhs = {}
-    for _, n in ipairs(used) do rhs[#rhs + 1] = T .. "._." .. n end
-    out[#out + 1] = "local " .. table.concat(used, ", ") .. " = " .. table.concat(rhs, ", ")
+  -- the shared locals it reads, four to a line
+  for i = 1, #used, 4 do
+    local names, rhs = {}, {}
+    for k = i, math.min(i + 3, #used) do names[#names + 1] = used[k]; rhs[#rhs + 1] = T .. "._." .. used[k] end
+    out[#out + 1] = "local " .. table.concat(names, ", ") .. " = " .. table.concat(rhs, ", ")
   end
   out[#out + 1] = ""
   for _, l in ipairs(parts[p] or {}) do out[#out + 1] = l end

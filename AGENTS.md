@@ -175,6 +175,9 @@ already run once at compile and record keys; that is the storyboard, and no coro
 - `core/moonsplice` is host-free: it never touches the renderer, Rust or the file system. Comps call it.
 - `core/runtime` is the engine's Lua, run by `native/engine` (LuaJIT through mlua). Its modules are required by
   bare name (`require("painter")`); the engine puts `core/runtime` on the path.
+- `core/runtime/boot.lua` and `love.lua` are compiled into the engine (`include_str!`): after editing either,
+  rebuild it (`cargo build --release -p moonsplice-engine` in `native/`) or the old copy keeps running.
+  `boot.lua` also loads `serve/init.lua` by path, so moving a runtime module it names means editing it too.
 - A feature the engine has not ported exits with status 3 and a sentence naming the node and the feature.
 - New node kinds, props or moves: rows first (P12), then lint and check findings, then the painter, then the
   editor and the agent's tools.

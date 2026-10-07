@@ -71,7 +71,7 @@ end
 -- the engine has not ported fails the one request that reached it (core/runtime/love.lua) instead
 -- of ending the session: the outline, the timeline and every frame that does not use it go on.
 package.preload["serve"] = function()
-  local S = load_game_file("serve.lua")()
+  local S = load_game_file("serve/init.lua")()
   local run = S.run
   S.run = function(...)
     ENGINE_SERVING = true

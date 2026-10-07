@@ -95,7 +95,7 @@ P["core/runtime/serve.lua"] = {
   rest = "core/runtime/serve/init.lua",
   modules = {
     ["core/runtime/serve/json.lua"] = { "^esc$", "^qstr$", "^num$", "^enc_", "^encode$", "^S%.encode$" },
-    ["core/runtime/serve/outline.lua"] = { "^humanise$", "^S%.humanise$", "^clip$", "^label_of$", "^CLI_ONLY$",
+    ["core/runtime/serve/outline.lua"] = { "^humanise$", "^S%.humanise$", "^label_of$", "^CLI_ONLY$",
       "^onscreen_of$", "^WHERE_A_FILE_IS$", "^S%.outline$", "^S%.at$" },
   },
 }
@@ -112,9 +112,11 @@ P["core/runtime/main.lua"] = {
 }
 
 P["core/runtime/fx.lua"] = {
-  note = "the GLSL sources are data; the passes that run them stay",
+  note = "fx.lua keeps the GLSL sources and the shader cache; the passes that run them move to fxpass.lua and read "
+    .. "the sources from F._",
   rest = "core/runtime/fx.lua",
-  modules = { ["core/runtime/fxglsl.lua"] = { "^%u%u[%u_]*$", "^F%.convert_shadertoy$", "^F%.preprocess$" } },
+  modules = { ["core/runtime/fxpass.lua"] = { "^F%.canvases$", "^blit$", "^blur_into$", "^pass_", "^kawase_lo$",
+    "^F%.apply$" } },
 }
 
 P["core/moonsplice/demo.lua"] = {
