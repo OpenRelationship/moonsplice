@@ -42,7 +42,7 @@ describe("the listening level", () => {
   it("is the only control in the transport that is not an edit", async () => {
     const fs = await import("node:fs");
     const path = await import("node:path");
-    const src = fs.readFileSync(path.resolve(process.cwd(), "src/stage/Stage.tsx"), "utf8");
+    const src = fs.readFileSync(path.resolve(process.cwd(), "src/stage/Transport.tsx"), "utf8");
     // It has to be reachable without a mouse and nameable by a screen reader, because it is a
     // slider and a slider with no name is a smear of pixels.
     expect(src).toContain('aria-label="How loud the preview is"');
