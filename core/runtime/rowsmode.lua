@@ -397,7 +397,31 @@ function M.expect(comp, opts)
   local before = M.digest(rows)
   local have = {}
   for _, x in ipairs(rows.expect) do have[x.id] = true end
+  local withdrawn = {}
   for _, x in ipairs(list) do
+    -- { withdraw = id, why = reason }: an expectation the run wrote and found wrong comes out, with its
+    -- reason on the record. The harness decides whose rows may be withdrawn (never the seed's); the engine
+    -- only refuses an unknown id or a missing reason.
+    if type(x) == "table" and x.withdraw ~= nil then
+      local bad
+      for k in pairs(x) do if k ~= "withdraw" and k ~= "why" then bad = k end end
+      local reason = bad and ("%s is not a withdraw field (withdraw, why)"):format(tostring(bad))
+        or (type(x.why) ~= "string" or x.why == "") and "a withdrawal needs why: the reason, in words"
+        or not have[x.withdraw] and ("no expect %s to withdraw"):format(tostring(x.withdraw))
+      if reason then
+        rejected[#rejected + 1] = { row = x, why = reason }
+      else
+        for i = #rows.expect, 1, -1 do
+          if rows.expect[i].id == x.withdraw then
+            withdrawn[#withdrawn + 1] = { id = x.withdraw, says = rows.expect[i].says, why = x.why }
+            table.remove(rows.expect, i)
+          end
+        end
+        have[x.withdraw] = nil
+      end
+      goto next_row
+    end
+    do
     local why = expect_why(x)
     if not why and have[x.id] then why = ("expect %s exists already; expectations are never edited"):format(x.id) end
     if not why then
@@ -426,6 +450,8 @@ function M.expect(comp, opts)
       end
     end
     if why then rejected[#rejected + 1] = { row = x, why = why } end
+    end
+    ::next_row::
   end
   R.sort(rows)
   local after = M.digest(rows)
@@ -434,7 +460,7 @@ function M.expect(comp, opts)
     out:write(R.lua(rows)); out:close()
   end
   local fs = findings(opts.comp)
-  io.write(R.json({ added = added, rejected = rejected, digest_before = before, digest_after = after,
+  io.write(R.json({ added = added, withdrawn = withdrawn, rejected = rejected, digest_before = before, digest_after = after,
     findings = fs, state = M.state(rows, fs) }), "\n")
   io.flush()
   return 0

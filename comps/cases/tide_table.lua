@@ -58,11 +58,11 @@ return e.comp {
       color = "#ffcf8a", emissive = "#ffb35c", emissive_strength = 14 },
     { id = "body", kind = "mesh", parent = "gauge", primitive = "cylinder", size = { 0.9, 1.2, 0.9 },
       color = "#b8322a", roughness = 0.45 },
-    { id = "band", kind = "mesh", parent = "gauge", primitive = "cylinder", size = { 0.93, 0.2, 0.93 },
+    { id = "band", kind = "mesh", parent = "body", y = 0.27, primitive = "cylinder", size = { 0.93, 0.2, 0.93 },
       color = "#ece6da", roughness = 0.5 },
-    { id = "topmark", kind = "mesh", parent = "gauge", primitive = "cone", size = { 0.42, 0.55, 0.42 },
+    { id = "topmark", kind = "mesh", parent = "body", y = 0.9, primitive = "cone", size = { 0.42, 0.55, 0.42 },
       color = "#b8322a", roughness = 0.45 },
-    { id = "lamp", kind = "mesh", parent = "gauge", primitive = "sphere", scale = 0.15,
+    { id = "lamp", kind = "mesh", parent = "body", y = 1.27, primitive = "sphere", scale = 0.15,
       color = "#ff5a3d", emissive = "#ff5a3d", emissive_strength = 0 },
     { id = "sun", kind = "light", parent = "gauge", dir = { 0.35, -0.22, 0.9 }, intensity = 0.8, color = "#ffb27a" },
     { id = "fill", kind = "light", parent = "gauge", dir = { -0.4, -0.55, -0.75 }, intensity = 0.9, color = "#9ab8d0" },
@@ -118,11 +118,11 @@ return e.comp {
         local flash = ((t % 4) < 0.5) and 10 or 0          -- Fl R 4s
         local rows = {
           { id = "sea", y = level },
-          { id = "body", x = math.sin(lean) * 0.35, y = y + 0.35, roll = lean },
-          { id = "band", x = math.sin(lean) * 0.62, y = y + 0.62, roll = lean },
-          { id = "topmark", x = math.sin(lean) * 1.25, y = y + 1.25, roll = lean },
-          { id = "lamp", x = math.sin(lean) * 1.62, y = y + 1.62, emissive_strength = flash },
-          { id = "glow", parent = "gauge", light = "point", pos = { math.sin(lean) * 1.7, y + 1.7, 0 }, color = "#ff5a3d",
+          -- the body pivots about the waterline (0.35 below its centre); band, topmark and lamp are its
+          -- children, so they lean with it. A positive roll tips the top toward -x.
+          { id = "body", x = -math.sin(lean) * 0.35, y = y + math.cos(lean) * 0.35, roll = lean },
+          { id = "lamp", emissive_strength = flash },
+          { id = "glow", parent = "gauge", light = "point", pos = { -math.sin(lean) * 1.7, y + math.cos(lean) * 1.7, 0 }, color = "#ff5a3d",
             intensity = flash > 0 and 90000 or 0, range = 7 },
           { id = "quaylight", parent = "gauge", light = "point", pos = { -3.2, 3.1, -6.6 }, color = "#ffb35c",
             intensity = 140000, range = 10, shadows = true },
