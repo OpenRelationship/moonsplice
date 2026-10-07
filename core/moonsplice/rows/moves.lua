@@ -326,30 +326,68 @@ table.sort(R.MOVES)
 
 -- Apply patches in order. Each is checked by `check(rows)` after it lands (a compile, by the host);
 -- one that fails is undone and reported, and the rest still apply.
+-- One move's shape, applied to rows in place; the comp check comes after. ok, err.
+local function shape(rows, p, touched)
+  local move = MOVES[p.move or ""]
+  if not move then return false, "unknown move " .. tostring(p.move) .. " (" .. table.concat(R.MOVES, ", ") .. ")" end
+  local ok, err = pcall(move, rows, p, touched)
+  if ok then R.sort(rows) end
+  return ok, err
+end
+
+local function restore(rows, before)
+  for k in pairs(rows) do rows[k] = nil end
+  for k, v in pairs(before) do rows[k] = v end
+end
+
+-- A patch is a batch: moves that only work together (a game.init that sets state and the hud that reads it)
+-- must land together. So the batch is applied whole and checked once. When that fails, each move is tried
+-- alone, in order, and the ones refused are tried again against what has landed until nothing more lands;
+-- a move is refused with the error it raised last.
 function R.apply(rows, patches, check)
   local res = { applied = {}, rejected = {}, touched = {} }
+  local start = copy(rows)
+  local whole, all_ok = {}, true
   for _, p in ipairs(patches) do
-    local before = copy(rows)
-    local touched = {}
-    local move = MOVES[p.move or ""]
-    local ok, err
-    if not move then
-      ok, err = false, "unknown move " .. tostring(p.move) .. " (" .. table.concat(R.MOVES, ", ") .. ")"
-    else
-      ok, err = pcall(move, rows, p, touched)
+    local ok = shape(rows, p, whole)
+    if not ok then all_ok = false break end
+  end
+  local together
+  if all_ok then
+    local ok, err = true, nil
+    if check then ok, err = pcall(check, rows) end
+    if ok then
+      for _, p in ipairs(patches) do res.applied[#res.applied + 1] = p end
+      res.touched = whole
+      return res
+    end
+    -- the batch as a whole fails: that error names what the patch as written breaks, and leads each refusal
+    together = (tostring(err):gsub("^moonsplice rows: ", ""))
+  end
+  restore(rows, start)
+  local pending, why = {}, {}
+  for i, p in ipairs(patches) do pending[#pending + 1] = i end
+  repeat
+    local landed, still = false, {}
+    for _, i in ipairs(pending) do
+      local p, before, touched = patches[i], copy(rows), {}
+      local ok, err = shape(rows, p, touched)
+      if ok and check then ok, err = pcall(check, rows) end
       if ok then
-        R.sort(rows)
-        if check then ok, err = pcall(check, rows) end
+        landed = true
+        res.applied[#res.applied + 1] = p
+        for _, t in ipairs(touched) do res.touched[#res.touched + 1] = t end
+      else
+        restore(rows, before)
+        why[i], still[#still + 1] = err, i
       end
     end
-    if ok then
-      res.applied[#res.applied + 1] = p
-      for _, t in ipairs(touched) do res.touched[#res.touched + 1] = t end
-    else
-      for k in pairs(rows) do rows[k] = nil end
-      for k, v in pairs(before) do rows[k] = v end
-      res.rejected[#res.rejected + 1] = { patch = p, why = tostring(err):gsub("^moonsplice rows: ", "") }
-    end
+    pending = still
+  until not landed or #pending == 0
+  for _, i in ipairs(pending) do
+    local alone = (tostring(why[i]):gsub("^moonsplice rows: ", ""))
+    res.rejected[#res.rejected + 1] = { patch = patches[i],
+      why = together and #patches > 1 and ("with the whole patch applied: %s (this move alone: %s)"):format(together, alone) or alone }
   end
   return res
 end
