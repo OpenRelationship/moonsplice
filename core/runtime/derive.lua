@@ -42,7 +42,7 @@ end
 
 local function root()
   return os.getenv("MOONSPLICE_ROOT")
-    or (love.filesystem and love.filesystem.getSource and love.filesystem.getSource():gsub("/runtime/?$", ""))
+    or (love.filesystem and love.filesystem.getSource and love.filesystem.getSource():gsub("/core/runtime/?$", ""))
     or "."
 end
 
@@ -81,7 +81,7 @@ local function run(cmd, what)
 end
 
 local function apple()
-  local bin = root() .. "/native/release/moonsplice-apple"
+  local bin = root() .. "/native/target/release/moonsplice-apple"
   if exists(bin) and not os.getenv("MOONSPLICE_NO_VT") then return bin end
 end
 

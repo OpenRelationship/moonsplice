@@ -3,7 +3,7 @@
 local N = {}
 
 function N.root()
-  return love.filesystem.getSource():gsub("/runtime/?$", "")
+  return love.filesystem.getSource():gsub("/core/runtime/?$", "")
 end
 
 function N.extension()
@@ -13,7 +13,7 @@ function N.extension()
 end
 
 function N.lib(name)
-  local dir = os.getenv("MOONSPLICE_NATIVE") or (N.root() .. "/native/release")
+  local dir = os.getenv("MOONSPLICE_NATIVE") or (N.root() .. "/native/target/release")
   local prefix = (jit and jit.os == "Windows") and "" or "lib"
   return dir .. "/" .. prefix .. name .. N.extension()
 end

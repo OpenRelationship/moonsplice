@@ -1,0 +1,4 @@
+#!/bin/sh
+# Moonsplice's one command: core/cli in LuaJIT. `./moonsplice` alone lists what it does.
+root=$(cd "$(dirname "$0")" && pwd)
+exec luajit "$root/core/cli/init.lua" "$root" "$@"

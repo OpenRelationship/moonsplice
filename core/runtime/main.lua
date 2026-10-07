@@ -107,7 +107,7 @@ end
 
 local function load_comp(path, fps_override, host_opts)
   -- lib/ is host-free pure Lua; make require("moonsplice") resolve to it.
-  local root = love.filesystem.getSource():gsub("/runtime/?$", "")
+  local root = love.filesystem.getSource():gsub("/core/runtime/?$", "")
   package.path = root .. "/core/?.lua;" .. root .. "/core/?/init.lua;" .. package.path
 
   -- Host reads sidecar / CLI JSON before the sandbox; core/moonsplice never opens files.

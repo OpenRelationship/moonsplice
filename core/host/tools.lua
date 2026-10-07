@@ -5,7 +5,7 @@ local json = require("ports.json")
 
 local T = {}
 
-local function bin() return H.root .. "/bin/moonsplice" end
+local function bin() return H.root .. "/moonsplice" end
 
 local function decode(out)
   local body = out:match("(%{\"schema\".*%})")

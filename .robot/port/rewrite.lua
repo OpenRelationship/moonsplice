@@ -55,6 +55,12 @@ M.by_ext = {
     { 'PathBuf::from("runtime")', 'PathBuf::from("core/runtime")' },
   },
   lua = {
+    -- the runtime finds the repo as its own folder's parent's parent now (core/runtime)
+    { 'getSource():gsub("/runtime/?$", "")', 'getSource():gsub("/core/runtime/?$", "")' },
+    { '"/native/release', '"/native/target/release' },
+    { '/bin/moonsplice"', '/moonsplice"' },          -- the launcher is at the root now
+    { '%s/bin/moonsplice %s', '%s/moonsplice %s' },
+    { '(native/release has', '(native/target/release has' },
     { '"/lib/?.lua;"', '"/core/?.lua;"' },
     { '"/lib/?/init.lua;"', '"/core/?/init.lua;"' },
   },

@@ -6,3 +6,12 @@ editor/.tauri-plugin-mcp/
 editor/node_modules/
 editor/dist/
 editor/src-tauri/target/
+# eval fixtures downloaded by `moonsplice eval --fetch` (.robot/eval/assets.json), as in Cadence
+comps/assets/*.webm
+comps/assets/*.ogg
+comps/assets/*.jpg
+comps/assets/fonts/
+comps/assets/compass.svg
+comps/assets/helium_atom.svg
+comps/assets/nasa_worm.svg
+comps/assets/android_wave.json

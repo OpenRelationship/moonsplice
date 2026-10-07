@@ -1498,7 +1498,7 @@ end
 
 -- The first node scene/ cannot draw, in words, or nil when it can draw them all.
 function P.scene_blocker(comp)
-  if not scene_builder then return "the scene renderer (native/release has no moonsplice-scene)" end
+  if not scene_builder then return "the scene renderer (native/target/release has no moonsplice-scene)" end
   for _, n in ipairs(comp.nodes) do
     if not SKIP_DRAW[n.kind] and not scene_owns(n) then
       local i, what = n.initial, nil

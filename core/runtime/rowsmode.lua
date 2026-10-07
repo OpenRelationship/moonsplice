@@ -10,7 +10,7 @@ end
 
 local function root()
   return os.getenv("MOONSPLICE_ROOT")
-    or (love.filesystem and love.filesystem.getSource and love.filesystem.getSource():gsub("/runtime/?$", "")) or "."
+    or (love.filesystem and love.filesystem.getSource and love.filesystem.getSource():gsub("/core/runtime/?$", "")) or "."
 end
 
 local function q(s) return "'" .. tostring(s):gsub("'", "'\\''") .. "'" end
@@ -244,7 +244,7 @@ end
 findings_of = function(path, only)
   local out = {}
   for _, tier in ipairs(only and { only } or { "lint", "check" }) do
-    local p = assert(_MOONSPLICE_POPEN(("%s/bin/moonsplice %s %s --json 2>&1"):format(q(root()), tier, q(path)), "r"))
+    local p = assert(_MOONSPLICE_POPEN(("%s/moonsplice %s %s --json 2>&1"):format(q(root()), tier, q(path)), "r"))
     local text = p:read("*a")
     p:close()
     local body = text:match("(%{\"schema\".*%})")

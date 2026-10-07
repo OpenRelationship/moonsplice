@@ -36,7 +36,7 @@ local function localize(src)
   local ext = src:match("^https?://[^?#]*%.(%w+)[?#]?")
   if src:match("^https?://") and not (ext and MEDIA_EXT[ext:lower()]) then
     local root = os.getenv("MOONSPLICE_ROOT")
-      or (love.filesystem and love.filesystem.getSource and love.filesystem.getSource():gsub("/runtime/?$", ""))
+      or (love.filesystem and love.filesystem.getSource and love.filesystem.getSource():gsub("/core/runtime/?$", ""))
       or "."
     local ok, out = sh(("'%s/bin/moonsplice-fetch' '%s'"):format(root, src:gsub("'", "'\\''")))
     local path = out:match('"path": "([^"]+)"')
@@ -360,7 +360,7 @@ end
 local function moonsplice_audio_bin()
   local root = (os.getenv("MOONSPLICE_ROOT") or (N and N.root and N.root()))
   if not root then
-    root = love.filesystem and love.filesystem.getSource and love.filesystem.getSource():gsub("/runtime/?$", "")
+    root = love.filesystem and love.filesystem.getSource and love.filesystem.getSource():gsub("/core/runtime/?$", "")
   end
   root = root or "."
   local p = root .. "/bin/moonsplice-audio"
@@ -639,7 +639,7 @@ function R.media(nodes, fps)
         tostring(i.seed or "") }, "|")) .. ".png"
       if not exists(dst) then
         local root = os.getenv("MOONSPLICE_ROOT")
-          or (love.filesystem and love.filesystem.getSource and love.filesystem.getSource():gsub("/runtime/?$", "")) or "."
+          or (love.filesystem and love.filesystem.getSource and love.filesystem.getSource():gsub("/core/runtime/?$", "")) or "."
         local cmd = ("'%s/bin/moonsplice-minimax' image --prompt %q --out %q --aspect %s"):format(root, i.prompt, dst, aspect)
         if i.seed then cmd = cmd .. " --seed " .. tonumber(i.seed) end
         if i.model then cmd = cmd .. (" --model %q"):format(i.model) end
