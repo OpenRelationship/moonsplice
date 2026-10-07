@@ -177,16 +177,16 @@ impl Paths {
         Paths::resolve_as(root, "editor")
     }
 
-    /// The same, with another declaration from `editor/core/host/`: `editor` is the app's,
+    /// The same, with another declaration from `editor/agent/`: `editor` is the app's,
     /// `producer` is the one that builds a piece from footage (`moonsplice agent`'s default).
     pub fn resolve_as(root: &Path, declaration: &str) -> Result<Paths, String> {
         let malleable = root.join("packages/malleable");
         let declaration = if declaration.ends_with(".lua") {
             PathBuf::from(declaration)
         } else {
-            root.join(format!("editor/core/host/{declaration}.lua"))
+            root.join(format!("editor/agent/{declaration}.lua"))
         };
-        let host = root.join("editor/core/host/host.lua");
+        let host = root.join("editor/agent/host.lua");
         for p in [&malleable, &declaration, &host] {
             if !p.exists() {
                 return Err(format!("{} is not where the app expected it", p.display()));

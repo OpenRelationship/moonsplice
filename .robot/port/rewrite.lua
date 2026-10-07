@@ -42,6 +42,9 @@ M.paths = {
   { "~/tablua/", "tablua/" },
 }
 
+-- an old path that means something else inside some files: the editor has its own agent/ folder
+M.skip = { ["agent/"] = "^editor/", ["agent/runs/"] = "^editor/" }
+
 -- docs/NAME.md -> .robot/docs/name.robot, for every page under docs/
 M.patterns = {
   { "docs/([%w_]+)%.md", function(name) return ".robot/docs/" .. name:lower():gsub("_", "-") .. ".robot" end },
@@ -77,7 +80,8 @@ M.by_path = {
   },
 }
 
-local PATHCHAR = "[%w_%./%-]"
+-- \2 ends a rewritten path's token: what follows it continues that path and is not a path of its own
+local PATHCHAR = "[%w_%./%-\2]"
 
 local function plain(s) return (s:gsub("[%^%$%(%)%%%.%[%]%*%+%-%?]", "%%%0")) end
 
@@ -118,8 +122,11 @@ function M.text(text, path)
   -- every old path becomes a token first, so no rule rewrites another rule's output
   local tokens = {}
   for i, r in ipairs(M.paths) do
-    local n
-    text, n = at_start(text, r[1], "\1" .. i .. "\2"); total = total + n
+    local n = 0
+    if not (M.skip[r[1]] and path:find(M.skip[r[1]])) then
+      text, n = at_start(text, r[1], "\1" .. i .. "\2")
+    end
+    total = total + n
     tokens[i] = r[2]
   end
   for _, p in ipairs(M.patterns) do

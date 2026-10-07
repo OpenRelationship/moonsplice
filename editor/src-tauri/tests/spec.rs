@@ -179,7 +179,7 @@ fn the_core_names_no_vendor() {
 
     // The app reaches the model through the host's own transport, so the one place a vendor is
     // named on this path is the app's own declaration, and it names it as configuration.
-    let decl = std::fs::read_to_string(root.join("editor/core/host/editor.lua")).unwrap();
+    let decl = std::fs::read_to_string(root.join("editor/agent/editor.lua")).unwrap();
     assert!(
         decl.contains("openrouter:"),
         "the app should name its provider in its declaration, not in the core"

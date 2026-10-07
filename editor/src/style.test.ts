@@ -70,7 +70,7 @@ describe("nothing highlights unless it is meant to", () => {
     // Today that is the agent's side of the conversation and your own side of it. If the list
     // grows it should grow because somebody decided it should.
     const marked = code.filter((f) => /data-selectable/.test(f.text)).map((f) => f.p);
-    expect(marked.map((p) => p.split("/src/")[1])).toEqual(["core/host/Agent.tsx"]);
+    expect(marked.map((p) => p.split("/src/")[1])).toEqual(["agent/Agent.tsx"]);
   });
 
   it("does not leave a utility class lying about that cannot work", () => {

@@ -10,7 +10,7 @@ Metadata    Source    cadence@56ddad1:docs/DIRECTION.md
 1. Why the output is generic today
     [Documentation]    The problem is not the model. Three things in the code produce the generic result:
     ...
-    ...    1. **The prompt asks for the average video.** `editor/core/host/producer.lua` gives a seven-step
+    ...    1. **The prompt asks for the average video.** `editor/agent/producer.lua` gives a seven-step
     ...    \ \ \ recipe (transcript → keep → draw → captions) and a style note: "Vox-style means bold type, a
     ...    \ \ \ restrained palette, clean blocks". A model told to make the typical explainer makes it.
     ...    \ \ \ Nothing asks for an idea.

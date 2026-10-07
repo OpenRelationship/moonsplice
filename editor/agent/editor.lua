@@ -3,7 +3,7 @@
 -- This file builds a table and runs nothing. What it *does* is `editor.feature`, which is
 -- also its test suite:
 --
---     lua packages/malleable/bin/malleable.lua --verify editor/core/host/editor.lua
+--     lua packages/malleable/bin/malleable.lua --verify editor/agent/editor.lua
 --
 -- The app's host (`editor/src-tauri/src/agent.rs`) puts a `moonsplice` table on the port,
 -- and `src/turn.lua` passes any extra port key through to a tool body — so `c.moonsplice` is
