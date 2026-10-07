@@ -74,6 +74,30 @@ local function camera(node)
     near = node.initial.near or 0.05, far = node.initial.far or 200 }
 end
 
+-- rotations as 3x3 row-major matrices, in Bevy's EulerRot::YXZ (R = Ry(yaw) Rx(pitch) Rz(roll))
+local IDENT = { 1, 0, 0, 0, 1, 0, 0, 0, 1 }
+local function mulm(a, b)
+  local m = {}
+  for i = 0, 2 do for j = 0, 2 do
+    m[i * 3 + j + 1] = a[i * 3 + 1] * b[j + 1] + a[i * 3 + 2] * b[j + 4] + a[i * 3 + 3] * b[j + 7]
+  end end
+  return m
+end
+local function mulv(m, v)
+  return { m[1] * v[1] + m[2] * v[2] + m[3] * v[3], m[4] * v[1] + m[5] * v[2] + m[6] * v[3],
+           m[7] * v[1] + m[8] * v[2] + m[9] * v[3] }
+end
+local function euler(y, p, r)
+  local cy, sy, cp, sp, cr, sr = math.cos(y), math.sin(y), math.cos(p), math.sin(p), math.cos(r), math.sin(r)
+  return mulm(mulm({ cy, 0, sy, 0, 1, 0, -sy, 0, cy }, { 1, 0, 0, 0, cp, -sp, 0, sp, cp }), { cr, -sr, 0, sr, cr, 0, 0, 0, 1 })
+end
+local function angles(m)
+  local m23 = math.max(-1, math.min(1, m[6]))
+  local pitch = math.asin(-m23)
+  if math.abs(m23) < 0.9999999 then return math.atan2(m[3], m[9]), pitch, math.atan2(m[4], m[5]) end
+  return math.atan2(-m[7], m[1]), pitch, 0
+end
+
 local MESH_PROPS = { "metallic", "roughness", "reflectance", "emissive_strength", "unlit", "double_sided", "detail" }
 
 function W.document(comp, node, t)
@@ -88,9 +112,26 @@ function W.document(comp, node, t)
     entities = {},
   }
   local rows, lit = doc.entities, false
+  -- a mesh or light may sit under a mesh: its x/y/z, yaw/pitch/roll and scale are then its parent's
+  -- frame, so an assembly (a buoy's body, band, topmark and lamp) moves and rolls as one. `size`
+  -- stays the part's own; only position, rotation and the uniform scale compose.
+  local frame = { [node] = { p = { 0, 0, 0 }, r = IDENT, s = 1 } }
   for _, child in ipairs(comp.nodes) do
-    if child.initial.parent == node then
+    local up = child.initial.parent
+    local pf = up and frame[up]
+    if pf and (up == node or up.kind == "mesh") and (child.kind == "mesh" or child.kind == "light") then
       local ci = child.initial
+      local lp = { child:get("x") or 0, child:get("y") or 0, child:get("z") or 0 }
+      local lr = euler(child:get("yaw") or 0, child:get("pitch") or 0, child:get("roll") or 0)
+      local ls = child:get("scale") or 1
+      local rp = mulv(pf.r, { lp[1] * pf.s, lp[2] * pf.s, lp[3] * pf.s })
+      local wf = { p = { pf.p[1] + rp[1], pf.p[2] + rp[2], pf.p[3] + rp[3] }, r = mulm(pf.r, lr),
+        s = pf.s * (type(ls) == "number" and ls or 1) }
+      frame[child] = wf
+      -- a world's own child keeps its angles as written (no round trip through a matrix)
+      local yaw, pitch, roll
+      if up == node then yaw, pitch, roll = child:get("yaw") or 0, child:get("pitch") or 0, child:get("roll") or 0
+      else yaw, pitch, roll = angles(wf.r) end
       if child.kind == "light" then
         lit = true
         -- type says which light; directional unless it says point or spot. (Every node carries x = 0
@@ -101,18 +142,18 @@ function W.document(comp, node, t)
           id = child.id or tostring(#rows), light = kind,
           color = rgba(child:get("color") or ci.color or "#ffffff"),
           intensity = (child:get("intensity") or ci.intensity or 1) * (kind == "directional" and 3500 or 900000),
-          dir = ci.dir, pos = { child:get("x") or 0, child:get("y") or 0, child:get("z") or 0 },
+          dir = ci.dir and (up == node and ci.dir or mulv(pf.r, ci.dir)), pos = wf.p,
           range = ci.range, shadows = ci.shadows, angle = ci.angle,
         }
       elseif child.kind == "mesh" then
         local sc = child:get("scale") or 1
+        if type(sc) == "number" then sc = wf.s end
         local row = {
           id = child.id or tostring(#rows),
           shape = (ci.primitive ~= "gltf") and ci.primitive or nil,
           src = (ci.primitive == "gltf" and not (child.file or ""):match("%.msh$")) and child.file or nil,
           solid = (child.file or ""):match("%.msh$") and child.file or nil,
-          pos = { child:get("x") or 0, child:get("y") or 0, child:get("z") or 0 },
-          yaw = child:get("yaw") or 0, pitch = child:get("pitch") or 0, roll = child:get("roll") or 0,
+          pos = wf.p, yaw = yaw, pitch = pitch, roll = roll,
           scale = sc, size = ci.size,
           color = rgba(child:get("color") or ci.color or { 0.85, 0.88, 0.92, 1 }, child:get("opacity") or 1),
           emissive = rgba(child:get("emissive") or ci.emissive),

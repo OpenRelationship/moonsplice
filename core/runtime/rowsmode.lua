@@ -169,7 +169,10 @@ local function brief(comp, rows, path)
     end
     w("expect (the ask; fixed, no move edits them):")
     for _, x in ipairs(rows.expect) do
-      w(failing[x.id] and ("  FAIL " .. failing[x.id]) or ("  ok   " .. x.id .. ": " .. (x.says or "")))
+      local when = x.at and (" at " .. tostring(x.at))
+        or (x.t0 or x.t1) and (" over %s..%s%s"):format(tostring(x.t0 or 0), tostring(x.t1 or "end"), x.holds == "ever" and " (ever)" or "")
+        or x.prop and " over the whole piece" or ""
+      w(failing[x.id] and ("  FAIL " .. failing[x.id]) or ("  ok   " .. x.id .. when .. ": " .. (x.says or "")))
     end
   end
   -- findings: errors, then warnings; info left out
@@ -362,6 +365,10 @@ local function expect_why(x)
     if x.at ~= nil and (x.t0 ~= nil or x.t1 ~= nil) then return "give at, or t0..t1, not both" end
     if x.holds ~= nil and x.holds ~= "ever" and x.holds ~= "always" then return 'holds is "ever" or "always"' end
     if x.holds ~= nil and x.at ~= nil then return "holds needs a window (t0..t1), not at" end
+    -- a value checked with no time at all is checked at every frame of the piece; say so, or say when
+    if x.at == nil and x.t0 == nil and x.t1 == nil and x.holds == nil and x.op ~= "has" then
+      return 'say when: at (one instant), t0..t1 (a window), or holds = "always" for every frame of the piece'
+    end
     for _, k in ipairs({ "at", "t0", "t1" }) do
       local v = x[k]
       if v ~= nil and type(v) ~= "number" and type(v) ~= "string" then return k .. " needs seconds or a fact reference" end

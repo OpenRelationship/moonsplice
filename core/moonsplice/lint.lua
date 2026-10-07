@@ -65,6 +65,53 @@ local function oklab_dist(a, b)
   return math.sqrt(d)
 end
 
+-- expect values: a color compares as a color whatever form it is written in ("#f2a541", "f2a541",
+-- {0.95, 0.65, 0.25, 1}, {242, 165, 65, 255}, {r=, g=, b=, a=}), to within one step of 8-bit; a
+-- number to within float noise. Anything else compares as written.
+local function as_rgba(v)
+  if type(v) == "string" then
+    local s = v:gsub("^#", "")
+    if (#s == 3 or #s == 4 or #s == 6 or #s == 8) and s:match("^%x+$") then return color.parse(s) end
+    return nil
+  end
+  if type(v) ~= "table" then return nil end
+  local c = { v[1] or v.r, v[2] or v.g, v[3] or v.b, v[4] or v.a or 1 }
+  for i = 1, 4 do if type(c[i]) ~= "number" then return nil end end
+  if c[1] > 1 or c[2] > 1 or c[3] > 1 or c[4] > 1 then
+    for i = 1, 4 do c[i] = c[i] / 255 end
+  end
+  return c
+end
+local function same(a, b)
+  if type(a) == "number" and type(b) == "number" then return math.abs(a - b) <= 1e-6 * math.max(1, math.abs(b)) end
+  if type(a) == "table" or type(b) == "table" then
+    local ca, cb = as_rgba(a), as_rgba(b)
+    if not (ca and cb) then return false end
+    for i = 1, 4 do if math.abs(ca[i] - cb[i]) > 1.01 / 255 then return false end end
+    return true
+  end
+  if type(a) == "string" and type(b) == "string" and as_rgba(a) and as_rgba(b) and a:match("^#") then
+    return same(as_rgba(a), b)
+  end
+  return a == b
+end
+local shown
+function shown(v)
+  local c = type(v) == "table" and as_rgba(v)
+  if c then
+    local h = ("#%02x%02x%02x"):format(math.floor(c[1] * 255 + 0.5), math.floor(c[2] * 255 + 0.5), math.floor(c[3] * 255 + 0.5))
+    return c[4] < 1 and h .. ("%02x"):format(math.floor(c[4] * 255 + 0.5)) or h
+  end
+  if type(v) == "number" then return ("%.4g"):format(v) end
+  if type(v) == "table" then
+    local parts = {}
+    for i, x in ipairs(v) do parts[i] = shown(x) end
+    return "[" .. table.concat(parts, ", ") .. "]"
+  end
+  return tostring(v)
+end
+L.expect_same, L.expect_shown = same, shown
+
 local function allowed(node, code, comp)
   local la = node and node.initial and node.initial.lint_allow
   if la then for _, c in ipairs(la) do if c == code then return true end end end
@@ -847,7 +894,7 @@ function L.run(comp, opts)
     local byid = {}
     for _, n in ipairs(comp.nodes or {}) do if n.id then byid[n.id] = n end end
     local OPS = {
-      ["=="] = function(a, b) return a == b end, ["~="] = function(a, b) return a ~= b end,
+      ["=="] = function(a, b) return same(a, b) end, ["~="] = function(a, b) return not same(a, b) end,
       [">"] = function(a, b) return type(a) == "number" and a > b end,
       [">="] = function(a, b) return type(a) == "number" and a >= b end,
       ["<"] = function(a, b) return type(a) == "number" and a < b end,
@@ -882,10 +929,10 @@ function L.run(comp, opts)
             if op(v, x.value) then ever = true elseif not bad then bad, badv = t, v end
           end
           if x.holds == "ever" then
-            if not ever then fail(x, badv, ts[1], ts[#ts], ("%s never %s %s"):format(x.prop, x.op or "==", tostring(x.value))) end
+            if not ever then fail(x, badv, ts[1], ts[#ts], ("%s never %s %s"):format(x.prop, x.op or "==", shown(x.value))) end
           elseif bad then
             fail(x, type(badv) == "number" and badv or nil, bad, bad,
-              ("%s is %s at %.2f s, needs %s %s"):format(x.prop, tostring(badv), bad, x.op or "==", tostring(x.value)))
+              ("%s is %s at %.2f s, needs %s %s"):format(x.prop, shown(badv), bad, x.op or "==", shown(x.value)))
           end
         end
       end

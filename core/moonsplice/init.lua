@@ -538,9 +538,12 @@ function Scene:world(p)
   p.far = p.far or 80
   return add(self, "world", p)
 end
--- glTF instance or unit primitive, parented to a world. Transforms are f(t).
+-- glTF instance or unit primitive, parented to a world, or to a mesh in one: a part under a mesh
+-- takes its x/y/z, yaw/pitch/roll and scale in that mesh's frame, so an assembly moves as one.
+-- Transforms are f(t).
+local function in_world(p) return p and (p.kind == "world" or p.kind == "mesh") end
 function Scene:mesh(p)
-  assert(p.parent and p.parent.kind == "world", "moonsplice: mesh{parent=world} required")
+  assert(in_world(p.parent), "moonsplice: mesh{parent=world or mesh} required")
   assert(p.src or p.primitive, "moonsplice: mesh{src= or primitive=} required")
   p.primitive = p.primitive or (p.src and "gltf" or "cube")
   p.x = p.x or 0
@@ -553,7 +556,7 @@ function Scene:mesh(p)
   return add(self, "mesh", p)
 end
 function Scene:light(p)
-  assert(p.parent and p.parent.kind == "world", "moonsplice: light{parent=world} required")
+  assert(in_world(p.parent), "moonsplice: light{parent=world or mesh} required")
   p.dir = p.dir or { -0.4, -1, -0.3 } -- the way the light travels: down and away from a camera on +z
   p.intensity = p.intensity or 1
   p.color = p.color or "#ffffff"
