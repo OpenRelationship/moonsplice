@@ -101,13 +101,11 @@ P["core/runtime/serve.lua"] = {
 }
 
 P["core/runtime/main.lua"] = {
-  note = "main keeps the frame loop (love.run) and the modes; argument and comp loading, and the offline render, "
-    .. "become siblings",
+  note = "main keeps argument and comp loading, the modes and the frame loop (love.run); the offline render "
+    .. "(frame_order, offline) becomes core/runtime/offline.lua, cut by hand since main is a script, not a module",
   rest = "core/runtime/main.lua",
   modules = {
-    ["core/runtime/args.lua"] = { "^parse_args$", "^abs_path$", "^read_inputs_json$", "^merge_kv$",
-      "^resolve_inputs$", "^load_comp$" },
-    ["core/runtime/render.lua"] = { "^frame_order$", "^offline$" },
+    ["core/runtime/offline.lua"] = { "^frame_order$", "^offline$" },
   },
 }
 
