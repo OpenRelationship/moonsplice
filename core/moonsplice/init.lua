@@ -878,7 +878,7 @@ function Comp:compile(hooks, inputs_map)
       _derive = hooks and hooks.derive, _solid = hooks and hooks.solid }, Scene)
   self._views = s.views
   self._scene_fn(s)
-  self.derived = s.derived -- facts a rows comp's assets produced (core/moonsplice/rows.lua)
+  self.derived = s.derived -- facts a rows comp's assets produced (core/moonsplice/rows/)
   self.solids = s.solids -- each solid asset's measurements (.robot/docs/solids.robot)
   self.expect = s.expect -- the ask's predicates, times in seconds (lint: expect_failed)
   self.access, self.spawned = s.access, s.spawned -- what each system writes, filled as it runs
@@ -1007,7 +1007,7 @@ for name, fn in pairs(Scene) do
   end
 end
 
--- what core/moonsplice/rows.lua builds a comp from rows with
+-- what core/moonsplice/rows/ builds a comp from rows with
 M.Scene, M.ANIMATABLE, M.SETTABLE, M.ease = Scene, ANIMATABLE, SETTABLE, require("moonsplice.ease")
 M.NODE_DEFAULTS = node_defaults
 

@@ -175,7 +175,7 @@ function W.document(comp, node, t)
       rows[#rows + 1] = r
     end
   end
-  -- entities a rows system spawned this frame (core/moonsplice/rows.lua): Bevy's rows, by id
+  -- entities a rows system spawned this frame (core/moonsplice/rows/): Bevy's rows, by id
   for _, r in ipairs(node:get("spawn") or {}) do
     local e = {}
     for k, v in pairs(r) do e[k] = v end
