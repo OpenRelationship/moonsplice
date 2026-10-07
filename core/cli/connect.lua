@@ -143,6 +143,8 @@ local function call(C, o, op, file)
     io.stderr:write(("moonsplice connect: %s: %s\n"):format(err.code or "error", err.message or "the call failed"))
     return 1
   end
+  -- a call that works settles what was waiting on the person (a credential from the environment, say)
+  C.state:settle("connect", service, nil, "done")
   return out({ value = value, record = err }, o.json, json.encode(value))
 end
 
