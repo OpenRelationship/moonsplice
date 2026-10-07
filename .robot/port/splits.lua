@@ -1,7 +1,7 @@
 -- How each ported file over the limit is cut, by responsibility. Keys are the file's path in Moonsplice; each plan
 -- names the modules it is cut into and which top-level chunks (outline.lua) each takes, as Lua patterns over the
 -- chunk's name; `ranges` hand a giant function's branches or a comp's chapters to a module by line (lines of the
--- ported file at the pinned commit, 56ddad1; the cut lands on the nearest statement boundary). What nothing claims
+-- file in this checkout, re-measured after each fix that lands first (lint.lua: after f7b8971); the cut lands on the nearest statement boundary). What nothing claims
 -- stays in `rest`. The port's tests measure every module from the file itself, so a plan that leaves one over the
 -- limit fails before anyone cuts anything.
 --
@@ -65,11 +65,12 @@ P["core/moonsplice/lint.lua"] = {
     .. "sampled state (states, add, opts) in its own module, called in the same order",
   rest = "core/moonsplice/lint/init.lua",
   ranges = {
-    ["core/moonsplice/lint/motion.lua"] = { { 328, 515 } },   -- motion rules, segment metadata
-    ["core/moonsplice/lint/frame.lua"] = { { 516, 671 } },    -- geometry, colour and brand
-    ["core/moonsplice/lint/audio.lua"] = { { 672, 736 } },
-    ["core/moonsplice/lint/world.lua"] = { { 737, 842 } },    -- solids, 3D framing, keys a system overrides
-    ["core/moonsplice/lint/expect.lua"] = { { 843, 894 } },   -- the ask as predicates
+    ["core/moonsplice/lint/sample.lua"] = { { 272, 374 } },   -- frame-grid sampling: states per node per sample
+    ["core/moonsplice/lint/motion.lua"] = { { 375, 562 } },   -- motion rules, segment metadata
+    ["core/moonsplice/lint/frame.lua"] = { { 563, 718 } },    -- geometry, colour and brand
+    ["core/moonsplice/lint/audio.lua"] = { { 719, 783 } },
+    ["core/moonsplice/lint/world.lua"] = { { 784, 889 } },    -- solids, 3D framing, keys a system overrides
+    ["core/moonsplice/lint/expect.lua"] = { { 890, 941 } },   -- the ask as predicates
   },
 }
 
