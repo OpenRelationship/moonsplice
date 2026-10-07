@@ -1,4 +1,4 @@
--- Runs Moonsplice's Robot suites with tablua's Robot engine (tablua/core/robot, portable Lua).
+-- Runs Moonsplice's Robot suites with tablua's Robot engine (submodules/tablua/core/robot, portable Lua).
 --
 --   luajit .robot/run.lua                       rules.robot, the repository's laws
 --   luajit .robot/run.lua port                  the port's checks, a dry run that writes nothing
@@ -8,7 +8,7 @@
 -- SUITE is a path or a name under .robot/ (rules, port/port, docs/design ...). Exit status 1 when anything failed.
 local here = arg[0]:match("^(.*)/[^/]+$") or "."
 local root = here:match("^(.*)/%.robot$") or (here == ".robot" and ".") or ".."
-local tablua = os.getenv("TABLUA") or (root .. "/tablua")
+local tablua = os.getenv("TABLUA") or (root .. "/submodules/tablua")
 
 package.path = table.concat({
   here .. "/?.lua", here .. "/port/?.lua",

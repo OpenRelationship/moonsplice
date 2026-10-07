@@ -11,12 +11,12 @@ local function abs(p)
 end
 -- the repository: the folder holding core/host/ (from the script's path), else $MOONSPLICE_ROOT, else here
 local script = arg and arg[0] or ""
-H.root = abs(script:match("^(.*)/agent/[^/]+$") or (script:match("^core/host/") and ".")
+H.root = abs(script:match("^(.*)/core/host/[^/]+$") or (script:match("^core/host/") and ".")
   or script:match("^(.*)/%.robot/[^/]+$") or (script:match("^%.robot/") and ".") or os.getenv("MOONSPLICE_ROOT") or ".")
-H.tablua = os.getenv("TABLUA") or ((os.getenv("HOME") or "") .. "/tablua")
+H.tablua = os.getenv("TABLUA") or (H.root .. "/submodules/tablua")
 
 package.path = table.concat({
-  H.root .. "/agent/?.lua", H.root .. "/.robot/?.lua",
+  H.root .. "/core/host/?.lua", H.root .. "/.robot/?.lua",
   H.tablua .. "/core/?.lua", H.tablua .. "/core/?/init.lua",
   H.tablua .. "/.robot/?.lua",
   package.path,

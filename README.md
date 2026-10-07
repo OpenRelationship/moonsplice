@@ -154,7 +154,7 @@ flowchart TB
         bevy["render and play<br/>Bevy for 3D and games"]
         tabicl["tabicl<br/>a tabular model, run locally"]
     end
-    tablua["tablua/<br/>the agent harness (submodule)"]
+    tablua["submodules/tablua<br/>the agent harness"]
 
     editor --> cli --> engine
     engine --> runtime --> api
@@ -170,7 +170,7 @@ flowchart TB
 | `native/` | The Rust that has to be fast: the LuaJIT host, the rasterizer, Bevy, decoding, tracking and TabICL. |
 | `editor/` | The desktop app. Every gesture in it becomes the same typed move the agent uses. |
 | `comps/` | Example and test compositions with their media. |
-| `tablua/` | The agent harness, developed in [its own repository](https://github.com/OpenRelationship/tablua). |
+| `submodules/` | [Tablua](https://github.com/OpenRelationship/tablua), the agent harness, and [connectory](https://github.com/OpenRelationship/connectory), a directory of APIs with each one a Lua file. Both are developed in their own repositories. |
 | `.robot/` | Documentation, rules and tests, all written as Robot Framework suites. |
 
 ## Getting started

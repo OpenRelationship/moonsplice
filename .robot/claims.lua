@@ -1,5 +1,5 @@
 -- Moonsplice's claims, run with tablua's Robot engine and kept in tablua's ledger format
--- (tablua/.robot/README.md: kill numbers written first, a red proof per claim, verdicts
+-- (submodules/tablua/.robot/README.md: kill numbers written first, a red proof per claim, verdicts
 -- holds / KILLED / BROKEN / BLIND / unproven / unknown, runs locked to a commit).
 --
 --   luajit .robot/run.lua [word ...]     every claims/*.robot, or those whose path holds a word
@@ -7,7 +7,7 @@
 --   luajit .robot/run.lua history        every claim's verdicts, run by run
 --   luajit .robot/run.lua trials [job]   the trial rows core/host/run.lua wrote
 local here = arg[0]:match("^(.*)/[^/]+$") or "."
-local H = dofile(here .. "/../agent/host.lua")
+local H = dofile(here .. "/../core/host/host.lua")
 local root = H.root .. "/.robot"
 
 local robot = require("robot")

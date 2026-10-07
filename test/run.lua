@@ -1,9 +1,9 @@
 -- Runs Moonsplice's unit tests: every core/**/*_test.lua, each in its own process, with core/, core/runtime/ and
--- tablua's test library (tablua/test/spec.lua: test, eq, ok, same, err, run) on the module path.
+-- tablua's test library (submodules/tablua/test/spec.lua: test, eq, ok, same, err, run) on the module path.
 --   luajit test/run.lua            all of them
 --   luajit test/run.lua rows lint  only files whose path holds one of the words
 local root = arg[0]:match("^(.*)/test/run%.lua$") or "."
-local tablua = os.getenv("TABLUA") or (root .. "/tablua")
+local tablua = os.getenv("TABLUA") or (root .. "/submodules/tablua")
 
 local function quote(s) return "'" .. s:gsub("'", "'\\''") .. "'" end
 

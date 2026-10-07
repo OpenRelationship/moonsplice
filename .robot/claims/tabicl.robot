@@ -6,7 +6,7 @@ Documentation    Is the Candle TabICL in Moonsplice's binary (tabicl/, host.tabi
 
 *** Variables ***
 ${FIXTURES}    ~/tablua-local/data/tabicl-parity
-${SHEETS}      tablua/.robot/runs/studio-s*.sqlite
+${SHEETS}      submodules/tablua/.robot/runs/studio-s*.sqlite
 
 *** Test Cases ***
 The Network Matches TabICL's Forward Pass

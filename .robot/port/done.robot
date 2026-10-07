@@ -34,11 +34,11 @@ The Goldens Hold
     Command Succeeds    ./moonsplice golden compare
 
 The Claims Still Run
-    [Documentation]    Cadence's claims, now run by .robot/claims.lua with tablua at tablua/.
+    [Documentation]    Cadence's claims, now run by .robot/claims.lua with tablua at submodules/tablua/.
     Command Succeeds    luajit .robot/claims.lua reds
 
 Tablua Names Moonsplice's Paths
     [Documentation]    tablua's comments and ports.moonsplice still say cadence/docs/ROWS.md, cadence/agent/REFERENCE.md
     ...    and bin/moonsplice. They become .robot/docs/rows.robot, .robot/docs/reference.robot and ./moonsplice in
     ...    a tablua commit, and the submodule is bumped to it.
-    Command Succeeds    ! grep -rn -e 'cadence/' -e 'bin/moonsplice' tablua/core
+    Command Succeeds    ! grep -rn -e 'cadence/' -e 'bin/moonsplice' submodules/tablua/core

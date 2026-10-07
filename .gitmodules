@@ -1,3 +1,6 @@
 [submodule "tablua"]
-	path = tablua
+	path = submodules/tablua
 	url = https://github.com/OpenRelationship/tablua
+[submodule "submodules/connectory"]
+	path = submodules/connectory
+	url = https://github.com/OpenRelationship/connectory

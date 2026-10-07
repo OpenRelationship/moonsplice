@@ -83,7 +83,8 @@ editor/      the desktop app: Tauri (src-tauri, its own cargo project) and React
 comps/       compositions with their media: cases (the eval suite), examples, lessons, film, projects
 assets/      fonts, brand and shared media
 test/        run.lua: every core/**/*_test.lua
-tablua/      the agent harness, a submodule (its own repository and its own AGENTS.md)
+submodules/  other repositories, pinned: tablua (the agent harness) and connectory (a directory of APIs,
+             each one Lua file); each has its own repository and its own AGENTS.md
 .robot/      all Robot: rules.robot, docs/, claims/, golden/, fixtures/, eval/, suites/, port/
 ```
 
@@ -238,15 +239,15 @@ already run once at compile and record keys; that is the storyboard, and no coro
 ## Working with tablua
 
 - tablua is the harness, developed in its own repository (`~/tablua`, `OpenRelationship/tablua`). Never edit
-  `tablua/` here; commit there, push, then bump the pin here with `git -C tablua fetch && git -C tablua checkout
-  <sha>` and a commit.
+  `submodules/tablua` here; commit there, push, then bump the pin here with
+  `git -C submodules/tablua fetch && git -C submodules/tablua checkout <sha>` and a commit.
 - Moonsplice owns the schema, compile, evaluation, rendering, findings and the engine commands. tablua owns the
   moves as the agent sees them, the features, the learner, the ports and the claims runner. A schema change is a
   change to `.robot/docs/rows.robot` first, then both sides.
 - tablua's harness works the way pi does: one model, a short system prompt, a few tools, a loop that ends when
   the model says it is done. No step, token or turn caps. Steering and follow-ups go between turns.
-- Moonsplice runs its own Robot suites with tablua's Lua runner (`tablua/core/robot`), so a change to that parser
-  changes how our docs and tests read.
+- Moonsplice runs its own Robot suites with tablua's Lua runner (`submodules/tablua/core/robot`), so a change to
+  that parser changes how our docs and tests read.
 
 ## Claims
 

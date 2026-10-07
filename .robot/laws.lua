@@ -1,5 +1,6 @@
 -- The repository's laws, measured over the files git tracks (plus any untracked file not ignored), for
--- .robot/rules.robot. tablua/ is a submodule with its own laws and is never walked.
+-- .robot/rules.robot. submodules/ holds other repositories (tablua, connectory), each with its own laws, and is never
+-- walked.
 --
 --   laws.limit                   400: the most lines a code or Robot file may have
 --   laws.counts(path) -> bool    whether the limit applies (code, Robot and config; data and media do not)
@@ -28,7 +29,7 @@ local function q(s) return "'" .. tostring(s):gsub("'", "'\\''") .. "'" end
 local function files(root)
   local p = assert(io.popen(("git -C %s ls-files --cached --others --exclude-standard"):format(q(root))))
   local out = {}
-  for l in p:lines() do if l ~= "tablua" and not l:match("^tablua/") then out[#out + 1] = l end end
+  for l in p:lines() do if not l:match("^submodules/") then out[#out + 1] = l end end
   p:close()
   return out
 end

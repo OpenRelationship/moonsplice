@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation    Moonsplice: games and videos as Lua comps, a comp being a pure function of time (and of the input log,
-...    for a game). Tablua, the agent that builds them, is a submodule at tablua/. These are the laws of this
-...    repository, each a test over the files git tracks; tablua/ keeps its own.
+...    for a game). Tablua, the agent that builds them, is a submodule at submodules/tablua. These are the laws of this
+...    repository, each a test over the files git tracks; each submodule keeps its own.
 ...
 ...    AGENTS.md states the bet this repository makes and how to work in it; read it first. CLAUDE.md links to it.
 ...
@@ -17,7 +17,7 @@ Documentation    Moonsplice: games and videos as Lua comps, a comp being a pure 
 ...    comps/    compositions with their media: cases (the eval suite), examples, lessons, film, projects
 ...    assets/    fonts, brand and shared media
 ...    test/    run.lua: every core/**/*_test.lua, with tablua's test/spec.lua
-...    tablua/    the agent, a submodule
+...    submodules/    other repositories: tablua (the agent) and connectory (the APIs a comp or agent can call)
 ...    .robot/    all Robot: these rules, docs/ (every page of documentation), claims/, golden/, fixtures/, eval/,
 ...    suites/, and port/ (how Cadence came over)
 ...
@@ -42,8 +42,8 @@ There Is No Markdown But AGENTS.md
 
 The Root Is The Tree Above
     [Tags]    law
-    Root Holds Only    moonsplice    core    native    editor    comps    assets    test    tablua    .robot    .claude
-    ...    .gitignore    .gitmodules    LICENSE    AGENTS.md    CLAUDE.md    README.md
+    Root Holds Only    moonsplice    core    native    editor    comps    assets    test    submodules    .robot
+    ...    .claude    .gitignore    .gitmodules    LICENSE    AGENTS.md    CLAUDE.md    README.md
 
 Robot Lives In .robot
     [Tags]    law
