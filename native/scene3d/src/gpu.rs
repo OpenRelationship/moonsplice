@@ -1,42 +1,14 @@
 const DRAW_STRIDE: u64 = 256;
 const MAX_INSTANCES: usize = 64;
 
+mod buffers;
+
+use buffers::{upload, DrawU, FrameU, GpuMesh, Targets};
+
 use crate::mesh::{Mesh, Vertex};
 use crate::scene::{Frame, Prim};
 use glam::Vec4;
 use std::collections::HashMap;
-use wgpu::util::DeviceExt;
-
-#[repr(C)]
-#[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
-struct FrameU {
-    view_proj: [[f32; 4]; 4],
-    light_dir: [f32; 4],
-    light_color: [f32; 4],
-    ambient: [f32; 4],
-}
-
-#[repr(C)]
-#[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
-struct DrawU {
-    model: [[f32; 4]; 4],
-    color: [f32; 4],
-}
-
-struct GpuMesh {
-    vb: wgpu::Buffer,
-    ib: wgpu::Buffer,
-    count: u32,
-}
-
-struct Targets {
-    w: u32,
-    h: u32,
-    color: wgpu::Texture,
-    depth: wgpu::Texture,
-    readback: wgpu::Buffer,
-    padded: u32,
-}
 
 pub struct Gpu {
     device: wgpu::Device,
@@ -52,29 +24,6 @@ pub struct Gpu {
     targets: Option<Targets>,
 }
 
-fn padded_bpr(width: u32) -> u32 {
-    let unpadded = width * 4;
-    let align = wgpu::COPY_BYTES_PER_ROW_ALIGNMENT;
-    unpadded.div_ceil(align) * align
-}
-
-fn upload(device: &wgpu::Device, mesh: &Mesh, label: &str) -> GpuMesh {
-    let vb = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-        label: Some(label),
-        contents: bytemuck::cast_slice(&mesh.vertices),
-        usage: wgpu::BufferUsages::VERTEX,
-    });
-    let ib = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-        label: Some(&(label.to_string() + "_idx")),
-        contents: bytemuck::cast_slice(&mesh.indices),
-        usage: wgpu::BufferUsages::INDEX,
-    });
-    GpuMesh {
-        vb,
-        ib,
-        count: mesh.indices.len() as u32,
-    }
-}
 
 impl Gpu {
     pub fn new(cube: &Mesh, sphere: &Mesh) -> Result<Self, String> {
@@ -236,59 +185,6 @@ impl Gpu {
             .insert(id, upload(&self.device, mesh, &format!("mesh{id}")));
     }
 
-    fn targets(&mut self, w: u32, h: u32) -> &Targets {
-        let recreate = self
-            .targets
-            .as_ref()
-            .map(|t| t.w != w || t.h != h)
-            .unwrap_or(true);
-        if recreate {
-            let padded = padded_bpr(w);
-            let color = self.device.create_texture(&wgpu::TextureDescriptor {
-                label: Some("color"),
-                size: wgpu::Extent3d {
-                    width: w,
-                    height: h,
-                    depth_or_array_layers: 1,
-                },
-                mip_level_count: 1,
-                sample_count: 1,
-                dimension: wgpu::TextureDimension::D2,
-                format: wgpu::TextureFormat::Rgba8Unorm,
-                usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
-                view_formats: &[],
-            });
-            let depth = self.device.create_texture(&wgpu::TextureDescriptor {
-                label: Some("depth"),
-                size: wgpu::Extent3d {
-                    width: w,
-                    height: h,
-                    depth_or_array_layers: 1,
-                },
-                mip_level_count: 1,
-                sample_count: 1,
-                dimension: wgpu::TextureDimension::D2,
-                format: wgpu::TextureFormat::Depth32Float,
-                usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
-                view_formats: &[],
-            });
-            let readback = self.device.create_buffer(&wgpu::BufferDescriptor {
-                label: Some("readback"),
-                size: padded as u64 * h as u64,
-                usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
-                mapped_at_creation: false,
-            });
-            self.targets = Some(Targets {
-                w,
-                h,
-                color,
-                depth,
-                readback,
-                padded,
-            });
-        }
-        self.targets.as_ref().unwrap()
-    }
 
     pub fn render(&mut self, frame: &Frame, w: u32, h: u32, out: &mut [u8]) -> Result<(), String> {
         let vp = frame.view_proj(w as f32 / h.max(1) as f32);
