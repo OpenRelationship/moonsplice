@@ -48,18 +48,20 @@ P["core/moonsplice/rows.lua"] = {
 }
 
 P["core/moonsplice/init.lua"] = {
-  note = "init.lua keeps Node and the module table; Scene's verbs, the recorder and Comp are siblings it requires",
+  note = "init.lua keeps Node, the module table and what the parts share: the Scene, Rec and Comp tables, add and "
+    .. "wrote_at, record and SETTABLE. Scene's verbs, the recorder's and Comp's methods are siblings it requires",
   rest = "core/moonsplice/init.lua",
   modules = {
     ["core/moonsplice/kinds.lua"] = { "^Scene:derive$", "^Scene:solid$", "^Scene:view$", "^Scene:lottie$",
       "^Scene:fx$", "^Scene:sprite", "^Scene:particles$", "^Scene:chart$", "^Scene:ornament$", "^Scene:captions$",
-      "^Scene:spine$", "^Scene:rive$", "^Scene:camera$", "^Scene:world$", "^Scene:mesh$", "^Scene:light$",
-      "^Scene:displace$", "^Scene:draw$", "^Scene:script$" },
-    ["core/moonsplice/scene.lua"] = { "^Scene", "^wrote_at$", "^M%.BLENDS$", "^BLEND_INSTEAD$", "^add$" },
-    ["core/moonsplice/rec.lua"] = { "^Rec", "^resolve_from$", "^record$", "^SETTABLE$" },
-    ["core/moonsplice/comp.lua"] = { "^Comp", "^M%.comp$", "^NO_STATE$" },
+      "^Scene:spine$", "^Scene:rive$", "^Scene:camera$", "^Scene:world$", "^in_world$", "^Scene:mesh$",
+      "^Scene:light$", "^Scene:displace$", "^Scene:draw$", "^Scene:script$" },
+    ["core/moonsplice/scene.lua"] = { "^Scene:" },
+    ["core/moonsplice/rec.lua"] = { "^Rec:" },
+    ["core/moonsplice/comp.lua"] = { "^M%.comp$", "^Comp:", "^NO_STATE$" },
   },
 }
+
 
 P["core/moonsplice/lint.lua"] = {
   note = "L.run (873 lines) is cut by hand into phases: each part returns function(ctx) and reads what it needs "
