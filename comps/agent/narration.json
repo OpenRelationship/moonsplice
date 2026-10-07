@@ -1,0 +1,1460 @@
+[
+ {
+  "id": "open",
+  "n": "",
+  "title": "Facts on real footage",
+  "say": "This is a real clip. Fourteen seconds, nothing added. Everything you are about to see drawn on top of it was measured from these pixels and written down as facts.",
+  "file": "comps/agent/narration/00_open.mp3",
+  "dur": 9.5,
+  "cues": [
+   {
+    "t0": 0.1,
+    "t1": 1.98,
+    "text": "This is a real clip."
+   },
+   {
+    "t0": 1.98,
+    "t1": 4.295,
+    "text": "Fourteen seconds, nothing added."
+   },
+   {
+    "t0": 4.295,
+    "t1": 5.812,
+    "text": "Everything you are about to see drawn"
+   },
+   {
+    "t0": 5.812,
+    "t1": 7.055,
+    "text": "on top of it was measured from"
+   },
+   {
+    "t0": 7.055,
+    "t1": 9.369,
+    "text": "these pixels and written down as facts."
+   }
+  ],
+  "words": [
+   {
+    "w": "This",
+    "t": 0.1
+   },
+   {
+    "w": "is",
+    "t": 0.47
+   },
+   {
+    "w": "a",
+    "t": 0.59
+   },
+   {
+    "w": "real",
+    "t": 0.8
+   },
+   {
+    "w": "clip.",
+    "t": 1.195
+   },
+   {
+    "w": "Fourteen",
+    "t": 1.98
+   },
+   {
+    "w": "seconds,",
+    "t": 2.505
+   },
+   {
+    "w": "nothing",
+    "t": 3.115
+   },
+   {
+    "w": "added.",
+    "t": 3.545
+   },
+   {
+    "w": "Everything",
+    "t": 4.295
+   },
+   {
+    "w": "you",
+    "t": 4.75
+   },
+   {
+    "w": "are",
+    "t": 4.87
+   },
+   {
+    "w": "about",
+    "t": 4.99
+   },
+   {
+    "w": "to",
+    "t": 5.2
+   },
+   {
+    "w": "see",
+    "t": 5.335
+   },
+   {
+    "w": "drawn",
+    "t": 5.53
+   },
+   {
+    "w": "on",
+    "t": 5.812
+   },
+   {
+    "w": "top",
+    "t": 5.9
+   },
+   {
+    "w": "of",
+    "t": 6.125
+   },
+   {
+    "w": "it",
+    "t": 6.23
+   },
+   {
+    "w": "was",
+    "t": 6.395
+   },
+   {
+    "w": "measured",
+    "t": 6.545
+   },
+   {
+    "w": "from",
+    "t": 6.915
+   },
+   {
+    "w": "these",
+    "t": 7.055
+   },
+   {
+    "w": "pixels",
+    "t": 7.25
+   },
+   {
+    "w": "and",
+    "t": 7.78
+   },
+   {
+    "w": "written",
+    "t": 7.935
+   },
+   {
+    "w": "down",
+    "t": 8.205
+   },
+   {
+    "w": "as",
+    "t": 8.475
+   },
+   {
+    "w": "facts.",
+    "t": 8.635
+   }
+  ]
+ },
+ {
+  "id": "track",
+  "n": "01",
+  "title": "The tracker",
+  "say": "A detector proposes a box, and SAM two propagates the mask forwards and backwards from that seed. Two entities survive here: a bottle, and a gloved hand. These boxes are the tracker's own output. The loose one is exactly why every fact carries a confidence instead of pretending to be exact.",
+  "file": "comps/agent/narration/01_track.mp3",
+  "dur": 20.3,
+  "cues": [
+   {
+    "t0": 0.0,
+    "t1": 2.59,
+    "text": "A detector proposes a box,"
+   },
+   {
+    "t0": 2.59,
+    "t1": 5.625,
+    "text": "and SAM two propagates the mask forwards"
+   },
+   {
+    "t0": 5.625,
+    "t1": 7.58,
+    "text": "and backwards from that seed."
+   },
+   {
+    "t0": 7.58,
+    "t1": 9.61,
+    "text": "Two entities survive here:"
+   },
+   {
+    "t0": 9.61,
+    "t1": 11.815,
+    "text": "a bottle, and a gloved hand."
+   },
+   {
+    "t0": 11.815,
+    "t1": 14.35,
+    "text": "These boxes are the tracker's own output."
+   },
+   {
+    "t0": 14.35,
+    "t1": 16.275,
+    "text": "The loose one is exactly why every"
+   },
+   {
+    "t0": 16.275,
+    "t1": 18.86,
+    "text": "fact carries a confidence instead of pretending"
+   },
+   {
+    "t0": 18.86,
+    "t1": 19.989,
+    "text": "to be exact."
+   }
+  ],
+  "words": [
+   {
+    "w": "A",
+    "t": 0.0
+   },
+   {
+    "w": "detector",
+    "t": 0.28
+   },
+   {
+    "w": "proposes",
+    "t": 0.92
+   },
+   {
+    "w": "a",
+    "t": 1.57
+   },
+   {
+    "w": "box,",
+    "t": 1.68
+   },
+   {
+    "w": "and",
+    "t": 2.59
+   },
+   {
+    "w": "SAM",
+    "t": 2.84
+   },
+   {
+    "w": "two",
+    "t": 3.26
+   },
+   {
+    "w": "propagates",
+    "t": 3.7
+   },
+   {
+    "w": "the",
+    "t": 4.4
+   },
+   {
+    "w": "mask",
+    "t": 4.54
+   },
+   {
+    "w": "forwards",
+    "t": 5.085
+   },
+   {
+    "w": "and",
+    "t": 5.625
+   },
+   {
+    "w": "backwards",
+    "t": 5.765
+   },
+   {
+    "w": "from",
+    "t": 6.305
+   },
+   {
+    "w": "that",
+    "t": 6.486
+   },
+   {
+    "w": "seed.",
+    "t": 6.767
+   },
+   {
+    "w": "Two",
+    "t": 7.58
+   },
+   {
+    "w": "entities",
+    "t": 7.97
+   },
+   {
+    "w": "survive",
+    "t": 8.525
+   },
+   {
+    "w": "here:",
+    "t": 9.005
+   },
+   {
+    "w": "a",
+    "t": 9.61
+   },
+   {
+    "w": "bottle,",
+    "t": 9.725
+   },
+   {
+    "w": "and",
+    "t": 10.35
+   },
+   {
+    "w": "a",
+    "t": 10.49
+   },
+   {
+    "w": "gloved",
+    "t": 10.57
+   },
+   {
+    "w": "hand.",
+    "t": 10.97
+   },
+   {
+    "w": "These",
+    "t": 11.815
+   },
+   {
+    "w": "boxes",
+    "t": 12.085
+   },
+   {
+    "w": "are",
+    "t": 12.515
+   },
+   {
+    "w": "the",
+    "t": 12.632
+   },
+   {
+    "w": "tracker's",
+    "t": 12.73
+   },
+   {
+    "w": "own",
+    "t": 13.285
+   },
+   {
+    "w": "output.",
+    "t": 13.53
+   },
+   {
+    "w": "The",
+    "t": 14.35
+   },
+   {
+    "w": "loose",
+    "t": 14.53
+   },
+   {
+    "w": "one",
+    "t": 14.79
+   },
+   {
+    "w": "is",
+    "t": 14.975
+   },
+   {
+    "w": "exactly",
+    "t": 15.095
+   },
+   {
+    "w": "why",
+    "t": 15.635
+   },
+   {
+    "w": "every",
+    "t": 15.895
+   },
+   {
+    "w": "fact",
+    "t": 16.275
+   },
+   {
+    "w": "carries",
+    "t": 16.65
+   },
+   {
+    "w": "a",
+    "t": 17.037
+   },
+   {
+    "w": "confidence",
+    "t": 17.115
+   },
+   {
+    "w": "instead",
+    "t": 17.815
+   },
+   {
+    "w": "of",
+    "t": 18.278
+   },
+   {
+    "w": "pretending",
+    "t": 18.395
+   },
+   {
+    "w": "to",
+    "t": 18.86
+   },
+   {
+    "w": "be",
+    "t": 18.975
+   },
+   {
+    "w": "exact.",
+    "t": 19.119
+   }
+  ]
+ },
+ {
+  "id": "thirds",
+  "n": "02",
+  "title": "A position becomes a word",
+  "say": "Here is the translation. A box is a rectangle of numbers, and the log refuses to store numbers. It stores the word an editor would say out loud. While the bottle sits in the middle third, the log says so, and records the interval it held for.",
+  "file": "comps/agent/narration/02_thirds.mp3",
+  "dur": 14.45,
+  "cues": [
+   {
+    "t0": 0.0,
+    "t1": 1.12,
+    "text": "Here is the translation."
+   },
+   {
+    "t0": 1.12,
+    "t1": 2.935,
+    "text": "A box is a rectangle of numbers,"
+   },
+   {
+    "t0": 2.935,
+    "t1": 5.435,
+    "text": "and the log refuses to store numbers."
+   },
+   {
+    "t0": 5.435,
+    "t1": 7.465,
+    "text": "It stores the word an editor would"
+   },
+   {
+    "t0": 7.465,
+    "t1": 8.785,
+    "text": "say out loud."
+   },
+   {
+    "t0": 8.785,
+    "t1": 10.085,
+    "text": "While the bottle sits in the middle"
+   },
+   {
+    "t0": 10.085,
+    "t1": 12.07,
+    "text": "third, the log says so,"
+   },
+   {
+    "t0": 12.07,
+    "t1": 14.2,
+    "text": "and records the interval it held for."
+   }
+  ],
+  "words": [
+   {
+    "w": "Here",
+    "t": 0.0
+   },
+   {
+    "w": "is",
+    "t": 0.225
+   },
+   {
+    "w": "the",
+    "t": 0.62
+   },
+   {
+    "w": "translation.",
+    "t": 0.761
+   },
+   {
+    "w": "A",
+    "t": 1.12
+   },
+   {
+    "w": "box",
+    "t": 1.181
+   },
+   {
+    "w": "is",
+    "t": 1.241
+   },
+   {
+    "w": "a",
+    "t": 1.281
+   },
+   {
+    "w": "rectangle",
+    "t": 1.301
+   },
+   {
+    "w": "of",
+    "t": 1.961
+   },
+   {
+    "w": "numbers,",
+    "t": 2.035
+   },
+   {
+    "w": "and",
+    "t": 2.935
+   },
+   {
+    "w": "the",
+    "t": 3.06
+   },
+   {
+    "w": "log",
+    "t": 3.2
+   },
+   {
+    "w": "refuses",
+    "t": 3.495
+   },
+   {
+    "w": "to",
+    "t": 4.14
+   },
+   {
+    "w": "store",
+    "t": 4.225
+   },
+   {
+    "w": "numbers.",
+    "t": 4.58
+   },
+   {
+    "w": "It",
+    "t": 5.435
+   },
+   {
+    "w": "stores",
+    "t": 5.58
+   },
+   {
+    "w": "the",
+    "t": 6.08
+   },
+   {
+    "w": "word",
+    "t": 6.24
+   },
+   {
+    "w": "an",
+    "t": 6.685
+   },
+   {
+    "w": "editor",
+    "t": 6.87
+   },
+   {
+    "w": "would",
+    "t": 7.245
+   },
+   {
+    "w": "say",
+    "t": 7.465
+   },
+   {
+    "w": "out",
+    "t": 7.7
+   },
+   {
+    "w": "loud.",
+    "t": 7.905
+   },
+   {
+    "w": "While",
+    "t": 8.785
+   },
+   {
+    "w": "the",
+    "t": 8.986
+   },
+   {
+    "w": "bottle",
+    "t": 9.085
+   },
+   {
+    "w": "sits",
+    "t": 9.425
+   },
+   {
+    "w": "in",
+    "t": 9.635
+   },
+   {
+    "w": "the",
+    "t": 9.727
+   },
+   {
+    "w": "middle",
+    "t": 9.807
+   },
+   {
+    "w": "third,",
+    "t": 10.085
+   },
+   {
+    "w": "the",
+    "t": 10.745
+   },
+   {
+    "w": "log",
+    "t": 10.885
+   },
+   {
+    "w": "says",
+    "t": 11.245
+   },
+   {
+    "w": "so,",
+    "t": 11.548
+   },
+   {
+    "w": "and",
+    "t": 12.07
+   },
+   {
+    "w": "records",
+    "t": 12.205
+   },
+   {
+    "w": "the",
+    "t": 12.705
+   },
+   {
+    "w": "interval",
+    "t": 12.84
+   },
+   {
+    "w": "it",
+    "t": 13.269
+   },
+   {
+    "w": "held",
+    "t": 13.38
+   },
+   {
+    "w": "for.",
+    "t": 13.645
+   }
+  ]
+ },
+ {
+  "id": "motion",
+  "n": "03",
+  "title": "So does a velocity",
+  "say": "Movement gets the same treatment. Not pixels per second, but a direction and an adverb. Moving left, fast, from seven point nine seconds to ten point four.",
+  "file": "comps/agent/narration/03_motion.mp3",
+  "dur": 10.7,
+  "cues": [
+   {
+    "t0": 0.08,
+    "t1": 2.385,
+    "text": "Movement gets the same treatment."
+   },
+   {
+    "t0": 2.385,
+    "t1": 3.685,
+    "text": "Not pixels per second,"
+   },
+   {
+    "t0": 3.685,
+    "t1": 5.695,
+    "text": "but a direction and an adverb."
+   },
+   {
+    "t0": 5.695,
+    "t1": 7.53,
+    "text": "Moving left, fast,"
+   },
+   {
+    "t0": 7.53,
+    "t1": 9.44,
+    "text": "from seven point nine seconds to ten"
+   },
+   {
+    "t0": 9.44,
+    "t1": 10.309,
+    "text": "point four."
+   }
+  ],
+  "words": [
+   {
+    "w": "Movement",
+    "t": 0.08
+   },
+   {
+    "w": "gets",
+    "t": 0.72
+   },
+   {
+    "w": "the",
+    "t": 1.02
+   },
+   {
+    "w": "same",
+    "t": 1.242
+   },
+   {
+    "w": "treatment.",
+    "t": 1.55
+   },
+   {
+    "w": "Not",
+    "t": 2.385
+   },
+   {
+    "w": "pixels",
+    "t": 2.685
+   },
+   {
+    "w": "per",
+    "t": 3.105
+   },
+   {
+    "w": "second,",
+    "t": 3.215
+   },
+   {
+    "w": "but",
+    "t": 3.685
+   },
+   {
+    "w": "a",
+    "t": 3.827
+   },
+   {
+    "w": "direction",
+    "t": 3.905
+   },
+   {
+    "w": "and",
+    "t": 4.565
+   },
+   {
+    "w": "an",
+    "t": 4.689
+   },
+   {
+    "w": "adverb.",
+    "t": 4.78
+   },
+   {
+    "w": "Moving",
+    "t": 5.695
+   },
+   {
+    "w": "left,",
+    "t": 6.115
+   },
+   {
+    "w": "fast,",
+    "t": 6.71
+   },
+   {
+    "w": "from",
+    "t": 7.53
+   },
+   {
+    "w": "seven",
+    "t": 7.81
+   },
+   {
+    "w": "point",
+    "t": 8.1
+   },
+   {
+    "w": "nine",
+    "t": 8.34
+   },
+   {
+    "w": "seconds",
+    "t": 8.636
+   },
+   {
+    "w": "to",
+    "t": 9.05
+   },
+   {
+    "w": "ten",
+    "t": 9.185
+   },
+   {
+    "w": "point",
+    "t": 9.44
+   },
+   {
+    "w": "four.",
+    "t": 9.715
+   }
+  ]
+ },
+ {
+  "id": "event",
+  "n": "04",
+  "title": "And the moment itself",
+  "say": "Then the moment. The gap between the two masks opens at eight and a half seconds, and that becomes an event, carrying the producer that measured it and how sure it was. Nothing in this log claims to be exact, because nothing in it is.",
+  "file": "comps/agent/narration/04_event.mp3",
+  "dur": 14.85,
+  "cues": [
+   {
+    "t0": 0.1,
+    "t1": 1.48,
+    "text": "Then the moment."
+   },
+   {
+    "t0": 1.48,
+    "t1": 3.565,
+    "text": "The gap between the two masks opens"
+   },
+   {
+    "t0": 3.565,
+    "t1": 5.24,
+    "text": "at eight and a half seconds,"
+   },
+   {
+    "t0": 5.24,
+    "t1": 6.8,
+    "text": "and that becomes an event,"
+   },
+   {
+    "t0": 6.8,
+    "t1": 8.785,
+    "text": "carrying the producer that measured it and"
+   },
+   {
+    "t0": 8.785,
+    "t1": 10.33,
+    "text": "how sure it was."
+   },
+   {
+    "t0": 10.33,
+    "t1": 12.025,
+    "text": "Nothing in this log claims to be"
+   },
+   {
+    "t0": 12.025,
+    "t1": 14.459999999999999,
+    "text": "exact, because nothing in it is."
+   }
+  ],
+  "words": [
+   {
+    "w": "Then",
+    "t": 0.1
+   },
+   {
+    "w": "the",
+    "t": 0.46
+   },
+   {
+    "w": "moment.",
+    "t": 0.62
+   },
+   {
+    "w": "The",
+    "t": 1.48
+   },
+   {
+    "w": "gap",
+    "t": 1.66
+   },
+   {
+    "w": "between",
+    "t": 2.06
+   },
+   {
+    "w": "the",
+    "t": 2.422
+   },
+   {
+    "w": "two",
+    "t": 2.525
+   },
+   {
+    "w": "masks",
+    "t": 2.742
+   },
+   {
+    "w": "opens",
+    "t": 3.23
+   },
+   {
+    "w": "at",
+    "t": 3.565
+   },
+   {
+    "w": "eight",
+    "t": 3.765
+   },
+   {
+    "w": "and",
+    "t": 4.0
+   },
+   {
+    "w": "a",
+    "t": 4.123
+   },
+   {
+    "w": "half",
+    "t": 4.2
+   },
+   {
+    "w": "seconds,",
+    "t": 4.385
+   },
+   {
+    "w": "and",
+    "t": 5.24
+   },
+   {
+    "w": "that",
+    "t": 5.36
+   },
+   {
+    "w": "becomes",
+    "t": 5.56
+   },
+   {
+    "w": "an",
+    "t": 5.925
+   },
+   {
+    "w": "event,",
+    "t": 6.044
+   },
+   {
+    "w": "carrying",
+    "t": 6.8
+   },
+   {
+    "w": "the",
+    "t": 7.225
+   },
+   {
+    "w": "producer",
+    "t": 7.32
+   },
+   {
+    "w": "that",
+    "t": 7.845
+   },
+   {
+    "w": "measured",
+    "t": 7.97
+   },
+   {
+    "w": "it",
+    "t": 8.346
+   },
+   {
+    "w": "and",
+    "t": 8.635
+   },
+   {
+    "w": "how",
+    "t": 8.785
+   },
+   {
+    "w": "sure",
+    "t": 9.086
+   },
+   {
+    "w": "it",
+    "t": 9.366
+   },
+   {
+    "w": "was.",
+    "t": 9.465
+   },
+   {
+    "w": "Nothing",
+    "t": 10.33
+   },
+   {
+    "w": "in",
+    "t": 10.807
+   },
+   {
+    "w": "this",
+    "t": 10.887
+   },
+   {
+    "w": "log",
+    "t": 11.07
+   },
+   {
+    "w": "claims",
+    "t": 11.425
+   },
+   {
+    "w": "to",
+    "t": 11.805
+   },
+   {
+    "w": "be",
+    "t": 11.885
+   },
+   {
+    "w": "exact,",
+    "t": 12.025
+   },
+   {
+    "w": "because",
+    "t": 12.925
+   },
+   {
+    "w": "nothing",
+    "t": 13.225
+   },
+   {
+    "w": "in",
+    "t": 13.629
+   },
+   {
+    "w": "it",
+    "t": 13.729
+   },
+   {
+    "w": "is.",
+    "t": 13.865
+   }
+  ]
+ },
+ {
+  "id": "edit",
+  "n": "05",
+  "title": "The agent edits",
+  "say": "Now the agent works. It never looks at the picture. It asks the log when the bottle changed hands, gets eight point five, and asserts that the caption belongs there.",
+  "file": "comps/agent/narration/05_edit.mp3",
+  "dur": 9.3,
+  "cues": [
+   {
+    "t0": 0.08,
+    "t1": 1.875,
+    "text": "Now the agent works."
+   },
+   {
+    "t0": 1.875,
+    "t1": 3.265,
+    "text": "It never looks at the picture."
+   },
+   {
+    "t0": 3.265,
+    "t1": 4.715,
+    "text": "It asks the log when the bottle"
+   },
+   {
+    "t0": 4.715,
+    "t1": 6.945,
+    "text": "changed hands, gets eight point five,"
+   },
+   {
+    "t0": 6.945,
+    "t1": 9.229,
+    "text": "and asserts that the caption belongs there."
+   }
+  ],
+  "words": [
+   {
+    "w": "Now",
+    "t": 0.08
+   },
+   {
+    "w": "the",
+    "t": 0.44
+   },
+   {
+    "w": "agent",
+    "t": 0.62
+   },
+   {
+    "w": "works.",
+    "t": 1.085
+   },
+   {
+    "w": "It",
+    "t": 1.875
+   },
+   {
+    "w": "never",
+    "t": 1.99
+   },
+   {
+    "w": "looks",
+    "t": 2.365
+   },
+   {
+    "w": "at",
+    "t": 2.585
+   },
+   {
+    "w": "the",
+    "t": 2.68
+   },
+   {
+    "w": "picture.",
+    "t": 2.78
+   },
+   {
+    "w": "It",
+    "t": 3.265
+   },
+   {
+    "w": "asks",
+    "t": 3.395
+   },
+   {
+    "w": "the",
+    "t": 3.785
+   },
+   {
+    "w": "log",
+    "t": 3.92
+   },
+   {
+    "w": "when",
+    "t": 4.225
+   },
+   {
+    "w": "the",
+    "t": 4.369
+   },
+   {
+    "w": "bottle",
+    "t": 4.465
+   },
+   {
+    "w": "changed",
+    "t": 4.715
+   },
+   {
+    "w": "hands,",
+    "t": 5.11
+   },
+   {
+    "w": "gets",
+    "t": 5.57
+   },
+   {
+    "w": "eight",
+    "t": 5.81
+   },
+   {
+    "w": "point",
+    "t": 5.995
+   },
+   {
+    "w": "five,",
+    "t": 6.27
+   },
+   {
+    "w": "and",
+    "t": 6.945
+   },
+   {
+    "w": "asserts",
+    "t": 7.075
+   },
+   {
+    "w": "that",
+    "t": 7.515
+   },
+   {
+    "w": "the",
+    "t": 7.635
+   },
+   {
+    "w": "caption",
+    "t": 7.745
+   },
+   {
+    "w": "belongs",
+    "t": 8.215
+   },
+   {
+    "w": "there.",
+    "t": 8.665
+   }
+  ]
+ },
+ {
+  "id": "proof",
+  "n": "06",
+  "title": "And checks its own work",
+  "say": "Then it proves what it did. Render both versions and hash every frame. One hundred of three hundred and fifty eight differ, in exactly two windows: where the caption used to be, and where it is now. Nothing else moved.",
+  "file": "comps/agent/narration/06_proof.mp3",
+  "dur": 13.95,
+  "cues": [
+   {
+    "t0": 0.08,
+    "t1": 2.322,
+    "text": "Then it proves what it did."
+   },
+   {
+    "t0": 2.322,
+    "t1": 5.23,
+    "text": "Render both versions and hash every frame."
+   },
+   {
+    "t0": 5.23,
+    "t1": 6.845,
+    "text": "One hundred of three hundred and fifty"
+   },
+   {
+    "t0": 6.845,
+    "t1": 9.265,
+    "text": "eight differ, in exactly two windows:"
+   },
+   {
+    "t0": 9.265,
+    "t1": 10.78,
+    "text": "where the caption used to be,"
+   },
+   {
+    "t0": 10.78,
+    "t1": 12.05,
+    "text": "and where it is now."
+   },
+   {
+    "t0": 12.05,
+    "t1": 13.479,
+    "text": "Nothing else moved."
+   }
+  ],
+  "words": [
+   {
+    "w": "Then",
+    "t": 0.08
+   },
+   {
+    "w": "it",
+    "t": 0.46
+   },
+   {
+    "w": "proves",
+    "t": 0.66
+   },
+   {
+    "w": "what",
+    "t": 1.27
+   },
+   {
+    "w": "it",
+    "t": 1.461
+   },
+   {
+    "w": "did.",
+    "t": 1.58
+   },
+   {
+    "w": "Render",
+    "t": 2.322
+   },
+   {
+    "w": "both",
+    "t": 2.74
+   },
+   {
+    "w": "versions",
+    "t": 3.015
+   },
+   {
+    "w": "and",
+    "t": 3.55
+   },
+   {
+    "w": "hash",
+    "t": 3.723
+   },
+   {
+    "w": "every",
+    "t": 4.105
+   },
+   {
+    "w": "frame.",
+    "t": 4.44
+   },
+   {
+    "w": "One",
+    "t": 5.23
+   },
+   {
+    "w": "hundred",
+    "t": 5.46
+   },
+   {
+    "w": "of",
+    "t": 5.795
+   },
+   {
+    "w": "three",
+    "t": 5.96
+   },
+   {
+    "w": "hundred",
+    "t": 6.175
+   },
+   {
+    "w": "and",
+    "t": 6.405
+   },
+   {
+    "w": "fifty",
+    "t": 6.52
+   },
+   {
+    "w": "eight",
+    "t": 6.845
+   },
+   {
+    "w": "differ,",
+    "t": 7.025
+   },
+   {
+    "w": "in",
+    "t": 7.445
+   },
+   {
+    "w": "exactly",
+    "t": 7.565
+   },
+   {
+    "w": "two",
+    "t": 8.21
+   },
+   {
+    "w": "windows:",
+    "t": 8.485
+   },
+   {
+    "w": "where",
+    "t": 9.265
+   },
+   {
+    "w": "the",
+    "t": 9.407
+   },
+   {
+    "w": "caption",
+    "t": 9.505
+   },
+   {
+    "w": "used",
+    "t": 9.935
+   },
+   {
+    "w": "to",
+    "t": 10.175
+   },
+   {
+    "w": "be,",
+    "t": 10.265
+   },
+   {
+    "w": "and",
+    "t": 10.78
+   },
+   {
+    "w": "where",
+    "t": 10.945
+   },
+   {
+    "w": "it",
+    "t": 11.148
+   },
+   {
+    "w": "is",
+    "t": 11.245
+   },
+   {
+    "w": "now.",
+    "t": 11.37
+   },
+   {
+    "w": "Nothing",
+    "t": 12.05
+   },
+   {
+    "w": "else",
+    "t": 12.505
+   },
+   {
+    "w": "moved.",
+    "t": 12.735
+   }
+  ]
+ },
+ {
+  "id": "close",
+  "n": "",
+  "title": "",
+  "say": "Real pixels, measured into words, edited by assertion.",
+  "file": "comps/agent/narration/07_close.mp3",
+  "dur": 5.2,
+  "cues": [
+   {
+    "t0": 0.155,
+    "t1": 3.48,
+    "text": "Real pixels, measured into words,"
+   },
+   {
+    "t0": 3.48,
+    "t1": 4.9879999999999995,
+    "text": "edited by assertion."
+   }
+  ],
+  "words": [
+   {
+    "w": "Real",
+    "t": 0.155
+   },
+   {
+    "w": "pixels,",
+    "t": 0.66
+   },
+   {
+    "w": "measured",
+    "t": 1.735
+   },
+   {
+    "w": "into",
+    "t": 2.285
+   },
+   {
+    "w": "words,",
+    "t": 2.65
+   },
+   {
+    "w": "edited",
+    "t": 3.48
+   },
+   {
+    "w": "by",
+    "t": 3.93
+   },
+   {
+    "w": "assertion.",
+    "t": 4.115
+   }
+  ]
+ }
+]

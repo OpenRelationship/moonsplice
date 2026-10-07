@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" fill="none">
+  <defs>
+    <linearGradient id="tile" x1="512" y1="100" x2="512" y2="924" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1C1D21"/>
+      <stop offset="1" stop-color="#08090A"/>
+    </linearGradient>
+    <linearGradient id="moon" x1="512" y1="240" x2="512" y2="784" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F7F8F8"/>
+      <stop offset="1" stop-color="#A9AFB9"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(600 500) scale(420)">
+      <stop offset="0" stop-color="#D0D6E0" stop-opacity="0.09"/>
+      <stop offset="1" stop-color="#D0D6E0" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#tile)"/>
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#glow)"/>
+  <rect x="100.5" y="100.5" width="823" height="823" rx="184.5" stroke="#FFFFFF" stroke-opacity="0.08"/>
+  <path d="M430.400 252.512A272.012 272.012 0 1 1 430.400 771.488A392.782 392.782 0 0 0 430.400 252.512Z" fill="url(#moon)"/>
+  <path d="M359.680 294.400A264.358 264.358 0 0 1 359.680 729.600A382.160 382.160 0 0 0 359.680 294.400Z" fill="url(#moon)"/>
+  <path d="M299.840 348.800A193.244 193.244 0 0 1 299.840 675.200A261.703 261.703 0 0 0 299.840 348.800Z" fill="url(#moon)"/>
+  <path d="M264.480 403.200A128.829 128.829 0 0 1 264.480 620.800A179.545 179.545 0 0 0 264.480 403.200Z" fill="url(#moon)"/>
+  <path d="M246.800 453.520A72.111 72.111 0 0 1 246.800 570.480A121.782 121.782 0 0 0 246.800 453.520Z" fill="url(#moon)"/>
+</svg>

@@ -1,0 +1,337 @@
+@import "tailwindcss";
+
+/* Moonsplice Studio.
+ *
+ * One idea carries the whole look: a composition is a pure function of time, and the two kinds
+ * of thing in it are *movements* (a relation between two values over a duration) and *pins*
+ * (a value somebody put at an instant). That distinction gets a colour rather than a label —
+ * teal for a movement, amber for a pin — because `app-shell` requires it to read as different
+ * at a glance and a legend nobody reads is not reading.
+ *
+ * Everything else recedes. The brightest thing on screen is the picture, and the room it sits
+ * in is neutral -- black through grey, with no hue of its own. A tinted grey reads as a colour
+ * once a frame is next to it, and every frame the app shows would be judged against that tint. */
+
+@theme {
+  --font-sans:
+    ui-sans-serif, -apple-system, "SF Pro Text", "Segoe UI Variable", "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
+}
+
+:root {
+  color-scheme: dark;
+
+  /* grounds, darkest first */
+  --ink-0: #08090a;
+  --ink-1: #0d0e10;
+  --ink-2: #141517;
+  --ink-3: #1b1c1f;
+  --ink-4: #25262a;
+  --edge: #2c2d31;
+  --edge-soft: #1e1f22;
+
+  /* type */
+  --text-1: #f7f8f8;
+  --text-2: #b4b8c0;
+  --text-3: #8a8f98;
+
+  /* the one distinction that matters */
+  --move: #c9d6ea; /* a relation: it moves */
+  --move-dim: #3a4352;
+  --pin: #e6d3b0; /* a value someone set: it was pinned */
+  --pin-dim: #4d4536;
+
+  /* the other lanes */
+  --said: #bdb6e0; /* spoken lines */
+  --sound: #a9c9b4; /* audio */
+  --warn: #e8968c;
+
+  /* A clip: the stretch of time a thing is on screen. It is the widest shape in the timeline and
+     it has to read as a solid at a glance, so it gets its own two tones rather than borrowing a
+     ground that was chosen to recede. */
+  --clip: #34363b;
+  --clip-edge: #7c818a;
+  /* The shape of a sound, drawn inside its clip. Light enough to read through the bar and not
+     so light that seventy of them shout; it is information, not an accent. */
+  --wave: #a3a9b4;
+
+  /* Neutral, because the accent already means "this moves" and a focus ring means nothing
+     of the kind. */
+  --focus: #d0d6e0;
+
+  --radius: 9px;
+  --radius-sm: 6px;
+
+  --shadow-lift: 0 1px 0 rgb(255 255 255 / 0.05) inset, 0 8px 24px -12px rgb(0 0 0 / 0.75);
+
+  /* the chrome height, so the panes can subtract it without guessing */
+  --chrome: 44px;
+  --lane: 30px;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --ink-0: #f1f2f4;
+  --ink-1: #fafbfc;
+  --ink-2: #ffffff;
+  --ink-3: #f1f2f4;
+  --ink-4: #e5e7eb;
+  --edge: #d6d9de;
+  --edge-soft: #eaecef;
+  --text-1: #0f1012;
+  --text-2: #52565e;
+  --text-3: #5e636c;
+  --move: #3d4f6b;
+  --move-dim: #d3dbe8;
+  --pin: #6e5b37;
+  --pin-dim: #ece3d2;
+  --said: #5a5390;
+  --sound: #3f6550;
+  --warn: #a5463b;
+  --clip: #e3e5e9;
+  --clip-edge: #8d929a;
+  --wave: #686e79;
+  --focus: #3c4048;
+  --shadow-lift: 0 1px 2px rgb(0 0 0 / 0.07), 0 10px 24px -16px rgb(0 0 0 / 0.26);
+}
+
+* {
+  border-color: var(--edge-soft);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--ink-1);
+  color: var(--text-1);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  cursor: default;
+}
+
+/* A desktop app is not a document.
+ *
+ * This used to be one declaration on `body`, relying on inheritance -- and inheritance is exactly
+ * what a rule like this cannot rely on. Anything that sets its own `user-select`, and anything a
+ * component library or the browser's own stylesheet sets it on, escapes the rule and takes its
+ * whole subtree with it. What that looks like is a lane name that highlights when you drag a clip
+ * past it, and a smear across the timeline that has to be clicked away. Stated on every element
+ * instead, so there is nothing to escape from.
+ *
+ * `-webkit-user-drag` is the same complaint rather than a different one: without it WebKit starts
+ * a native drag from any text or image under the pointer and paints a ghost of it across the app.
+ * The app's own dragging is put back below -- a composition dragged into a folder and footage
+ * dragged onto the timeline are real HTML drags, and a blanket ban would have taken both away.
+ *
+ * The prefixed spellings are not decoration. This renders in WKWebView, where the unprefixed
+ * property only arrived in Safari 17 and `-webkit-user-drag` has no unprefixed spelling at all. */
+*,
+*::before,
+*::after {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* The things that are meant to be dragged. */
+[draggable]:not([draggable="false"]) {
+  -webkit-user-drag: element;
+}
+
+/* Except where words are the point: something typed, and something said.
+ *
+ * The descendant rule is load-bearing now that the ban is stated on every element rather than
+ * inherited: without it a marked paragraph would be selectable and the spans inside it would not,
+ * which selects nothing at all.
+ *
+ * No cursor here. A text field already draws an I-beam, and saying so again would override the
+ * places that deliberately do not want one -- a read-only field showing a value that something
+ * else is moving is not a field you type in. */
+input,
+textarea,
+[contenteditable="true"],
+[data-selectable],
+[data-selectable] * {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Said text is the one exception that has to announce itself: it is the only text in the app you
+   can take, and the I-beam is the only thing that says so. */
+[data-selectable] {
+  cursor: text;
+}
+
+/* The parts a browser draws for you still belong to the design. */
+::selection {
+  background: color-mix(in oklab, var(--move) 28%, transparent);
+  color: var(--text-1);
+}
+::placeholder {
+  color: var(--text-3);
+}
+
+/* Numbers that line up. A timeline whose figures jitter reads as broken. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+  border-radius: var(--radius-sm);
+}
+
+/* Scrollbars, only while a pane is being used. */
+.scroll {
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 160ms;
+}
+.scroll:hover,
+.scroll:focus-within {
+  scrollbar-color: var(--ink-4) transparent;
+}
+.scroll::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+.scroll::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 9px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+.scroll:hover::-webkit-scrollbar-thumb,
+.scroll:focus-within::-webkit-scrollbar-thumb {
+  background: var(--ink-4);
+  background-clip: content-box;
+}
+
+/* The window's own chrome. The stoplights sit in the first 78px; nothing interactive may. */
+.chrome-drag {
+  -webkit-app-region: drag;
+  app-region: drag;
+}
+.chrome-no-drag {
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+}
+
+/* A checkerboard for a frame that has not arrived yet: honest about being nothing. */
+.holding {
+  background-image:
+    linear-gradient(45deg, var(--ink-2) 25%, transparent 25% 75%, var(--ink-2) 75%),
+    linear-gradient(45deg, var(--ink-2) 25%, transparent 25% 75%, var(--ink-2) 75%);
+  background-size: 16px 16px;
+  background-position:
+    0 0,
+    8px 8px;
+  background-color: var(--ink-1);
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.breathe {
+  animation: breathe 1.4s ease-in-out infinite;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rise {
+  animation: rise 180ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .breathe,
+  .rise {
+    animation: none;
+  }
+  * {
+    transition-duration: 1ms !important;
+  }
+}
+
+/* The listening fader. A native range so it is draggable, keyboard-operable and reachable by a
+   screen reader without any of that being written twice; everything below is only its looks.
+   It is drawn the width of the sound lane's colour, because that is what it is about. */
+.fader {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 56px;
+  height: 14px;
+  background: transparent;
+  cursor: pointer;
+}
+.fader::-webkit-slider-runnable-track {
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--sound) 0 var(--at, 80%),
+    var(--edge) var(--at, 80%) 100%
+  );
+}
+.fader::-moz-range-track {
+  height: 3px;
+  border-radius: 999px;
+  background: var(--edge);
+}
+.fader::-moz-range-progress {
+  height: 3px;
+  border-radius: 999px;
+  background: var(--sound);
+}
+.fader::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -3.5px;
+  height: 10px;
+  width: 10px;
+  border-radius: 999px;
+  background: var(--text-1);
+  border: none;
+  transition: transform 120ms ease;
+}
+.fader::-moz-range-thumb {
+  height: 10px;
+  width: 10px;
+  border-radius: 999px;
+  background: var(--text-1);
+  border: none;
+}
+.fader:hover::-webkit-slider-thumb,
+.fader:focus-visible::-webkit-slider-thumb {
+  transform: scale(1.18);
+}
+.fader:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 999px;
+}

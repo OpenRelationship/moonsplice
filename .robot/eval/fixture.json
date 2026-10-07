@@ -1,0 +1,11 @@
+{
+  "name": "IMG_6213.MOV",
+  "what": "One speaker to camera, iPhone 13 Pro Max, recorded 2026-10-05. Portrait picture stored landscape with a -90 degree display matrix.",
+  "sha256": "874c961e6c638892f3da048eea4352695e59ead6be422ffc5bdd2c2e6600c71e",
+  "bytes": 1581046769,
+  "duration_s": 815.268,
+  "stored_size": "1920x1080",
+  "display_size": "1080x1920",
+  "rotation": -90,
+  "fps": 30
+}

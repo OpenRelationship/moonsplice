@@ -1,0 +1,12 @@
+[package]
+name = "moonsplice-decode"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "moonsplice_decode"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+rayon = "1"
+ffmpeg-the-third = "5"

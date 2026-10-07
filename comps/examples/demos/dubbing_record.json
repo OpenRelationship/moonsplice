@@ -1,0 +1,73 @@
+{
+  "url": "https://elevenlabs.io/app/dubbing",
+  "dpr": 2,
+  "fps": 30,
+  "headed": true,
+  "settle_ms": 6000,
+  "steps": [
+    {
+      "hold": 1.0
+    },
+    {
+      "marker": "upload",
+      "upload": {
+        "sel": "input[type=file]",
+        "file": "REPLACED_AT_RUNTIME",
+        "settle": 1.1,
+        "zone": "text=or drag and drop them here",
+        "approach": 0.75
+      }
+    },
+    {
+      "move": {
+        "sel": "button:has-text(\"Choose languages\")"
+      }
+    },
+    {
+      "marker": "open_picker",
+      "pwclick": {
+        "sel": "button:has-text(\"Choose languages\")",
+        "settle": 0.45
+      }
+    },
+    {
+      "marker": "type_lang",
+      "type": {
+        "sel": "input[placeholder=\"Search languages...\"]",
+        "text": "spanish",
+        "cps": 13
+      }
+    },
+    {
+      "hold": 0.25
+    },
+    {
+      "marker": "pick_lang",
+      "pwclick": {
+        "sel": "[role=option]:has-text(\"Spanish\")",
+        "settle": 0.5
+      }
+    },
+    {
+      "marker": "close_picker",
+      "press": {
+        "key": "Escape",
+        "settle": 0.45
+      }
+    },
+    {
+      "move": {
+        "sel": "button.rounded-full.aspect-1"
+      }
+    },
+    {
+      "hover": 0.35
+    },
+    {
+      "marker": "submit",
+      "click": {
+        "settle": 0.55
+      }
+    }
+  ]
+}

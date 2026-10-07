@@ -1,0 +1,20 @@
+[package]
+name = "moonsplice-render"
+version = "0.1.0"
+edition = "2021"
+description = "Moonsplice's GPU: a headless Bevy app that owns the device, for the work the CPU scene cannot do"
+license = "MIT"
+
+[dependencies]
+# Bevy owns the GPU (.robot/docs/engine.robot, phase 3). Headless: no window, no winit event loop.
+# 3D: `s:world` is drawn by Bevy's PBR renderer (src/world.rs), glTF included.
+bevy = { version = "=0.19.1", default-features = false, features = [
+  "default_app", "bevy_render", "std", "multi_threaded",
+  "bevy_core_pipeline", "bevy_pbr", "bevy_mesh", "bevy_light", "bevy_camera", "bevy_image",
+  "bevy_post_process", "bevy_gltf", "bevy_scene", "bevy_world_serialization", "tonemapping_luts", "ktx2", "zstd_rust", "png",
+] }
+serde_json = "1"
+# The comp's own GLSL is translated here, by the naga Bevy's wgpu already carries.
+naga = { version = "29", features = ["glsl-in", "wgsl-out"] }
+# The same wgpu Bevy uses (one build): the pass drives it directly on Bevy's device.
+wgpu = "29"

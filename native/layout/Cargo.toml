@@ -1,0 +1,11 @@
+[package]
+name = "moonsplice-layout"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "moonsplice_layout"
+crate-type = ["cdylib"]
+
+[dependencies]
+taffy = "0.9"

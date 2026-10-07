@@ -1,0 +1,11 @@
+[package]
+name = "moonsplice-cli"
+version = "0.1.0"
+edition = "2021"
+description = "Self-contained launcher for the Moonsplice renderer"
+license = "UNLICENSED"
+
+[[bin]]
+name = "moonsplice"
+path = "src/main.rs"
+

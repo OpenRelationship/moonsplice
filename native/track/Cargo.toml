@@ -1,0 +1,26 @@
+[package]
+name = "moonsplice-track"
+version = "0.1.0"
+edition = "2021"
+description = "EdgeTAM video object tracking on ONNX Runtime (CPU or Core ML), for moonsplice-vision"
+license = "MIT"
+
+[lib]
+name = "moonsplice_track"
+path = "src/lib.rs"
+
+[[bin]]
+name = "moonsplice-track"
+path = "src/main.rs"
+
+# Same pin as embed/. On macOS `coreml` adds the Core ML execution provider to the prebuilt runtime;
+# elsewhere the tracker is CPU-only.
+[features]
+# CUDA execution provider (Linux + NVIDIA): `cargo build --release -p moonsplice-track --features cuda`
+cuda = ["ort/cuda"]
+
+[target.'cfg(target_os = "macos")'.dependencies]
+ort = { version = "=2.0.0-rc.13", features = ["coreml"] }
+
+[target.'cfg(not(target_os = "macos"))'.dependencies]
+ort = "=2.0.0-rc.13"

@@ -1,0 +1,49 @@
+[package]
+name = "moonsplice-scene"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "moonsplice_scene"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+vello_cpu = "0.3"
+vello_common = "0.3"
+anyrender = "0.13"
+velato = { version = "0.12", default-features = false }
+serde_json = "1"
+glifo = "0.4"
+parley = { version = "0.11", default-features = false, features = ["std"] }
+# html: Blitz, fenced to src/html (folded in from moonsplice-html). Off, the scene builds with no
+# Stylo, no QuickJS and no network.
+blitz-dom = { version = "0.3.0-beta.2", optional = true }
+blitz-html = { version = "0.3.0-beta.2", optional = true }
+blitz-paint = { version = "0.3.0-beta.2", optional = true }
+blitz-traits = { version = "0.3.0-beta.2", optional = true }
+data-url = { version = "0.3", optional = true }
+kuchikiki = { version = "0.8", optional = true }
+png = { version = "0.17", optional = true }
+rquickjs = { version = "0.9", optional = true }
+ureq = { version = "2.12", optional = true }
+url = { version = "2", optional = true }
+wuff = { version = "0.2", optional = true }
+# gpu: the comp's own GLSL (the shadertoy fx pass) on Bevy's device. Off, that pass is refused
+# with a sentence and everything else is the same.
+moonsplice-render = { path = "../render", optional = true }
+
+[features]
+default = ["html", "gpu"]
+gpu = ["dep:moonsplice-render"]
+html = ["dep:blitz-dom", "dep:blitz-html", "dep:blitz-paint", "dep:blitz-traits", "dep:data-url",
+  "dep:kuchikiki", "dep:png", "dep:rquickjs", "dep:ureq", "dep:url", "dep:wuff"]
+
+[[bin]]
+name = "moonsplice-html-shot"
+path = "src/bin/moonsplice-html-shot.rs"
+required-features = ["html"]
+
+# Threads where there are threads. wasm32-unknown-unknown has none, and the browser build is the
+# CPU path single-threaded (.robot/docs/engine.robot, phase 5).
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+vello_cpu = { version = "0.3", features = ["multithreading"] }

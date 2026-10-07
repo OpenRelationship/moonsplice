@@ -1,0 +1,21 @@
+[package]
+name = "moonsplice-solid"
+version = "0.1.0"
+edition = "2021"
+description = "Solids as data: a tree of primitives, booleans, revolves and extrusions built by Manifold into a glTF Bevy draws, with its measurements"
+license = "MIT"
+
+[lib]
+name = "moonsplice_solid"
+path = "src/lib.rs"
+
+[[bin]]
+name = "moonsplice-solid"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = "1"
+base64 = "0.22"
+manifold3d = { version = "0.4", default-features = false }
+serde_json = "1"
+sha1 = "0.10"

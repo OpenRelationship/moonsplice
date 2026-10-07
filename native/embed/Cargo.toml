@@ -1,0 +1,22 @@
+[package]
+name = "moonsplice-embed"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "moonsplice_embed"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+# ort 2.0.0-rc.13: default features include `download-binaries` (prebuilt
+# onnxruntime for aarch64-apple-darwin) and `ndarray`. We use tuple-based
+# tensor construction (shape, Vec<T>) so we never touch ndarray directly —
+# no ndarray version-matching headaches.
+ort = "=2.0.0-rc.13"
+tokenizers = "0.23"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[[bin]]
+name = "smoke"
+path = "src/bin/smoke.rs"

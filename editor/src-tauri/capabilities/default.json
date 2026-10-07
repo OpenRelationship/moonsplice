@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Moonsplice Studio's own commands, plus the file dialog.",
+  "windows": ["main"],
+  "permissions": ["core:default", "dialog:default"]
+}

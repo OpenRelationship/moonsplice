@@ -1,0 +1,59 @@
+[package]
+name = "moonsplice-studio"
+version = "0.1.0"
+description = "Moonsplice Studio — the desktop app"
+# Two binaries live here now (the window and `moonsplice-agent`); `tauri dev` runs `cargo run`
+# with no `--bin`, which refuses to guess.
+default-run = "moonsplice-studio"
+edition = "2021"
+rust-version = "1.82"
+
+[lib]
+name = "moonsplice_studio_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["protocol-asset"] }
+tauri-plugin-dialog = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+notify = "8"
+notify-debouncer-full = "0.6"
+image = { version = "0.25", default-features = false, features = ["jpeg"] }
+# LuaJIT, the one Lua in the app: the engine runs in this process (moonsplice-engine, below) and
+# its runtime reaches the native helpers through LuaJIT's FFI. mlua links one Lua per build, so the
+# agent harness runs on it too -- packages/malleable is written to the subset both accept.
+mlua = { version = "0.11", features = ["luajit", "vendored", "serialize", "send"] }
+moonsplice-engine = { path = "../../native/engine" }
+keyring = { version = "3", features = ["apple-native"] }
+reqwest = { version = "0.12", default-features = false, features = ["blocking", "json", "rustls-tls"] }
+regex = "1"
+log = "0.4"
+env_logger = "0.11"
+jpeg-encoder = { version = "0.6.1", features = ["simd"] }
+
+# The window, reachable from outside it. A socket into the running app that answers `execute_js`,
+# `get_dom` and `get_console_logs`, so "the preview is blank" can be asked of the thing that is
+# blank instead of guessed at from a screenshot. Started only under `#[cfg(debug_assertions)]` in
+# `run()`; a release build links it and never opens the socket.
+tauri-plugin-mcp = { path = "../.tauri-plugin-mcp" }
+
+[dev-dependencies]
+tempfile = "3"
+
+# Its own workspace: the repo root builds eleven cargo members plus staged dylibs
+# (moonsplice build), and a second root here would break `cargo build --release`.
+[workspace]
+
+# The frame path is image work, and image work in an unoptimised build is not the same activity:
+# a 1280x720 frame encodes in 10 ms optimised and 406 ms not, which is the difference between
+# playback and a slideshow. Our own crate stays at opt-level 0 so a rebuild is still seconds.
+[profile.dev.package."*"]
+opt-level = 3
+
+[profile.dev]
+opt-level = 1

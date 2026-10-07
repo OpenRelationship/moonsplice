@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Moonsplice: one moon, five phases, read left to right like frames. -->
+  <path d="M23.600 5.288A28.001 28.001 0 1 1 23.600 58.712A40.433 40.433 0 0 0 23.600 5.288Z" fill="currentColor"/>
+  <path d="M16.320 9.600A27.213 27.213 0 0 1 16.320 54.400A39.340 39.340 0 0 0 16.320 9.600Z" fill="currentColor"/>
+  <path d="M10.160 15.200A19.893 19.893 0 0 1 10.160 48.800A26.940 26.940 0 0 0 10.160 15.200Z" fill="currentColor"/>
+  <path d="M6.520 20.800A13.262 13.262 0 0 1 6.520 43.200A18.483 18.483 0 0 0 6.520 20.800Z" fill="currentColor"/>
+  <path d="M4.700 25.980A7.423 7.423 0 0 1 4.700 38.020A12.536 12.536 0 0 0 4.700 25.980Z" fill="currentColor"/>
+</svg>

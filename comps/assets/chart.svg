@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2001/svg" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#10141e"/>
+  <g fill="none" stroke="#243044" stroke-width="1">
+    <path d="M0 90h1280M0 180h1280M0 270h1280M0 360h1280M0 450h1280M0 540h1280M0 630h1280"/>
+    <path d="M160 0v720M320 0v720M480 0v720M640 0v720M800 0v720M960 0v720M1120 0v720"/>
+  </g>
+  <g>
+    <rect x="64" y="48" width="144" height="48" fill="#e84a5f"/>
+    <rect x="208" y="48" width="144" height="48" fill="#f2b33d"/>
+    <rect x="352" y="48" width="144" height="48" fill="#3ee0c6"/>
+    <rect x="496" y="48" width="144" height="48" fill="#4f8cff"/>
+    <rect x="640" y="48" width="144" height="48" fill="#e85aa8"/>
+    <rect x="784" y="48" width="144" height="48" fill="#ffffff"/>
+    <rect x="928" y="48" width="144" height="48" fill="#6b7894"/>
+    <rect x="1072" y="48" width="144" height="48" fill="#1c2436"/>
+  </g>
+  <circle cx="640" cy="400" r="168" fill="none" stroke="#3ee0c6" stroke-width="4"/>
+  <circle cx="640" cy="400" r="92" fill="none" stroke="#4f8cff" stroke-width="3"/>
+  <path d="M640 210v380M450 400h380" stroke="#f2b33d" stroke-width="2"/>
+  <rect x="96" y="560" width="220" height="96" rx="16" fill="#1b2436" stroke="#3ee0c6" stroke-width="2"/>
+  <text x="206" y="604" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="18" fill="#8b97b0">FIXTURE</text>
+  <text x="206" y="632" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="bold" fill="#e8edf7">CHART 01</text>
+  <text x="640" y="670" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="28" fill="#e8edf7">MOONSPLICE RENDERER EVAL</text>
+</svg>

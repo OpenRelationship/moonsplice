@@ -1,0 +1,13 @@
+[workspace]
+resolver = "2"
+members = ["cli", "decode", "layout", "embed", "scene3d", "scene", "track", "engine", "render", "play", "tabicl", "solid"]
+default-members = ["cli", "decode", "layout", "scene3d", "scene"]
+
+[profile.dev]
+opt-level = 1
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+strip = "symbols"

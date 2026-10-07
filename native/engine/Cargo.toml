@@ -1,0 +1,33 @@
+[package]
+name = "moonsplice-engine"
+version = "0.1.0"
+edition = "2021"
+description = "The Moonsplice host: core/runtime/*.lua in LuaJIT, with no LÖVE underneath"
+license = "MIT"
+
+[lib]
+name = "moonsplice_engine"
+path = "src/lib.rs"
+
+[[bin]]
+name = "moonsplice-engine"
+path = "src/main.rs"
+
+[dependencies]
+# LuaJIT, not Lua 5.4: core/runtime/*.lua reaches the native helpers through LuaJIT's FFI, and the
+# whole point of this phase is that not one line of it changes.
+mlua = { version = "0.11", features = ["luajit", "vendored"] }
+md-5 = "0.10"
+sha1 = "0.10"
+sha2 = "0.10"
+base64 = "0.22"
+png = "0.17"
+zune-jpeg = "0.4"
+# t:drop, baked once at compile. enhanced-determinism: the same bake on every platform.
+rapier2d = { version = "0.36", features = ["enhanced-determinism"] }
+# TabICLv2 in Candle: tablua's move ranker (host.tabicl), CPU
+moonsplice-tabicl = { path = "../tabicl" }
+# Manifold solids: s:solid(tree) and rows assets with solid = {...} (.robot/docs/solids.robot)
+moonsplice-solid = { path = "../solid" }
+candle-core = "0.11"
+serde_json = "1"

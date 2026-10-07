@@ -1,0 +1,129 @@
+{
+  "comment": "Public-domain and openly licensed fixtures for the Moonsplice renderer eval. Downloaded by moonsplice eval --fetch.",
+  "user_agent": "MoonspliceRendererEval/1.0 (public renderer test fixtures)",
+  "assets": [
+    {
+      "id": "earth_night",
+      "path": "comps/assets/earth_night.webm",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/9/99/Animation_of_Rotating_Earth_at_Night.webm",
+      "page": "https://commons.wikimedia.org/wiki/File:Animation_of_Rotating_Earth_at_Night.webm",
+      "license": "Public domain (NASA)",
+      "credit": "NASA / Suomi NPP city lights over Blue Marble"
+    },
+    {
+      "id": "galileo",
+      "path": "comps/assets/galileo.webm",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/a3/Earth_rotation_during_Galileo_flyby_%28ap070514%29.webm",
+      "page": "https://commons.wikimedia.org/wiki/File:Earth_rotation_during_Galileo_flyby_(ap070514).webm",
+      "license": "Public domain (NASA/JPL)",
+      "credit": "NASA/JPL / Doug Ellison"
+    },
+    {
+      "id": "apollo17",
+      "path": "comps/assets/apollo17.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/The_Earth_seen_from_Apollo_17.jpg/1280px-The_Earth_seen_from_Apollo_17.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:The_Earth_seen_from_Apollo_17.jpg",
+      "license": "Public domain (NASA)",
+      "credit": "NASA / Apollo 17 crew"
+    },
+    {
+      "id": "nasa_worm",
+      "path": "comps/assets/nasa_worm.svg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/a3/NASA_Worm_logo.svg",
+      "page": "https://commons.wikimedia.org/wiki/File:NASA_Worm_logo.svg",
+      "license": "Public domain (NASA)",
+      "credit": "Danne & Blackburn for NASA"
+    },
+    {
+      "id": "compass",
+      "path": "comps/assets/compass.svg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/8/8d/Simple_compass_rose.svg",
+      "fallback": "https://web.archive.org/web/2020/https://upload.wikimedia.org/wikipedia/commons/8/8d/Simple_compass_rose.svg",
+      "page": "https://commons.wikimedia.org/wiki/File:Simple_compass_rose.svg",
+      "license": "CC BY 3.0",
+      "credit": "Brosen / Wikimedia Commons"
+    },
+    {
+      "id": "helium_atom",
+      "path": "comps/assets/helium_atom.svg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/8/83/Helium_atom_%28not_to_scale%29.svg",
+      "fallback": "https://web.archive.org/web/2020/https://upload.wikimedia.org/wikipedia/commons/8/83/Helium_atom_%28not_to_scale%29.svg",
+      "page": "https://commons.wikimedia.org/wiki/File:Helium_atom_(not_to_scale).svg",
+      "license": "CC BY-SA 3.0",
+      "credit": "Wikimedia Commons contributors"
+    },
+    {
+      "id": "piano",
+      "path": "comps/assets/piano.ogg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/9/9a/Pleasant_Moments_Piano_Roll.ogg",
+      "fallback": "https://web.archive.org/web/2020/https://upload.wikimedia.org/wikipedia/commons/9/9a/Pleasant_Moments_Piano_Roll.ogg",
+      "page": "https://commons.wikimedia.org/wiki/File:Pleasant_Moments_Piano_Roll.ogg",
+      "license": "Public domain",
+      "credit": "Scott Joplin — Pleasant Moments piano roll"
+    },
+    {
+      "id": "lottie_wave",
+      "path": "comps/assets/android_wave.json",
+      "url": "https://raw.githubusercontent.com/airbnb/lottie-android/master/sample/src/main/assets/AndroidWave.json",
+      "page": "https://github.com/airbnb/lottie-android",
+      "license": "Apache-2.0",
+      "credit": "Airbnb lottie-android sample: AndroidWave.json"
+    },
+    {
+      "id": "roboto_regular",
+      "path": "comps/assets/fonts/Roboto-Regular.ttf",
+      "url": "https://raw.githubusercontent.com/googlefonts/roboto-2/main/src/hinted/Roboto-Regular.ttf",
+      "page": "https://github.com/googlefonts/roboto-2",
+      "license": "Apache-2.0",
+      "credit": "Google Fonts / Christian Robertson — Roboto Regular"
+    },
+    {
+      "id": "roboto_italic",
+      "path": "comps/assets/fonts/Roboto-Italic.ttf",
+      "url": "https://raw.githubusercontent.com/googlefonts/roboto-2/main/src/hinted/Roboto-Italic.ttf",
+      "page": "https://github.com/googlefonts/roboto-2",
+      "license": "Apache-2.0",
+      "credit": "Google Fonts / Christian Robertson — Roboto Italic"
+    },
+    {
+      "id": "roboto_bold",
+      "path": "comps/assets/fonts/Roboto-Bold.ttf",
+      "url": "https://raw.githubusercontent.com/googlefonts/roboto-2/main/src/hinted/Roboto-Bold.ttf",
+      "page": "https://github.com/googlefonts/roboto-2",
+      "license": "Apache-2.0",
+      "credit": "Google Fonts / Christian Robertson — Roboto Bold"
+    },
+    {
+      "id": "roboto_bolditalic",
+      "path": "comps/assets/fonts/Roboto-BoldItalic.ttf",
+      "url": "https://raw.githubusercontent.com/googlefonts/roboto-2/main/src/hinted/Roboto-BoldItalic.ttf",
+      "page": "https://github.com/googlefonts/roboto-2",
+      "license": "Apache-2.0",
+      "credit": "Google Fonts / Christian Robertson — Roboto Bold Italic"
+    },
+    {
+      "id": "jetbrains_regular",
+      "path": "comps/assets/fonts/JetBrainsMono-Regular.ttf",
+      "url": "https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/fonts/ttf/JetBrainsMono-Regular.ttf",
+      "page": "https://github.com/JetBrains/JetBrainsMono",
+      "license": "OFL-1.1",
+      "credit": "JetBrains — JetBrains Mono Regular"
+    },
+    {
+      "id": "playfair",
+      "path": "comps/assets/fonts/PlayfairDisplay.ttf",
+      "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/playfairdisplay/PlayfairDisplay%5Bwght%5D.ttf",
+      "page": "https://github.com/google/fonts/tree/main/ofl/playfairdisplay",
+      "license": "OFL-1.1",
+      "credit": "Claus Eggers Sørensen — Playfair Display"
+    },
+    {
+      "id": "fraunces",
+      "path": "comps/assets/fonts/Fraunces.ttf",
+      "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/fraunces/Fraunces%5BSOFT%2CWONK%2Copsz%2Cwght%5D.ttf",
+      "page": "https://github.com/google/fonts/tree/main/ofl/fraunces",
+      "license": "OFL-1.1",
+      "credit": "Undercase Type / Google Fonts — Fraunces"
+    }
+  ]
+}

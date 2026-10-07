@@ -1,0 +1,950 @@
+# what the port did with every Cadence file at 56ddad1: path<TAB>act<TAB>to<TAB>why
+.agents/AGENTS.md	doc	.robot/docs/agents-repo.robot	
+.agents/skills/AGENTS.md	drop		generated nomimono skills
+.agents/skills/features/studio/agent-surface/.generated	drop		generated nomimono skills
+.agents/skills/features/studio/agent-surface/SKILL.md	drop		generated nomimono skills
+.agents/skills/features/studio/app-shell/.generated	drop		generated nomimono skills
+.agents/skills/features/studio/app-shell/SKILL.md	drop		generated nomimono skills
+.agents/skills/features/studio/av-decisions/.generated	drop		generated nomimono skills
+.agents/skills/features/studio/av-decisions/SKILL.md	drop		generated nomimono skills
+.agents/skills/features/studio/av-encoder/.generated	drop		generated nomimono skills
+.agents/skills/features/studio/av-encoder/SKILL.md	drop		generated nomimono skills
+.agents/skills/features/studio/decision-layer/.generated	drop		generated nomimono skills
+.agents/skills/features/studio/decision-layer/SKILL.md	drop		generated nomimono skills
+.agents/skills/features/studio/lazy-facts/.generated	drop		generated nomimono skills
+.agents/skills/features/studio/lazy-facts/SKILL.md	drop		generated nomimono skills
+.agents/skills/features/studio/local-perception/.generated	drop		generated nomimono skills
+.agents/skills/features/studio/local-perception/SKILL.md	drop		generated nomimono skills
+.agents/skills/features/studio/love-free-render/.generated	drop		generated nomimono skills
+.agents/skills/features/studio/love-free-render/SKILL.md	drop		generated nomimono skills
+.agents/skills/features/studio/project-sync/.generated	drop		generated nomimono skills
+.agents/skills/features/studio/project-sync/SKILL.md	drop		generated nomimono skills
+.agents/skills/features/video-jeff/ask-api/.generated	drop		generated nomimono skills
+.agents/skills/features/video-jeff/ask-api/SKILL.md	drop		generated nomimono skills
+.agents/skills/features/video-jeff/derived-confidence/.generated	drop		generated nomimono skills
+.agents/skills/features/video-jeff/derived-confidence/SKILL.md	drop		generated nomimono skills
+.agents/skills/features/video-jeff/one-pass-head/.generated	drop		generated nomimono skills
+.agents/skills/features/video-jeff/one-pass-head/SKILL.md	drop		generated nomimono skills
+.agents/skills/features/video-jeff/sub-frame-timing/.generated	drop		generated nomimono skills
+.agents/skills/features/video-jeff/sub-frame-timing/SKILL.md	drop		generated nomimono skills
+.agents/skills/features/video-jeff/teacher-committee/.generated	drop		generated nomimono skills
+.agents/skills/features/video-jeff/teacher-committee/SKILL.md	drop		generated nomimono skills
+.buckconfig	drop		buck2
+.buckroot	drop		buck2
+.cargo/config.toml	port	native/.cargo/config.toml	
+.claude/settings.json	drop		a new .claude/settings.json loads .robot/rules.robot
+.github/workflows/check.yml	drop		CI is rewritten to run .robot
+.gitignore	drop		written new
+.gitmodules	drop		tablua is the only submodule
+.mcp.json	park		registers the parked vision MCP
+.robot/claims/harness.robot	port	.robot/claims/harness.robot	
+.robot/claims/quality.robot	port	.robot/claims/quality.robot	
+.robot/claims/routes.robot	port	.robot/claims/routes.robot	
+.robot/claims/tabicl.robot	port	.robot/claims/tabicl.robot	
+.robot/mskeywords.lua	port	.robot/mskeywords.lua	
+.robot/run.lua	port	.robot/claims.lua	
+AGENTS.md	drop		a symlink to .agents/AGENTS.md
+BUCK	drop		buck2
+CHECKS.md	doc	.robot/docs/checks.robot	
+CLAUDE.md	doc	.robot/docs/agents.robot	
+Cargo.lock	copy	native/Cargo.lock	
+Cargo.toml	port	native/Cargo.toml	
+DESIGN.md	doc	.robot/docs/design.robot	
+INTEGRATIONS.md	doc	.robot/docs/integrations.robot	
+LICENSE	copy	LICENSE	
+README.md	doc	.robot/docs/readme.robot	
+agent/REFERENCE.md	doc	.robot/docs/reference.robot	
+agent/asks.lua	port	core/host/asks.lua	
+agent/host.lua	port	core/host/host.lua	
+agent/models.lua	port	core/host/models.lua	
+agent/plain.lua	port	core/host/plain.lua	
+agent/prompts.lua	port	core/host/prompts.lua	
+agent/run.lua	port	core/host/run.lua	
+agent/tools.lua	port	core/host/tools.lua	
+agent/work.lua	port	core/host/work.lua	
+agent/world.lua	port	core/host/world.lua	
+app/AGENTS.md	doc	.robot/docs/editor.robot	
+app/studio/.gitignore	port	editor/.gitignore	
+app/studio/agent/editor.feature	rewrite	.robot/suites/editor.robot	Gherkin becomes Robot (no Gherkin, as in tablua); the editor's agent drives tablua, not malleable
+app/studio/agent/editor.lua	port	editor/agent/editor.lua	
+app/studio/agent/host.lua	port	editor/agent/host.lua	
+app/studio/agent/producer.lua	port	editor/agent/producer.lua	
+app/studio/index.html	port	editor/index.html	
+app/studio/package-lock.json	copy	editor/package-lock.json	
+app/studio/package.json	port	editor/package.json	
+app/studio/src-tauri/Cargo.lock	copy	editor/src-tauri/Cargo.lock	
+app/studio/src-tauri/Cargo.toml	port	editor/src-tauri/Cargo.toml	
+app/studio/src-tauri/build.rs	port	editor/src-tauri/build.rs	
+app/studio/src-tauri/capabilities/default.json	port	editor/src-tauri/capabilities/default.json	
+app/studio/src-tauri/icons/128x128.png	copy	editor/src-tauri/icons/128x128.png	
+app/studio/src-tauri/icons/128x128@2x.png	copy	editor/src-tauri/icons/128x128@2x.png	
+app/studio/src-tauri/icons/32x32.png	copy	editor/src-tauri/icons/32x32.png	
+app/studio/src-tauri/icons/icon.icns	copy	editor/src-tauri/icons/icon.icns	
+app/studio/src-tauri/icons/icon.ico	copy	editor/src-tauri/icons/icon.ico	
+app/studio/src-tauri/icons/icon.png	copy	editor/src-tauri/icons/icon.png	
+app/studio/src-tauri/src/agent.rs	port	editor/src-tauri/src/agent.rs	
+app/studio/src-tauri/src/bin/moonsplice-agent.rs	port	editor/src-tauri/src/bin/moonsplice-agent.rs	
+app/studio/src-tauri/src/engine.rs	port	editor/src-tauri/src/engine.rs	
+app/studio/src-tauri/src/frames.rs	port	editor/src-tauri/src/frames.rs	
+app/studio/src-tauri/src/headless.rs	port	editor/src-tauri/src/headless.rs	
+app/studio/src-tauri/src/lib.rs	port	editor/src-tauri/src/lib.rs	
+app/studio/src-tauri/src/lower.rs	port	editor/src-tauri/src/lower.rs	
+app/studio/src-tauri/src/main.rs	port	editor/src-tauri/src/main.rs	
+app/studio/src-tauri/src/net.rs	port	editor/src-tauri/src/net.rs	
+app/studio/src-tauri/src/perf.rs	port	editor/src-tauri/src/perf.rs	
+app/studio/src-tauri/src/project.rs	port	editor/src-tauri/src/project.rs	
+app/studio/src-tauri/src/queue.rs	port	editor/src-tauri/src/queue.rs	
+app/studio/src-tauri/src/secrets.rs	port	editor/src-tauri/src/secrets.rs	
+app/studio/src-tauri/src/source.rs	port	editor/src-tauri/src/source.rs	
+app/studio/src-tauri/src/waveform.rs	port	editor/src-tauri/src/waveform.rs	
+app/studio/src-tauri/src/words.rs	port	editor/src-tauri/src/words.rs	
+app/studio/src-tauri/tauri.conf.json	port	editor/src-tauri/tauri.conf.json	
+app/studio/src-tauri/tests/agent_live.rs	port	editor/src-tauri/tests/agent_live.rs	
+app/studio/src-tauri/tests/longform.rs	port	editor/src-tauri/tests/longform.rs	
+app/studio/src-tauri/tests/offline.rs	port	editor/src-tauri/tests/offline.rs	
+app/studio/src-tauri/tests/playback.rs	port	editor/src-tauri/tests/playback.rs	
+app/studio/src-tauri/tests/spec.rs	port	editor/src-tauri/tests/spec.rs	
+app/studio/src-tauri/tests/studio.rs	port	editor/src-tauri/tests/studio.rs	
+app/studio/src/App.tsx	port	editor/src/App.tsx	
+app/studio/src/Keys.test.ts	port	editor/src/Keys.test.ts	
+app/studio/src/Keys.tsx	port	editor/src/Keys.tsx	
+app/studio/src/Sidebar.tsx	port	editor/src/Sidebar.tsx	
+app/studio/src/agent/Agent.tsx	port	editor/src/agent/Agent.tsx	
+app/studio/src/agent/describe.ts	port	editor/src/agent/describe.ts	
+app/studio/src/agent/transport.test.ts	port	editor/src/agent/transport.test.ts	
+app/studio/src/agent/transport.ts	port	editor/src/agent/transport.ts	
+app/studio/src/app.css	port	editor/src/app.css	
+app/studio/src/bridge.ts	port	editor/src/bridge.ts	
+app/studio/src/chrome/Chrome.tsx	port	editor/src/chrome/Chrome.tsx	
+app/studio/src/effects/Effects.tsx	port	editor/src/effects/Effects.tsx	
+app/studio/src/effects/what.test.ts	port	editor/src/effects/what.test.ts	
+app/studio/src/effects/what.ts	port	editor/src/effects/what.ts	
+app/studio/src/format.test.ts	port	editor/src/format.test.ts	
+app/studio/src/format.ts	port	editor/src/format.ts	
+app/studio/src/instant.ts	port	editor/src/instant.ts	
+app/studio/src/library/Library.tsx	port	editor/src/library/Library.tsx	
+app/studio/src/library/drop.test.ts	port	editor/src/library/drop.test.ts	
+app/studio/src/listening.test.ts	port	editor/src/listening.test.ts	
+app/studio/src/main.tsx	port	editor/src/main.tsx	
+app/studio/src/mix.ts	port	editor/src/mix.ts	
+app/studio/src/player.test.ts	port	editor/src/player.test.ts	
+app/studio/src/player.ts	port	editor/src/player.ts	
+app/studio/src/sound.test.ts	port	editor/src/sound.test.ts	
+app/studio/src/sound.ts	port	editor/src/sound.ts	
+app/studio/src/spec.test.ts	port	editor/src/spec.test.ts	
+app/studio/src/stage/Stage.tsx	port	editor/src/stage/Stage.tsx	
+app/studio/src/state.ts	port	editor/src/state.ts	
+app/studio/src/style.test.ts	port	editor/src/style.test.ts	
+app/studio/src/timeline/Timeline.tsx	port	editor/src/timeline/Timeline.tsx	
+app/studio/src/timeline/lanes.test.ts	port	editor/src/timeline/lanes.test.ts	
+app/studio/src/timeline/lanes.ts	port	editor/src/timeline/lanes.ts	
+app/studio/src/timeline/longform.test.ts	port	editor/src/timeline/longform.test.ts	
+app/studio/src/timeline/shape.test.ts	port	editor/src/timeline/shape.test.ts	
+app/studio/src/timeline/shape.ts	port	editor/src/timeline/shape.ts	
+app/studio/src/types.ts	port	editor/src/types.ts	
+app/studio/src/ui/bits.tsx	port	editor/src/ui/bits.tsx	
+app/studio/src/vocabulary.test.ts	port	editor/src/vocabulary.test.ts	
+app/studio/tsconfig.json	port	editor/tsconfig.json	
+app/studio/vite.config.ts	port	editor/vite.config.ts	
+app/studio/vocabulary.json	port	editor/vocabulary.json	
+assets/cursors/cursor_none.png	copy	assets/cursors/cursor_none.png	
+assets/cursors/hand_closed.png	copy	assets/cursors/hand_closed.png	
+assets/cursors/hand_open.png	copy	assets/cursors/hand_open.png	
+assets/cursors/hand_point.png	copy	assets/cursors/hand_point.png	
+assets/cursors/pointer_a.png	copy	assets/cursors/pointer_a.png	
+assets/cursors/pointer_b.png	copy	assets/cursors/pointer_b.png	
+assets/fonts/NotoSans-Bold.ttf	copy	assets/fonts/NotoSans-Bold.ttf	
+assets/fonts/NotoSansArabic-Bold.ttf	copy	assets/fonts/NotoSansArabic-Bold.ttf	
+assets/fonts/NotoSansDevanagari-Bold.ttf	copy	assets/fonts/NotoSansDevanagari-Bold.ttf	
+assets/fonts/NotoSansJP-Bold.otf	copy	assets/fonts/NotoSansJP-Bold.otf	
+assets/fonts/NotoSansKR-Bold.otf	copy	assets/fonts/NotoSansKR-Bold.otf	
+assets/fonts/NotoSansSC-Bold.otf	copy	assets/fonts/NotoSansSC-Bold.otf	
+bin/build-native	rewrite	core/cli/build.lua	
+bin/eval	rewrite	core/cli/eval.lua	
+bin/golden	rewrite	core/cli/golden.lua	
+bin/lint-tests	rewrite	.robot/suites/lint.robot	a Robot suite
+bin/moonsplice	rewrite	core/cli/init.lua	the launcher, in Lua; ./moonsplice execs it
+bin/moonsplice-agent	rewrite	core/cli/agent.lua	
+bin/moonsplice-audio	park		Python, Studio or vision wrappers: their programs are parked
+bin/moonsplice-capture	rewrite	core/cli/capture.lua	
+bin/moonsplice-cloud	park		Python, Studio or vision wrappers: their programs are parked
+bin/moonsplice-eval-agent	rewrite	core/cli/evalagent.lua	
+bin/moonsplice-fetch	rewrite	core/cli/fetch.lua	
+bin/moonsplice-longform	park		Python, Studio or vision wrappers: their programs are parked
+bin/moonsplice-minimax	park		Python, Studio or vision wrappers: their programs are parked
+bin/moonsplice-open	rewrite	core/cli/open.lua	
+bin/moonsplice-pexels	park		Python, Studio or vision wrappers: their programs are parked
+bin/moonsplice-transcribe	rewrite	core/cli/transcribe.lua	
+bin/moonsplice-vision	park		Python, Studio or vision wrappers: their programs are parked
+bin/run-eval.py	park		Python, Studio or vision wrappers: their programs are parked
+bin/studio-ask	park		Python, Studio or vision wrappers: their programs are parked
+bin/studio-demo	park		Python, Studio or vision wrappers: their programs are parked
+bin/studio-devtools	rewrite	core/cli/devtools.lua	vendors tauri-plugin-mcp into editor/.tauri-plugin-mcp (gitignored), which the editor's build needs
+bin/studio-spec	park		Python, Studio or vision wrappers: their programs are parked
+bin/vision-setup	park		Python, Studio or vision wrappers: their programs are parked
+bin/web	park		Python, Studio or vision wrappers: their programs are parked
+bin/write-eval.py	park		Python, Studio or vision wrappers: their programs are parked
+brand/app-icon.png	copy	assets/brand/app-icon.png	
+brand/app-icon.svg	copy	assets/brand/app-icon.svg	
+brand/app-screenshot.png	copy	assets/brand/app-screenshot.png	
+brand/build.py	park		
+brand/logo-light.svg	copy	assets/brand/logo-light.svg	
+brand/logo.svg	copy	assets/brand/logo.svg	
+brand/mark.svg	copy	assets/brand/mark.svg	
+checks/probe.py	park		Python probes
+checks/query.py	park		Python probes
+checks/requirements.txt	park		Python probes
+checks/setup.sh	park		Python probes
+cli/Cargo.toml	port	native/cli/Cargo.toml	
+cli/src/main.rs	port	native/cli/src/main.rs	
+cloud/client.py	park		Python Modal worker
+cloud/worker.py	park		Python Modal worker
+comps/agent/facts-on-footage.lua	port	comps/agent/facts-on-footage.lua	
+comps/agent/narration.json	copy	comps/agent/narration.json	
+comps/agent/narration/00_open.mp3	copy	comps/agent/narration/00_open.mp3	
+comps/agent/narration/01_track.mp3	copy	comps/agent/narration/01_track.mp3	
+comps/agent/narration/02_thirds.mp3	copy	comps/agent/narration/02_thirds.mp3	
+comps/agent/narration/03_motion.mp3	copy	comps/agent/narration/03_motion.mp3	
+comps/agent/narration/04_event.mp3	copy	comps/agent/narration/04_event.mp3	
+comps/agent/narration/05_edit.mp3	copy	comps/agent/narration/05_edit.mp3	
+comps/agent/narration/06_proof.mp3	copy	comps/agent/narration/06_proof.mp3	
+comps/agent/narration/07_close.mp3	copy	comps/agent/narration/07_close.mp3	
+comps/demo/handoff.lua	port	comps/demo/handoff.lua	
+comps/lesson/how-moonsplice-works.lua	port	comps/lesson/how-moonsplice-works.lua	
+comps/lesson/narration.json	copy	comps/lesson/narration.json	
+comps/lesson/narration/00_open.mp3	copy	comps/lesson/narration/00_open.mp3	
+comps/lesson/narration/01_fn.mp3	copy	comps/lesson/narration/01_fn.mp3	
+comps/lesson/narration/02_seek.mp3	copy	comps/lesson/narration/02_seek.mp3	
+comps/lesson/narration/03_declare.mp3	copy	comps/lesson/narration/03_declare.mp3	
+comps/lesson/narration/04_det.mp3	copy	comps/lesson/narration/04_det.mp3	
+comps/lesson/narration/05_hash.mp3	copy	comps/lesson/narration/05_hash.mp3	
+comps/lesson/narration/06_lift.mp3	copy	comps/lesson/narration/06_lift.mp3	
+comps/lesson/narration/07_perceive.mp3	copy	comps/lesson/narration/07_perceive.mp3	
+comps/lesson/narration/08_lower.mp3	copy	comps/lesson/narration/08_lower.mp3	
+comps/lesson/narration/09_why.mp3	copy	comps/lesson/narration/09_why.mp3	
+comps/lesson/narration/10_close.mp3	copy	comps/lesson/narration/10_close.mp3	
+context/AGENTS.md	drop		nomimono context; plans are Robot now
+context/dump/.gitkeep	drop		nomimono context; plans are Robot now
+context/dump/context.sqlite	drop		nomimono context; plans are Robot now
+context/projects/AGENTS.md	drop		nomimono context; plans are Robot now
+context/projects/studio/PROJECT.md	drop		nomimono context; plans are Robot now
+context/projects/studio/features/agent-surface/BUCK	drop		nomimono context; plans are Robot now
+context/projects/studio/features/agent-surface/bdd/agent-surface.feature	drop		nomimono context; plans are Robot now
+context/projects/studio/features/agent-surface/feature.md	drop		nomimono context; plans are Robot now
+context/projects/studio/features/agent-surface/test/.gitkeep	drop		nomimono context; plans are Robot now
+context/projects/studio/features/app-shell/BUCK	drop		nomimono context; plans are Robot now
+context/projects/studio/features/app-shell/bdd/app-shell.feature	drop		nomimono context; plans are Robot now
+context/projects/studio/features/app-shell/feature.md	drop		nomimono context; plans are Robot now
+context/projects/studio/features/app-shell/test/.gitkeep	drop		nomimono context; plans are Robot now
+context/projects/studio/features/av-decisions/BUCK	drop		nomimono context; plans are Robot now
+context/projects/studio/features/av-decisions/bdd/av-decisions.feature	drop		nomimono context; plans are Robot now
+context/projects/studio/features/av-decisions/feature.md	drop		nomimono context; plans are Robot now
+context/projects/studio/features/av-decisions/test/.gitkeep	drop		nomimono context; plans are Robot now
+context/projects/studio/features/av-encoder/BUCK	drop		nomimono context; plans are Robot now
+context/projects/studio/features/av-encoder/bdd/av-encoder.feature	drop		nomimono context; plans are Robot now
+context/projects/studio/features/av-encoder/feature.md	drop		nomimono context; plans are Robot now
+context/projects/studio/features/av-encoder/test/.gitkeep	drop		nomimono context; plans are Robot now
+context/projects/studio/features/decision-layer/BUCK	drop		nomimono context; plans are Robot now
+context/projects/studio/features/decision-layer/bdd/decision-layer.feature	drop		nomimono context; plans are Robot now
+context/projects/studio/features/decision-layer/feature.md	drop		nomimono context; plans are Robot now
+context/projects/studio/features/decision-layer/test/.gitkeep	drop		nomimono context; plans are Robot now
+context/projects/studio/features/lazy-facts/BUCK	drop		nomimono context; plans are Robot now
+context/projects/studio/features/lazy-facts/bdd/lazy-facts.feature	drop		nomimono context; plans are Robot now
+context/projects/studio/features/lazy-facts/feature.md	drop		nomimono context; plans are Robot now
+context/projects/studio/features/lazy-facts/test/.gitkeep	drop		nomimono context; plans are Robot now
+context/projects/studio/features/local-perception/BUCK	drop		nomimono context; plans are Robot now
+context/projects/studio/features/local-perception/bdd/local-perception.feature	drop		nomimono context; plans are Robot now
+context/projects/studio/features/local-perception/feature.md	drop		nomimono context; plans are Robot now
+context/projects/studio/features/local-perception/test/.gitkeep	drop		nomimono context; plans are Robot now
+context/projects/studio/features/love-free-render/BUCK	drop		nomimono context; plans are Robot now
+context/projects/studio/features/love-free-render/bdd/love-free-render.feature	drop		nomimono context; plans are Robot now
+context/projects/studio/features/love-free-render/feature.md	drop		nomimono context; plans are Robot now
+context/projects/studio/features/love-free-render/test/.gitkeep	drop		nomimono context; plans are Robot now
+context/projects/studio/features/project-sync/BUCK	drop		nomimono context; plans are Robot now
+context/projects/studio/features/project-sync/bdd/project-sync.feature	drop		nomimono context; plans are Robot now
+context/projects/studio/features/project-sync/feature.md	drop		nomimono context; plans are Robot now
+context/projects/studio/features/project-sync/test/.gitkeep	drop		nomimono context; plans are Robot now
+context/projects/video-jeff/AGENTS.md	drop		nomimono context; plans are Robot now
+context/projects/video-jeff/PROJECT.md	drop		nomimono context; plans are Robot now
+context/projects/video-jeff/features/ask-api/BUCK	drop		nomimono context; plans are Robot now
+context/projects/video-jeff/features/ask-api/bdd/ask-api.feature	drop		nomimono context; plans are Robot now
+context/projects/video-jeff/features/ask-api/feature.md	drop		nomimono context; plans are Robot now
+context/projects/video-jeff/features/ask-api/test/.gitkeep	drop		nomimono context; plans are Robot now
+context/projects/video-jeff/features/derived-confidence/BUCK	drop		nomimono context; plans are Robot now
+context/projects/video-jeff/features/derived-confidence/bdd/derived-confidence.feature	drop		nomimono context; plans are Robot now
+context/projects/video-jeff/features/derived-confidence/feature.md	drop		nomimono context; plans are Robot now
+context/projects/video-jeff/features/derived-confidence/test/.gitkeep	drop		nomimono context; plans are Robot now
+context/projects/video-jeff/features/one-pass-head/BUCK	drop		nomimono context; plans are Robot now
+context/projects/video-jeff/features/one-pass-head/bdd/one-pass-head.feature	drop		nomimono context; plans are Robot now
+context/projects/video-jeff/features/one-pass-head/feature.md	drop		nomimono context; plans are Robot now
+context/projects/video-jeff/features/one-pass-head/test/.gitkeep	drop		nomimono context; plans are Robot now
+context/projects/video-jeff/features/sub-frame-timing/BUCK	drop		nomimono context; plans are Robot now
+context/projects/video-jeff/features/sub-frame-timing/bdd/sub-frame-timing.feature	drop		nomimono context; plans are Robot now
+context/projects/video-jeff/features/sub-frame-timing/feature.md	drop		nomimono context; plans are Robot now
+context/projects/video-jeff/features/sub-frame-timing/test/.gitkeep	drop		nomimono context; plans are Robot now
+context/projects/video-jeff/features/teacher-committee/BUCK	drop		nomimono context; plans are Robot now
+context/projects/video-jeff/features/teacher-committee/bdd/teacher-committee.feature	drop		nomimono context; plans are Robot now
+context/projects/video-jeff/features/teacher-committee/feature.md	drop		nomimono context; plans are Robot now
+context/projects/video-jeff/features/teacher-committee/test/.gitkeep	drop		nomimono context; plans are Robot now
+decode/Cargo.toml	port	native/decode/Cargo.toml	
+decode/src/lib.rs	port	native/decode/src/lib.rs	
+decode/tests/seeking.rs	port	native/decode/tests/seeking.rs	
+docs/DESKTOP.md	doc	.robot/docs/desktop.robot	
+docs/DIRECTION.md	doc	.robot/docs/direction.robot	
+docs/ENGINE.md	doc	.robot/docs/engine.robot	
+docs/FACTS.md	doc	.robot/docs/facts.robot	
+docs/FRICTION.md	doc	.robot/docs/friction.robot	
+docs/ROWS.md	doc	.robot/docs/rows.robot	
+docs/SCENE.md	doc	.robot/docs/scene.robot	
+docs/SOLIDS.md	doc	.robot/docs/solids.robot	
+docs/VISION.md	doc	.robot/docs/vision.robot	
+docs/media/facts-on-footage.jpg	copy	assets/docs/facts-on-footage.jpg	
+docs/media/facts-on-footage.mp4	copy	assets/docs/facts-on-footage.mp4	
+docs/media/how-moonsplice-works.jpg	copy	assets/docs/how-moonsplice-works.jpg	
+docs/media/how-moonsplice-works.mp4	copy	assets/docs/how-moonsplice-works.mp4	
+embed/Cargo.toml	port	native/embed/Cargo.toml	
+embed/src/bin/smoke.rs	port	native/embed/src/bin/smoke.rs	
+embed/src/lib.rs	port	native/embed/src/lib.rs	
+engine/Cargo.toml	port	native/engine/Cargo.toml	
+engine/lua/boot.lua	port	core/runtime/boot.lua	
+engine/lua/love.lua	port	core/runtime/love.lua	
+engine/src/data.rs	port	native/engine/src/data.rs	
+engine/src/image.rs	port	native/engine/src/image.rs	
+engine/src/lib.rs	port	native/engine/src/lib.rs	
+engine/src/main.rs	port	native/engine/src/main.rs	
+engine/src/physics.rs	port	native/engine/src/physics.rs	
+engine/src/session.rs	port	native/engine/src/session.rs	
+engine/src/solid.rs	port	native/engine/src/solid.rs	
+engine/src/tabicl.rs	port	native/engine/src/tabicl.rs	
+engine/tests/session.rs	port	native/engine/tests/session.rs	
+evals/README.md	doc	.robot/docs/evals.robot	
+evals/SOURCES.md	doc	.robot/docs/evals.robot	
+evals/agent/MoonspliceEval.py	park		
+evals/agent/README.md	doc	.robot/docs/eval-agent.robot	
+evals/agent/fixture.json	copy	.robot/eval/fixture.json	
+evals/agent/goal.md	doc	.robot/docs/eval-agent.robot	
+evals/agent/preamble/claude-cli.md	doc	.robot/docs/eval-agent.robot	
+evals/agent/preamble/moonsplice-agent.md	doc	.robot/docs/eval-agent.robot	
+evals/agent/vox_explainer.robot	port	.robot/eval/vox_explainer.robot	
+evals/assets.json	port	.robot/eval/assets.json	
+evals/assets/chart.svg	copy	comps/assets/chart.svg	
+evals/assets/cube.gltf	copy	comps/assets/cube.gltf	
+evals/assets/page/bake.html	copy	comps/assets/page/bake.html	
+evals/assets/page/face.woff2	copy	comps/assets/page/face.woff2	
+evals/assets/page/index.html	copy	comps/assets/page/index.html	
+evals/assets/page/mark.png	copy	comps/assets/page/mark.png	
+evals/assets/page/style.css	copy	comps/assets/page/style.css	
+evals/assets/ui_button.svg	copy	comps/assets/ui_button.svg	
+evals/assets/ui_card.svg	copy	comps/assets/ui_card.svg	
+evals/assets/ui_chrome.svg	copy	comps/assets/ui_chrome.svg	
+evals/assets/ui_page.svg	copy	comps/assets/ui_page.svg	
+evals/assets/ui_sidebar.svg	copy	comps/assets/ui_sidebar.svg	
+evals/assets/walk.json	copy	comps/assets/walk.json	
+evals/assets/walk.png	copy	comps/assets/walk.png	
+evals/cases/audio.lua	port	comps/cases/audio.lua	
+evals/cases/blend_modes.lua	port	comps/cases/blend_modes.lua	
+evals/cases/bounce.lua	port	comps/cases/bounce.lua	
+evals/cases/camera.lua	port	comps/cases/camera.lua	
+evals/cases/captions.lua	port	comps/cases/captions.lua	
+evals/cases/chart.lua	port	comps/cases/chart.lua	
+evals/cases/clip_mask.lua	port	comps/cases/clip_mask.lua	
+evals/cases/compositing.lua	port	comps/cases/compositing.lua	
+evals/cases/displace.lua	port	comps/cases/displace.lua	
+evals/cases/draw.lua	port	comps/cases/draw.lua	
+evals/cases/drop.lua	port	comps/cases/drop.lua	
+evals/cases/eases.lua	port	comps/cases/eases.lua	
+evals/cases/effects.lua	port	comps/cases/effects.lua	
+evals/cases/flex.lua	port	comps/cases/flex.lua	
+evals/cases/fonts.lua	port	comps/cases/fonts.lua	
+evals/cases/fx.lua	port	comps/cases/fx.lua	
+evals/cases/fx_native.lua	port	comps/cases/fx_native.lua	
+evals/cases/game_harbour.lua	port	comps/cases/game_harbour.lua	
+evals/cases/game_harbour3d.lua	port	comps/cases/game_harbour3d.lua	
+evals/cases/grade.lua	port	comps/cases/grade.lua	
+evals/cases/hsluv.lua	port	comps/cases/hsluv.lua	
+evals/cases/html.lua	port	comps/cases/html.lua	
+evals/cases/image.lua	port	comps/cases/image.lua	
+evals/cases/lottie.lua	port	comps/cases/lottie.lua	
+evals/cases/motion.lua	port	comps/cases/motion.lua	
+evals/cases/okhsl.lua	port	comps/cases/okhsl.lua	
+evals/cases/ornaments.lua	port	comps/cases/ornaments.lua	
+evals/cases/page.lua	port	comps/cases/page.lua	
+evals/cases/page_bake.lua	port	comps/cases/page_bake.lua	
+evals/cases/particles.lua	port	comps/cases/particles.lua	
+evals/cases/perspective_explode.lua	port	comps/cases/perspective_explode.lua	
+evals/cases/perspective_focus.lua	port	comps/cases/perspective_focus.lua	
+evals/cases/primitives.lua	port	comps/cases/primitives.lua	
+evals/cases/pulse.lua	port	comps/cases/pulse.lua	
+evals/cases/rows_tide.lua	port	comps/cases/rows_tide.lua	
+evals/cases/solids.lua	port	comps/cases/solids.lua	
+evals/cases/spine.lua	port	comps/cases/spine.lua	
+evals/cases/spritesheet.lua	port	comps/cases/spritesheet.lua	
+evals/cases/svg.lua	port	comps/cases/svg.lua	
+evals/cases/tide_table.lua	port	comps/cases/tide_table.lua	
+evals/cases/type.lua	port	comps/cases/type.lua	
+evals/cases/type_sdf.lua	port	comps/cases/type_sdf.lua	
+evals/cases/type_styles.lua	port	comps/cases/type_styles.lua	
+evals/cases/type_wrap.lua	port	comps/cases/type_wrap.lua	
+evals/cases/vector.lua	port	comps/cases/vector.lua	
+evals/cases/video.lua	port	comps/cases/video.lua	
+evals/cases/video_layers.lua	port	comps/cases/video_layers.lua	
+evals/cases/world3d.lua	port	comps/cases/world3d.lua	
+evals/cases/world_bevy.lua	port	comps/cases/world_bevy.lua	
+evals/film/Small Boats.lua	port	comps/film/Small Boats.lua	
+evals/film/Sound/bed-harbour.mp3	port	comps/film/Sound/bed-harbour.mp3	
+evals/film/Sound/quay.mp3	port	comps/film/Sound/quay.mp3	
+evals/film/Sound/swell.mp3	port	comps/film/Sound/swell.mp3	
+evals/golden/audio.scene.md5	copy	.robot/golden/audio.scene.md5	
+evals/golden/blend_modes.scene.md5	copy	.robot/golden/blend_modes.scene.md5	
+evals/golden/bounce.scene.md5	copy	.robot/golden/bounce.scene.md5	
+evals/golden/camera.scene.md5	copy	.robot/golden/camera.scene.md5	
+evals/golden/captions.scene.md5	copy	.robot/golden/captions.scene.md5	
+evals/golden/chart.scene.md5	copy	.robot/golden/chart.scene.md5	
+evals/golden/clip_mask.scene.md5	copy	.robot/golden/clip_mask.scene.md5	
+evals/golden/compositing.scene.md5	copy	.robot/golden/compositing.scene.md5	
+evals/golden/displace.scene.md5	copy	.robot/golden/displace.scene.md5	
+evals/golden/draw.scene.md5	copy	.robot/golden/draw.scene.md5	
+evals/golden/drop.scene.md5	copy	.robot/golden/drop.scene.md5	
+evals/golden/eases.scene.md5	copy	.robot/golden/eases.scene.md5	
+evals/golden/effects.scene.md5	copy	.robot/golden/effects.scene.md5	
+evals/golden/flex.scene.md5	copy	.robot/golden/flex.scene.md5	
+evals/golden/fonts.scene.md5	copy	.robot/golden/fonts.scene.md5	
+evals/golden/fx.scene.md5	copy	.robot/golden/fx.scene.md5	
+evals/golden/fx_native.scene.md5	copy	.robot/golden/fx_native.scene.md5	
+evals/golden/game_harbour.scene.md5	copy	.robot/golden/game_harbour.scene.md5	
+evals/golden/game_harbour3d.scene.md5	copy	.robot/golden/game_harbour3d.scene.md5	
+evals/golden/grade.scene.md5	copy	.robot/golden/grade.scene.md5	
+evals/golden/hsluv.scene.md5	copy	.robot/golden/hsluv.scene.md5	
+evals/golden/html.scene.md5	copy	.robot/golden/html.scene.md5	
+evals/golden/image.scene.md5	copy	.robot/golden/image.scene.md5	
+evals/golden/lottie.scene.md5	copy	.robot/golden/lottie.scene.md5	
+evals/golden/motion.scene.md5	copy	.robot/golden/motion.scene.md5	
+evals/golden/okhsl.scene.md5	copy	.robot/golden/okhsl.scene.md5	
+evals/golden/ornaments.scene.md5	copy	.robot/golden/ornaments.scene.md5	
+evals/golden/page.scene.md5	copy	.robot/golden/page.scene.md5	
+evals/golden/page_bake.scene.md5	copy	.robot/golden/page_bake.scene.md5	
+evals/golden/particles.scene.md5	copy	.robot/golden/particles.scene.md5	
+evals/golden/perspective_explode.scene.md5	copy	.robot/golden/perspective_explode.scene.md5	
+evals/golden/perspective_focus.scene.md5	copy	.robot/golden/perspective_focus.scene.md5	
+evals/golden/primitives.scene.md5	copy	.robot/golden/primitives.scene.md5	
+evals/golden/pulse.scene.md5	copy	.robot/golden/pulse.scene.md5	
+evals/golden/rows_tide.scene.md5	copy	.robot/golden/rows_tide.scene.md5	
+evals/golden/solids.scene.md5	copy	.robot/golden/solids.scene.md5	
+evals/golden/spine.scene.md5	copy	.robot/golden/spine.scene.md5	
+evals/golden/spritesheet.scene.md5	copy	.robot/golden/spritesheet.scene.md5	
+evals/golden/svg.scene.md5	copy	.robot/golden/svg.scene.md5	
+evals/golden/tide_table.scene.md5	copy	.robot/golden/tide_table.scene.md5	
+evals/golden/type.scene.md5	copy	.robot/golden/type.scene.md5	
+evals/golden/type_sdf.scene.md5	copy	.robot/golden/type_sdf.scene.md5	
+evals/golden/type_styles.scene.md5	copy	.robot/golden/type_styles.scene.md5	
+evals/golden/type_wrap.scene.md5	copy	.robot/golden/type_wrap.scene.md5	
+evals/golden/vector.scene.md5	copy	.robot/golden/vector.scene.md5	
+evals/golden/video.scene.md5	copy	.robot/golden/video.scene.md5	
+evals/golden/video_layers.scene.md5	copy	.robot/golden/video_layers.scene.md5	
+evals/golden/world3d.scene.md5	copy	.robot/golden/world3d.scene.md5	
+evals/golden/world_bevy.scene.md5	copy	.robot/golden/world_bevy.scene.md5	
+evals/manifest.json	port	.robot/eval/manifest.json	
+evals/projects/launch-spot/assets/in/vo-39e5bed07150.mp3	port	comps/projects/launch-spot/assets/in/vo-39e5bed07150.mp3	
+evals/projects/launch-spot/assets/in/vo.mp3	port	comps/projects/launch-spot/assets/in/vo.mp3	
+evals/projects/launch-spot/comps/launch.lua	port	comps/projects/launch-spot/comps/launch.lua	
+evals/projects/launch-spot/doc.json	port	comps/projects/launch-spot/doc.json	
+evals/projects/launch-spot/studio.json	port	comps/projects/launch-spot/studio.json	
+examples/README.md	doc	.robot/docs/examples.robot	
+examples/basics/bounce.lua	port	comps/examples/basics/bounce.lua	
+examples/basics/bumper.lua	port	comps/examples/basics/bumper.lua	
+examples/basics/captions.lua	port	comps/examples/basics/captions.lua	
+examples/basics/chart.lua	port	comps/examples/basics/chart.lua	
+examples/basics/effects.lua	port	comps/examples/basics/effects.lua	
+examples/basics/grade.lua	port	comps/examples/basics/grade.lua	
+examples/basics/hello.lua	port	comps/examples/basics/hello.lua	
+examples/basics/onair.lua	port	comps/examples/basics/onair.lua	
+examples/basics/page.lua	port	comps/examples/basics/page.lua	
+examples/basics/palette.lua	port	comps/examples/basics/palette.lua	
+examples/basics/pulse.lua	port	comps/examples/basics/pulse.lua	
+examples/basics/wave.lua	port	comps/examples/basics/wave.lua	
+examples/basics/world3d.lua	port	comps/examples/basics/world3d.lua	
+examples/clips/multi.lua	port	comps/examples/clips/multi.lua	
+examples/clips/vertical.lua	port	comps/examples/clips/vertical.lua	
+examples/demos/carousel.lua	port	comps/examples/demos/carousel.lua	
+examples/demos/dub_demo.lua	port	comps/examples/demos/dub_demo.lua	
+examples/demos/dubbing_record.json	copy	comps/examples/demos/dubbing_record.json	
+examples/demos/moon_demo.lua	port	comps/examples/demos/moon_demo.lua	
+examples/demos/screen3d.lua	port	comps/examples/demos/screen3d.lua	
+examples/vv/fonts/BebasNeue-Regular.ttf	copy	comps/examples/vv/fonts/BebasNeue-Regular.ttf	
+examples/vv/fonts/CormorantGaramond[wght].ttf	copy	comps/examples/vv/fonts/CormorantGaramond[wght].ttf	
+examples/vv/fonts/DMMono-Regular.ttf	copy	comps/examples/vv/fonts/DMMono-Regular.ttf	
+examples/vv/fonts/InstrumentSerif-Italic.ttf	copy	comps/examples/vv/fonts/InstrumentSerif-Italic.ttf	
+examples/vv/fonts/InstrumentSerif-Regular.ttf	copy	comps/examples/vv/fonts/InstrumentSerif-Regular.ttf	
+examples/vv/fonts/SpaceGrotesk[wght].ttf	copy	comps/examples/vv/fonts/SpaceGrotesk[wght].ttf	
+examples/vv/fonts/Syne[wght].ttf	copy	comps/examples/vv/fonts/Syne[wght].ttf	
+examples/vv/fonts/Unbounded[wght].ttf	copy	comps/examples/vv/fonts/Unbounded[wght].ttf	
+examples/vv/scene-explainer.lua	port	comps/examples/vv/scene-explainer.lua	
+examples/vv/scene-explainer.mp4	copy	comps/examples/vv/scene-explainer.mp4	
+examples/vv/type-specimen.lua	port	comps/examples/vv/type-specimen.lua	
+examples/vv/type-specimen.mp4	copy	comps/examples/vv/type-specimen.mp4	
+git/AGENTS.md	drop		nomimono git hooks
+git/ci/github/check.yml	drop		nomimono git hooks
+git/ci/local/check.sh	drop		nomimono git hooks
+git/ci/local/doctor.sh	drop		nomimono git hooks
+justfile	drop		the CLI is core/cli
+layout/Cargo.toml	port	native/layout/Cargo.toml	
+layout/src/lib.rs	port	native/layout/src/lib.rs	
+lib/moonsplice/audio.lua	port	core/moonsplice/audio.lua	
+lib/moonsplice/captions.lua	port	core/moonsplice/captions.lua	
+lib/moonsplice/chart.lua	port	core/moonsplice/chart.lua	
+lib/moonsplice/color.lua	port	core/moonsplice/color.lua	
+lib/moonsplice/demo.lua	port	core/moonsplice/demo.lua	
+lib/moonsplice/ease.lua	port	core/moonsplice/ease.lua	
+lib/moonsplice/game.lua	port	core/moonsplice/game.lua	
+lib/moonsplice/hsluv.lua	port	core/moonsplice/hsluv.lua	
+lib/moonsplice/init.lua	port	core/moonsplice/init.lua	
+lib/moonsplice/json.lua	port	core/moonsplice/json.lua	
+lib/moonsplice/lint.lua	port	core/moonsplice/lint.lua	
+lib/moonsplice/math3d.lua	port	core/moonsplice/math3d.lua	
+lib/moonsplice/okhsl.lua	port	core/moonsplice/okhsl.lua	
+lib/moonsplice/onscreen.lua	port	core/moonsplice/onscreen.lua	
+lib/moonsplice/ornament.lua	port	core/moonsplice/ornament.lua	
+lib/moonsplice/result.lua	port	core/moonsplice/result.lua	
+lib/moonsplice/rough.lua	port	core/moonsplice/rough.lua	
+lib/moonsplice/rows.lua	port	core/moonsplice/rows.lua	
+lib/moonsplice/spine.lua	port	core/moonsplice/spine.lua	
+lib/moonsplice/timeline.lua	port	core/moonsplice/timeline.lua	
+library/AGENTS.md	drop		nomimono library page
+model/Cargo.toml	drop		the editor-model direction, scrapped 2026-09-16
+model/README.md	drop		the editor-model direction, scrapped 2026-09-16
+model/lua/props.lua	drop		the editor-model direction, scrapped 2026-09-16
+model/scripts/cuda-box.sh	drop		the editor-model direction, scrapped 2026-09-16
+model/scripts/mac-smoke.sh	drop		the editor-model direction, scrapped 2026-09-16
+model/scripts/wsl-job.sh	drop		the editor-model direction, scrapped 2026-09-16
+model/src/agent.rs	drop		the editor-model direction, scrapped 2026-09-16
+model/src/apply.rs	drop		the editor-model direction, scrapped 2026-09-16
+model/src/backend/candle.rs	drop		the editor-model direction, scrapped 2026-09-16
+model/src/backend/mlx.rs	drop		the editor-model direction, scrapped 2026-09-16
+model/src/backend/mock.rs	drop		the editor-model direction, scrapped 2026-09-16
+model/src/backend/mod.rs	drop		the editor-model direction, scrapped 2026-09-16
+model/src/backend/ort.rs	drop		the editor-model direction, scrapped 2026-09-16
+model/src/eval.rs	drop		the editor-model direction, scrapped 2026-09-16
+model/src/lib.rs	drop		the editor-model direction, scrapped 2026-09-16
+model/src/main.rs	drop		the editor-model direction, scrapped 2026-09-16
+model/src/mutate.rs	drop		the editor-model direction, scrapped 2026-09-16
+model/src/prompt.rs	drop		the editor-model direction, scrapped 2026-09-16
+model/src/tasks.rs	drop		the editor-model direction, scrapped 2026-09-16
+model/src/validate.rs	drop		the editor-model direction, scrapped 2026-09-16
+model/tasks/generated/captions_m01.json	drop		the editor-model direction, scrapped 2026-09-16
+model/tasks/generated/captions_m02.json	drop		the editor-model direction, scrapped 2026-09-16
+model/tasks/generated/compositing_m01.json	drop		the editor-model direction, scrapped 2026-09-16
+model/tasks/generated/compositing_m02.json	drop		the editor-model direction, scrapped 2026-09-16
+model/tasks/generated/primitives_m01.json	drop		the editor-model direction, scrapped 2026-09-16
+model/tasks/generated/type_m01.json	drop		the editor-model direction, scrapped 2026-09-16
+model/tasks/generated/type_m02.json	drop		the editor-model direction, scrapped 2026-09-16
+model/tasks/hand/primitives_disc_white.json	drop		the editor-model direction, scrapped 2026-09-16
+model/tasks/hand/primitives_duration_trap.json	drop		the editor-model direction, scrapped 2026-09-16
+model/tasks/hand/primitives_slab_faster.json	drop		the editor-model direction, scrapped 2026-09-16
+model/tasks/hand/primitives_title_no_overshoot.json	drop		the editor-model direction, scrapped 2026-09-16
+mono.toml	drop		nomimono
+packages/AGENTS.md	drop		nomimono and malleable submodules
+packages/malleable	drop		nomimono and malleable submodules
+packages/nomimono	drop		nomimono and malleable submodules
+play/Cargo.toml	port	native/play/Cargo.toml	
+play/src/main.rs	port	native/play/src/main.rs	
+render/Cargo.toml	port	native/render/Cargo.toml	
+render/src/lib.rs	port	native/render/src/lib.rs	
+render/src/world.rs	port	native/render/src/world.rs	
+runtime/checkmode.lua	port	core/runtime/checkmode.lua	
+runtime/decode.lua	port	core/runtime/decode.lua	
+runtime/derive.lua	port	core/runtime/derive.lua	
+runtime/effects.lua	port	core/runtime/effects.lua	
+runtime/fx.lua	port	core/runtime/fx.lua	
+runtime/html.lua	port	core/runtime/html.lua	
+runtime/layout.lua	port	core/runtime/layout.lua	
+runtime/main.lua	port	core/runtime/main.lua	
+runtime/native.lua	port	core/runtime/native.lua	
+runtime/painter.lua	port	core/runtime/painter.lua	
+runtime/persp.lua	port	core/runtime/persp.lua	
+runtime/physics_bake.lua	port	core/runtime/physics_bake.lua	
+runtime/resolve.lua	port	core/runtime/resolve.lua	
+runtime/richtext.lua	port	core/runtime/richtext.lua	
+runtime/rive.lua	port	core/runtime/rive.lua	
+runtime/rowsmode.lua	port	core/runtime/rowsmode.lua	
+runtime/scene.lua	port	core/runtime/scene.lua	
+runtime/scene3d.lua	port	core/runtime/scene3d.lua	
+runtime/sceneg.lua	port	core/runtime/sceneg.lua	
+runtime/serve.lua	port	core/runtime/serve.lua	
+runtime/solid.lua	port	core/runtime/solid.lua	
+runtime/vector.lua	port	core/runtime/vector.lua	
+runtime/worldbevy.lua	port	core/runtime/worldbevy.lua	
+scene/Cargo.toml	port	native/scene/Cargo.toml	
+scene/fonts/NotoSans-Regular.ttf	copy	native/scene/fonts/NotoSans-Regular.ttf	
+scene/src/bin/moonsplice-html-shot.rs	port	native/scene/src/bin/moonsplice-html-shot.rs	
+scene/src/cpu.rs	port	native/scene/src/cpu.rs	
+scene/src/displace.rs	port	native/scene/src/displace.rs	
+scene/src/effects.rs	port	native/scene/src/effects.rs	
+scene/src/fx.rs	port	native/scene/src/fx.rs	
+scene/src/html/bake.rs	port	native/scene/src/html/bake.rs	
+scene/src/html/mod.rs	port	native/scene/src/html/mod.rs	
+scene/src/lib.rs	port	native/scene/src/lib.rs	
+scene/src/lottie.rs	port	native/scene/src/lottie.rs	
+scene/src/persp.rs	port	native/scene/src/persp.rs	
+scene3d/Cargo.toml	port	native/scene3d/Cargo.toml	
+scene3d/src/cpu.rs	port	native/scene3d/src/cpu.rs	
+scene3d/src/gpu.rs	port	native/scene3d/src/gpu.rs	
+scene3d/src/lib.rs	port	native/scene3d/src/lib.rs	
+scene3d/src/mesh.rs	port	native/scene3d/src/mesh.rs	
+scene3d/src/scene.rs	port	native/scene3d/src/scene.rs	
+scene3d/src/shader.wgsl	port	native/scene3d/src/shader.wgsl	
+scripts/AGENTS.md	drop		nomimono recipe glue
+scripts/build/.gitkeep	drop		nomimono recipe glue
+scripts/lib/doc-binding.mjs	drop		nomimono recipe glue
+scripts/lib/moonsplice-wasm.mjs	drop		nomimono recipe glue
+scripts/moonsplice-doctor.mjs	drop		nomimono recipe glue
+scripts/moonsplice-feedback.mjs	drop		nomimono recipe glue
+scripts/moonsplice-verify.mjs	drop		nomimono recipe glue
+scripts/tools/.gitkeep	drop		nomimono recipe glue
+scripts/tools/studio.sh	drop		nomimono recipe glue
+scripts/update/.gitkeep	drop		nomimono recipe glue
+site/app.jpg	park		the site is its own project
+site/index.html	park		the site is its own project
+skills.sh.json	drop		nomimono
+skills/README.md	park		vendored agent skills
+skills/moonsplice/SKILL.md	park		vendored agent skills
+skills/moonsplice/evals/evals.json	park		vendored agent skills
+skills/moonsplice/references/api.md	park		vendored agent skills
+skills/moonsplice/references/capture.md	park		vendored agent skills
+skills/moonsplice/references/demo.md	park		vendored agent skills
+skills/moonsplice/references/effects.md	park		vendored agent skills
+skills/moonsplice/references/elevenlabs.md	park		vendored agent skills
+skills/moonsplice/references/love2d.md	park		vendored agent skills
+skills/moonsplice/references/motion.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/.agents/skills/update-skills-from-changelog/SKILL.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/.env.example	park		vendored agent skills
+skills/vendor/elevenlabs-skills/.gitignore	park		vendored agent skills
+skills/vendor/elevenlabs-skills/LICENSE	park		vendored agent skills
+skills/vendor/elevenlabs-skills/README.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/agents/SKILL.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/agents/references/agent-configuration.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/agents/references/client-tools.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/agents/references/installation.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/agents/references/outbound-calls.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/agents/references/widget-embedding.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/evals/agents/evals.json	park		vendored agent skills
+skills/vendor/elevenlabs-skills/evals/agents/trigger_eval.json	park		vendored agent skills
+skills/vendor/elevenlabs-skills/evals/music/evals.json	park		vendored agent skills
+skills/vendor/elevenlabs-skills/evals/music/trigger_eval.json	park		vendored agent skills
+skills/vendor/elevenlabs-skills/evals/run_all.py	park		vendored agent skills
+skills/vendor/elevenlabs-skills/evals/setup-api-key/evals.json	park		vendored agent skills
+skills/vendor/elevenlabs-skills/evals/setup-api-key/trigger_eval.json	park		vendored agent skills
+skills/vendor/elevenlabs-skills/evals/sound-effects/evals.json	park		vendored agent skills
+skills/vendor/elevenlabs-skills/evals/sound-effects/trigger_eval.json	park		vendored agent skills
+skills/vendor/elevenlabs-skills/evals/speech-engine/evals.json	park		vendored agent skills
+skills/vendor/elevenlabs-skills/evals/speech-engine/trigger_eval.json	park		vendored agent skills
+skills/vendor/elevenlabs-skills/evals/speech-to-text/evals.json	park		vendored agent skills
+skills/vendor/elevenlabs-skills/evals/speech-to-text/trigger_eval.json	park		vendored agent skills
+skills/vendor/elevenlabs-skills/evals/text-to-speech/evals.json	park		vendored agent skills
+skills/vendor/elevenlabs-skills/evals/text-to-speech/trigger_eval.json	park		vendored agent skills
+skills/vendor/elevenlabs-skills/evals/voice-changer/evals.json	park		vendored agent skills
+skills/vendor/elevenlabs-skills/evals/voice-changer/trigger_eval.json	park		vendored agent skills
+skills/vendor/elevenlabs-skills/evals/voice-isolator/evals.json	park		vendored agent skills
+skills/vendor/elevenlabs-skills/evals/voice-isolator/trigger_eval.json	park		vendored agent skills
+skills/vendor/elevenlabs-skills/logo.png	park		vendored agent skills
+skills/vendor/elevenlabs-skills/music/SKILL.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/music/references/api_reference.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/music/references/installation.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/setup-api-key/SKILL.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/sound-effects/SKILL.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/sound-effects/references/installation.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/speech-engine/SKILL.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/speech-engine/references/installation.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/speech-engine/references/javascript-sdk-reference.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/speech-engine/references/python-sdk-reference.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/speech-to-text/SKILL.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/speech-to-text/references/installation.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/speech-to-text/references/realtime-client-side.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/speech-to-text/references/realtime-commit-strategies.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/speech-to-text/references/realtime-events.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/speech-to-text/references/realtime-server-side.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/speech-to-text/references/transcription-options.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/text-to-speech/SKILL.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/text-to-speech/references/installation.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/text-to-speech/references/streaming.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/text-to-speech/references/voice-settings.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/voice-changer/SKILL.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/voice-changer/references/installation.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/voice-isolator/SKILL.md	park		vendored agent skills
+skills/vendor/elevenlabs-skills/voice-isolator/references/installation.md	park		vendored agent skills
+solid/Cargo.toml	port	native/solid/Cargo.toml	
+solid/src/lib.rs	port	native/solid/src/lib.rs	
+solid/src/main.rs	port	native/solid/src/main.rs	
+spikes/blitz_spike/Cargo.lock	drop		spikes whose results are in the docs
+spikes/blitz_spike/Cargo.toml	drop		spikes whose results are in the docs
+spikes/blitz_spike/src/main.rs	drop		spikes whose results are in the docs
+spikes/p0/conf.lua	drop		spikes whose results are in the docs
+spikes/p0/main.lua	drop		spikes whose results are in the docs
+spikes/p0/out.mp4	drop		spikes whose results are in the docs
+spikes/vello_spike/Cargo.lock	drop		spikes whose results are in the docs
+spikes/vello_spike/Cargo.toml	drop		spikes whose results are in the docs
+spikes/vello_spike/src/main.rs	drop		spikes whose results are in the docs
+submodules/.gitkeep	drop		nomimono's submodule folder; tablua is at tablua/
+submodules/AGENTS.md	drop		nomimono's submodule folder; tablua is at tablua/
+tabicl/Cargo.toml	port	native/tabicl/Cargo.toml	
+tabicl/src/lib.rs	port	native/tabicl/src/lib.rs	
+tabicl/src/main.rs	port	native/tabicl/src/main.rs	
+tabicl/src/model.rs	port	native/tabicl/src/model.rs	
+tabicl/src/parity.rs	port	native/tabicl/src/parity.rs	
+tabicl/src/prep.rs	port	native/tabicl/src/prep.rs	
+tabicl/src/pyrand.rs	port	native/tabicl/src/pyrand.rs	
+tests/PLAN.md	doc	.robot/docs/tests.robot	
+tests/captions_from_words.lua	rewrite	core/moonsplice/captions_test.lua	a test in test/spec.lua's form, beside the module it tests
+tests/fixtures/banned_clock.lua	port	.robot/fixtures/banned_clock.lua	
+tests/fixtures/font_glyphs.lua	port	.robot/fixtures/font_glyphs.lua	
+tests/fixtures/headless.lua	port	.robot/fixtures/headless.lua	
+tests/fixtures/inputs_bound.inputs.json	port	.robot/fixtures/inputs_bound.inputs.json	
+tests/fixtures/inputs_bound.lua	port	.robot/fixtures/inputs_bound.lua	
+tests/fixtures/inputs_missing.lua	port	.robot/fixtures/inputs_missing.lua	
+tests/fixtures/overlap.lua	port	.robot/fixtures/overlap.lua	
+tests/fixtures/overrun.lua	port	.robot/fixtures/overrun.lua	
+tests/fixtures/px.png	port	.robot/fixtures/px.png	
+tests/fixtures/screen_glyphs.lua	port	.robot/fixtures/screen_glyphs.lua	
+tests/fixtures/shadow_glyphs.lua	port	.robot/fixtures/shadow_glyphs.lua	
+tests/fixtures/vector_effect_glyphs.lua	port	.robot/fixtures/vector_effect_glyphs.lua	
+tests/golden/hello.md5	copy	.robot/golden/hello.md5	
+tests/lint/drawn_vector.lua	port	.robot/fixtures/lint/drawn_vector.lua	
+tests/lint/fx_opaque.lua	port	.robot/fixtures/lint/fx_opaque.lua	
+tests/lint/outline_contrast.lua	port	.robot/fixtures/lint/outline_contrast.lua	
+tests/lint/reveal_typeon.lua	port	.robot/fixtures/lint/reveal_typeon.lua	
+tests/lint/static_vector.lua	port	.robot/fixtures/lint/static_vector.lua	
+tests/run_p1.sh	rewrite	.robot/suites/p1.robot	a Robot suite, not a shell script
+tests/run_verify.sh	rewrite	.robot/suites/verify.robot	a Robot suite, not a shell script
+toolchains/BUCK	drop		buck2
+tools/agent_script.py	park		Python, Node and research scripts
+tools/align_cues.py	park		Python, Node and research scripts
+tools/apple/main.swift	port	native/apple/main.swift	
+tools/apple/vt.swift	port	native/apple/vt.swift	
+tools/aspect_probe.mjs	park		Python, Node and research scripts
+tools/bench_perceive.py	park		Python, Node and research scripts
+tools/codec/CHANNELS.md	park		Python, Node and research scripts
+tools/codec/cbox.sh	park		Python, Node and research scripts
+tools/codec/clustering_results.jsonl	park		Python, Node and research scripts
+tools/codec/guard.py	park		Python, Node and research scripts
+tools/codec/h264_features.py	park		Python, Node and research scripts
+tools/codec/jm_features.py	park		Python, Node and research scripts
+tools/codec/make_inset_clips.py	park		Python, Node and research scripts
+tools/codec/make_reversal.py	park		Python, Node and research scripts
+tools/codec/make_setb.py	park		Python, Node and research scripts
+tools/codec/make_traj.py	park		Python, Node and research scripts
+tools/codec/mb_debug.py	park		Python, Node and research scripts
+tools/codec/probe.py	park		Python, Node and research scripts
+tools/codec/propagate.py	park		Python, Node and research scripts
+tools/codec/r2.py	park		Python, Node and research scripts
+tools/codec/r2_pushed.txt	park		Python, Node and research scripts
+tools/codec/ravst.py	park		Python, Node and research scripts
+tools/codec/redundancy_results.jsonl	park		Python, Node and research scripts
+tools/codec/run_jm_probe.py	park		Python, Node and research scripts
+tools/codec/schedule.py	park		Python, Node and research scripts
+tools/codec/test0_real_object.py	park		Python, Node and research scripts
+tools/codec/testA_nonrigid.py	park		Python, Node and research scripts
+tools/codec/testC_allocation.py	park		Python, Node and research scripts
+tools/codec/testD_spatial.py	park		Python, Node and research scripts
+tools/codec/testE_jm_spatial.py	park		Python, Node and research scripts
+tools/codec/testG1_crop.py	park		Python, Node and research scripts
+tools/codec/testG1_model.py	park		Python, Node and research scripts
+tools/codec/testG_ravst_auc.py	park		Python, Node and research scripts
+tools/codec/testH_clustering.py	park		Python, Node and research scripts
+tools/codec/testR2_redundancy.py	park		Python, Node and research scripts
+tools/codec/testR_redundancy.py	park		Python, Node and research scripts
+tools/codec/unav100_segments.csv	park		Python, Node and research scripts
+tools/dub-fetch.sh	park		Python, Node and research scripts
+tools/edge-bench/bench.py	park		Python, Node and research scripts
+tools/edge-bench/concurrency_l4.json	park		Python, Node and research scripts
+tools/edge-bench/export.py	park		Python, Node and research scripts
+tools/edge-bench/modal_bench.py	park		Python, Node and research scripts
+tools/edge-bench/precision_l4.json	park		Python, Node and research scripts
+tools/edge-bench/profile_l4.json	park		Python, Node and research scripts
+tools/edge-bench/results_cpu8.json	park		Python, Node and research scripts
+tools/edge-bench/results_gpu.json	park		Python, Node and research scripts
+tools/edge-bench/results_mac_cpu.json	park		Python, Node and research scripts
+tools/edgetam_onnx_setup.py	park		Python, Node and research scripts
+tools/flags.mjs	park		Python, Node and research scripts
+tools/flags2.mjs	park		Python, Node and research scripts
+tools/grabmedia.mjs	park		Python, Node and research scripts
+tools/grabpills.mjs	park		Python, Node and research scripts
+tools/login.mjs	park		Python, Node and research scripts
+tools/logo.mjs	park		Python, Node and research scripts
+tools/make-agent-lesson.py	park		Python, Node and research scripts
+tools/make-lesson.py	park		Python, Node and research scripts
+tools/peek.mjs	park		Python, Node and research scripts
+tools/peek2.mjs	park		Python, Node and research scripts
+tools/peek3.mjs	park		Python, Node and research scripts
+tools/probe.mjs	park		Python, Node and research scripts
+tools/probe2.mjs	park		Python, Node and research scripts
+tools/probe_v2.mjs	park		Python, Node and research scripts
+tools/record.mjs	park		Python, Node and research scripts
+tools/scene-wasm/index.html	park		Python, Node and research scripts
+tools/scene-wasm/replay.mjs	park		Python, Node and research scripts
+tools/scene-wasm/scene.mjs	park		Python, Node and research scripts
+tools/tauri-mcp/guest-execute-js.patch	park		Python, Node and research scripts
+tools/tracks_to_lua.py	park		Python, Node and research scripts
+tools/video-jeff/ask_agree.py	park		Python, Node and research scripts
+tools/video-jeff/ask_crop.py	park		Python, Node and research scripts
+tools/video-jeff/ask_crop_rule.py	park		Python, Node and research scripts
+tools/video-jeff/ask_frame.py	park		Python, Node and research scripts
+tools/video-jeff/ask_model2.py	park		Python, Node and research scripts
+tools/video-jeff/ask_noul.py	park		Python, Node and research scripts
+tools/video-jeff/ask_validate.py	park		Python, Node and research scripts
+tools/video-jeff/cache_gen.py	park		Python, Node and research scripts
+tools/video-jeff/cache_shots.py	park		Python, Node and research scripts
+tools/video-jeff/canary_sam3.py	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0000.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0001.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0002.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0003.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0004.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0005.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0006.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0007.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0008.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0009.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0010.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0011.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0012.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0013.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0014.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0015.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0016.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0017.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0018.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0019.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0020.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0021.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0022.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0023.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0024.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0025.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0026.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0027.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0028.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0029.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0030.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0031.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0032.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0033.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0034.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0035.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0036.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0037.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0038.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0039.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0040.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0041.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0042.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0043.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0044.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0045.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0046.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0047.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0048.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0049.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0050.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0051.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0052.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0053.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0054.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0055.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0056.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0057.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0058.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0059.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0060.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0061.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0062.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0063.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0064.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0065.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0066.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0067.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0068.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/comp0069.mp4	park		Python, Node and research scripts
+tools/video-jeff/gen/truth.json	park		Python, Node and research scripts
+tools/video-jeff/gen_comps.py	park		Python, Node and research scripts
+tools/video-jeff/inject.py	park		Python, Node and research scripts
+tools/video-jeff/mask_junction.py	park		Python, Node and research scripts
+tools/video-jeff/oracle_flow.py	park		Python, Node and research scripts
+tools/video-jeff/oracle_gap.py	park		Python, Node and research scripts
+tools/video-jeff/oracle_lum.py	park		Python, Node and research scripts
+tools/video-jeff/oracle_run.py	park		Python, Node and research scripts
+tools/video-jeff/oracle_v2.py	park		Python, Node and research scripts
+tools/video-jeff/shots.py	park		Python, Node and research scripts
+tools/video-jeff/train_arms.py	park		Python, Node and research scripts
+tools/video-jeff/train_proj.py	park		Python, Node and research scripts
+tools/video-jeff/verbalize.py	park		Python, Node and research scripts
+tools/video-jeff/verify_inject.py	park		Python, Node and research scripts
+tools/video-jeff/xattn.py	park		Python, Node and research scripts
+track/Cargo.toml	port	native/track/Cargo.toml	
+track/src/lib.rs	port	native/track/src/lib.rs	
+track/src/main.rs	port	native/track/src/main.rs	
+track/src/resize.rs	port	native/track/src/resize.rs	
+vision/cli.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/eval/REPORT-2026-09-16.md	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/lua/props.lua	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/__init__.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/annotate.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/audiofacts.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/boundaries.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/camerafacts.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/clipeval.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/clips.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/contact.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/depth.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/derive.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/devices.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/diarize.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/diff.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/edits.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/embed.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/evalrun.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/facts.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/fetch.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/identity.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/keyframes.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/landmarks.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/lower.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/native.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/ocr.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/people.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/perceive.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/profile.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/profiles.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/query.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/scene_text.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/segtrack.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/server.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/sheet.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/sources.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/tags.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/tracking.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/vendor/__init__.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/vendor/mp_handpose.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/moonsplice_vision/vendor/mp_palmdet.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/requirements.txt	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/tests/test_audiofacts.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/tests/test_boundaries.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/tests/test_camerafacts.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/tests/test_clipeval.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/tests/test_contact.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/tests/test_diarize.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/tests/test_edits.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/tests/test_facts.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/tests/test_identity.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/tests/test_landmarks.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/tests/test_ocr.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/tests/test_perceive.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/tests/test_query.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/tests/test_repairs.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/tests/test_tracking.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/tests/test_transcript.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+vision/tests/test_vision.py	park		Python vision MCP; its Lua view (vision/lua) goes with it
+web/README.md	park		wasmoon preview host
+web/bridge.lua	park		wasmoon preview host
+web/host.js	park		wasmoon preview host
+web/index.html	park		wasmoon preview host
+web/media.js	park		wasmoon preview host
+web/painter.js	park		wasmoon preview host

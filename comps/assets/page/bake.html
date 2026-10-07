@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Moonsplice bake fixture</title>
+  <style>
+    html, body { margin: 0; background: #0b1220; color: #e8edf7; font-family: Helvetica, Arial, sans-serif; }
+    body { padding: 48px 56px; }
+    .kicker { font-size: 14px; letter-spacing: 0.28em; color: #6b7894; }
+    .ready .kicker { color: #3ee0c6; }
+    h1 { margin: 12px 0 0; font-size: 56px; font-weight: 700; }
+    .ready h1 { color: #3ee0c6; }
+    p { margin: 18px 0 0; font-size: 22px; color: #8b97b0; }
+  </style>
+</head>
+<body>
+  <div class="kicker">SCRIPT BAKE</div>
+  <h1 id="title">loading</h1>
+  <p id="note">pre-script markup</p>
+  <script>
+    document.getElementById("title").textContent = "Baked";
+    document.getElementById("note").textContent = "JS ran once at resolve. Not in evaluate(t).";
+    document.body.classList.add("ready");
+  </script>
+</body>
+</html>
