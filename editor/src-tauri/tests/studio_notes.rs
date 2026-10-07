@@ -347,14 +347,15 @@ fn a_frame_and_a_sound_come_back_with_permission_to_read_them() {
         plain
     );
 
-    // And the wrapper actually says the thing.
+    // And the wrapper actually says the thing. It lives in framing.rs, beside the frames it wraps.
+    let wrapper = include_str!("../src/framing.rs");
     for header in [
         "access-control-allow-origin",
         "access-control-allow-methods",
         "access-control-allow-headers",
     ] {
         assert!(
-            src.contains(&format!("\"{header}\"")),
+            wrapper.contains(&format!("\"{header}\"")),
             "across_the_origin does not send {header}"
         );
     }
