@@ -11,6 +11,12 @@ import type {
   Applied,
   AssetView,
   CompChanged,
+  ConnectAnswer,
+  ConnectAsk,
+  ConnectFound,
+  ConnectNeeds,
+  ConnectRecorded,
+  Connection,
   Gesture,
   Opened,
   ProjectView,
@@ -79,6 +85,26 @@ export const bridge = {
 
   setKey: (name: string, value: string) => invoke<void>("set_key", { name, value }),
   keyIsSet: (name: string) => invoke<boolean>("key_is_set", { name }),
+
+  /** Other people's apps (.robot/docs/connect.robot). What agents are waiting on the person for,
+   *  and what is connected: names only, never a value. */
+  connectAsks: () => invoke<ConnectAsk[]>("connect_asks"),
+  connections: () => invoke<Connection[]>("connect_list"),
+  connectNeeds: (service: string) => invoke<ConnectNeeds>("connect_needs", { service }),
+  connectFind: (words: string) => invoke<ConnectFound[]>("connect_find", { words }),
+  /** The values go to the keychain on the other side and are never sent back. */
+  connectSave: (service: string, values: Record<string, string>) =>
+    invoke<ConnectRecorded>("connect_save", { service, values }),
+  connectAnswer: (service: string, op: string, answer: ConnectAnswer) =>
+    invoke<{ service: string; op: string; answer: ConnectAnswer }>("connect_answer", {
+      service,
+      op,
+      answer,
+    }),
+  connectForget: (service: string) => invoke<void>("connect_forget", { service }),
+  connectLogo: (service: string) => invoke<string | null>("connect_logo", { service }),
+  /** The service's documentation, in the browser. Rust looks the address up itself. */
+  connectDocs: (service: string) => invoke<void>("connect_docs", { service }),
   /** What playback is costing, per stage. Asked for while playing, so the app can say which of
    *  the four steps is eating the budget rather than only that it is behind. */
   playback: (budgetMs: number) => invoke<PlaybackReport>("playback", { budgetMs }),

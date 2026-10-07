@@ -8,6 +8,7 @@ import { bridge, onComp, onExport, onProject, onTrouble, why } from "./bridge";
 import { Chrome } from "./chrome/Chrome";
 import * as fmt from "./format";
 import { Keys } from "./Keys";
+import { Waiting } from "./connect/Waiting";
 import { Sidebar } from "./Sidebar";
 import { shuttle } from "./player";
 import { Stage } from "./stage/Stage";
@@ -303,6 +304,7 @@ export default function App() {
   return (
     <div className="flex h-full flex-col">
       <Keys />
+      <Waiting />
       <Chrome />
       {project ? (
         <div className="flex min-h-0 flex-1">

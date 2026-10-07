@@ -224,3 +224,58 @@ export type TurnChunk =
       steps?: number;
       notes?: string[];
     };
+
+// ------------------------------------------------------------------------------ connections
+
+/** One thing a service needs to be connected: a token, an account id. Only its name and label
+ *  ever reach the window; the value goes from the field to the keychain. */
+export interface ConnectField {
+  name: string;
+  label: string;
+  secret: boolean;
+}
+
+/** Something an agent is waiting on the person for (.robot/docs/connect.robot). */
+export interface ConnectAsk {
+  id: string;
+  kind: "connect" | "approve";
+  service: string;
+  name?: string | null;
+  op?: string | null;
+  method?: string | null;
+  fields: ConnectField[];
+  docs?: string | null;
+  why?: string | null;
+  at?: string | null;
+  status?: string | null;
+}
+
+export interface Connection {
+  service: string;
+  fields: string[];
+  at?: string | null;
+}
+
+export interface ConnectNeeds {
+  service: string;
+  name: string;
+  docs?: string | null;
+  fields: ConnectField[];
+  missing: string[];
+}
+
+export interface ConnectFound {
+  service: string;
+  name: string;
+  categories: string[];
+  operations: number;
+  docs?: string | null;
+}
+
+export interface ConnectRecorded {
+  service: string;
+  fields: string[];
+  checked: boolean;
+}
+
+export type ConnectAnswer = "once" | "always" | "deny";

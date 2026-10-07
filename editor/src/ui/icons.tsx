@@ -21,6 +21,7 @@ export type IconName =
   | "stop"
   | "send"
   | "sun"
+  | "settings"
   | "panel-left"
   | "panel-right"
   | "step-back"
@@ -58,6 +59,7 @@ export function Icon({
     | "stop"
     | "send"
     | "sun"
+    | "settings"
     | "panel-left"
     | "panel-right"
     | "step-back"
@@ -227,6 +229,14 @@ export function Icon({
         <svg viewBox="0 0 16 16" className={cn} aria-hidden>
           <circle cx="8" cy="8" r="2.9" {...stroke} />
           <path d="M8 1.6v1.4M8 13v1.4M1.6 8h1.4M13 8h1.4M3.6 3.6l1 1M11.4 11.4l1 1M12.4 3.6l-1 1M4.6 11.4l-1 1" {...stroke} />
+        </svg>
+      );
+    case "settings":
+      return (
+        <svg viewBox="0 0 16 16" className={cn} aria-hidden>
+          <path d="M2.5 4.5h11M2.5 11.5h11" {...stroke} />
+          <circle cx="6" cy="4.5" r="1.7" {...stroke} fill="var(--ink-0)" />
+          <circle cx="10.5" cy="11.5" r="1.7" {...stroke} fill="var(--ink-0)" />
         </svg>
       );
     case "caret-right":

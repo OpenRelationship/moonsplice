@@ -47,6 +47,7 @@ use crate::source::SourceDoc;
 mod apply;
 mod assets;
 mod bridge;
+mod connections;
 mod describe;
 mod edit;
 mod export;
@@ -59,6 +60,7 @@ mod open;
 pub use apply::*;
 pub use assets::*;
 use bridge::*;
+pub use connections::*;
 pub use describe::*;
 pub use edit::*;
 pub use export::*;
@@ -338,19 +340,7 @@ pub fn run() {
             }
         })
         .setup(|app| {
-            let handle = app.handle().clone();
-            if let Some(root) = remembered_path(&handle) {
-                if let Ok(p) = Project::open(&root) {
-                    let studio = handle.state::<Studio>();
-                    *studio.project.lock().unwrap() = Some(p);
-                    // Including when `MOONSPLICE_PROJECT` chose it. Opening a folder is opening a
-                    // folder however the app was told to; without this the next launch, with no
-                    // environment set, went back to the empty state -- which is how the
-                    // remembering stayed unexercised for as long as it did.
-                    remember_path(&handle, &root);
-                    watch(handle.clone(), root);
-                }
-            }
+            reopen_remembered(app.handle());
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -383,6 +373,15 @@ pub fn run() {
             stop_turn,
             set_key,
             key_is_set,
+            connect_asks,
+            connect_list,
+            connect_needs,
+            connect_find,
+            connect_save,
+            connect_answer,
+            connect_forget,
+            connect_logo,
+            connect_docs,
         ])
         .run(tauri::generate_context!())
         .expect("Moonsplice Studio could not start");

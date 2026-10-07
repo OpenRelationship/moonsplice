@@ -59,6 +59,18 @@ pub(super) fn remembered_path(app: &AppHandle) -> Option<PathBuf> {
     p.is_dir().then_some(p)
 }
 
+/// At launch: open the remembered folder, if there is one and it still opens.
+pub(super) fn reopen_remembered(handle: &AppHandle) {
+    let Some(root) = remembered_path(handle) else { return };
+    let Ok(p) = Project::open(&root) else { return };
+    *handle.state::<Studio>().project.lock().unwrap() = Some(p);
+    // Including when `MOONSPLICE_PROJECT` chose it. Opening a folder is opening a folder however
+    // the app was told to; without this the next launch, with no environment set, went back to
+    // the empty state -- which is how the remembering stayed unexercised for as long as it did.
+    remember_path(handle, &root);
+    watch(handle.clone(), root);
+}
+
 pub(super) fn remember_path(app: &AppHandle, root: &Path) {
     let Ok(dir) = app.path().app_config_dir() else { return };
     let _ = std::fs::create_dir_all(&dir);
