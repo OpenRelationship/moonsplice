@@ -1,5 +1,6 @@
--- Runs Moonsplice's unit tests: every core/**/*_test.lua, each in its own process, with core/, core/runtime/ and
--- tablua's test library (submodules/tablua/test/spec.lua: test, eq, ok, same, err, run) on the module path.
+-- Runs Moonsplice's unit tests: every core/**/*_test.lua, each in its own process, with core/, core/runtime/,
+-- tablua's test library (submodules/tablua/test/spec.lua: test, eq, ok, same, err, run), tablua's core (its ports)
+-- and the submodules (connectory as connectory.lua.*) on the module path.
 --   luajit test/run.lua            all of them
 --   luajit test/run.lua rows lint  only files whose path holds one of the words
 local root = arg[0]:match("^(.*)/test/run%.lua$") or "."
@@ -17,7 +18,8 @@ end
 list:close()
 
 local paths = table.concat({ root .. "/core/?.lua", root .. "/core/?/init.lua", root .. "/core/runtime/?.lua",
-  root .. "/core/runtime/?/init.lua", tablua .. "/test/?.lua", "" }, ";")
+  root .. "/core/runtime/?/init.lua", tablua .. "/test/?.lua", tablua .. "/core/?.lua", tablua .. "/core/?/init.lua",
+  root .. "/submodules/?.lua", "" }, ";")
 local setup = "package.path=" .. string.format("%q", paths) .. "..package.path"
 
 local failed = {}

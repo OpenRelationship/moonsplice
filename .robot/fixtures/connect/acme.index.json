@@ -1,0 +1,6 @@
+{"operations": [
+  {"slug": "acme.tickets_list", "name": "List tickets", "description": "Lists the tickets.",
+   "input": {"properties": {"state": {"type": "string"}}}},
+  {"slug": "acme.tickets_create", "name": "Create a ticket", "description": "Opens a new ticket.",
+   "input": {"properties": {"title": {"type": "string"}, "body": {"type": "string"}}, "required": ["title"]}}
+]}

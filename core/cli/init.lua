@@ -1,12 +1,15 @@
 -- Moonsplice's command line, run by ./moonsplice as `luajit core/cli/init.lua ROOT COMMAND ...`. Most commands are
 -- the engine's (native/engine running core/runtime): render, hash, lint, check, rows, patch, gate, expect, tabicl,
--- serve. sheet renders and tiles a contact sheet (cli/sheet.lua); play runs a game in Bevy's window.
+-- serve. sheet renders and tiles a contact sheet (cli/sheet.lua); play runs a game in Bevy's window; connect reaches
+-- other people's apps (cli/connect.lua); studio runs Tablua's agent on a comp (cli/studio.lua).
 local root = assert(arg[1], "usage: luajit core/cli/init.lua ROOT COMMAND ...")
 local args = {}
 for i = 3, #arg do args[#args + 1] = arg[i] end
 local cmd = arg[2]
 
-package.path = root .. "/core/?.lua;" .. root .. "/core/?/init.lua;" .. package.path
+-- core, then the submodules: connectory as connectory.lua.*, and Tablua's core (its ports and the harness)
+package.path = root .. "/core/?.lua;" .. root .. "/core/?/init.lua;" .. root .. "/submodules/?.lua;" .. root
+  .. "/submodules/tablua/core/?.lua;" .. root .. "/submodules/tablua/core/?/init.lua;" .. package.path
 
 local M = {}
 
@@ -79,7 +82,10 @@ local USAGE = [[usage: moonsplice COMMAND [args]
   sheet COMP OUT.png [--json] [--n 6]            a contact sheet: picks, seconds, labelled
   tabicl                        one JSON body per line on stdin, one {probas, ms} per line out
   serve                         the editor's frame server (MOONSPLICE_SERVE_DIR)
-  play COMP                     a game in a window (Bevy)]]
+  play COMP                     a game in a window (Bevy)
+  connect SERVICE | --list | --asks | --find WORDS | --calls SERVICE | --approve SERVICE OP | --call OP [ARGS.json]
+                                other people's apps through connectory (.robot/docs/connect.robot)
+  studio --comp COMP --ask TEXT [--kind video|game]   a Tablua run on a comp, with connect]]
 
 M.root, M.args = root, args
 
@@ -100,6 +106,10 @@ elseif cmd == "serve" then
 elseif cmd == "sheet" then
   need(2, "sheet COMP OUT.png [--json] [--n 6]")
   os.exit(require("cli.sheet").run(M, args))
+elseif cmd == "connect" then
+  os.exit(require("cli.connect").run(M, args))
+elseif cmd == "studio" then
+  os.exit(require("cli.studio").run(M, args))
 elseif cmd == "play" then
   local bin = os.getenv("MOONSPLICE_PLAY") or (root .. "/native/target/release/moonsplice-play")
   if not exists(bin) then die("moonsplice-play is not built (cargo build --release -p moonsplice-play in native/)", 2) end

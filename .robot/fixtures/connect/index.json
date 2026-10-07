@@ -1,0 +1,4 @@
+{"index": [
+  {"slug": "acme", "name": "Acme", "categories": ["ticketing"], "docs": "https://acme.test/keys", "operations": 2,
+   "env": ["ACME_TOKEN", "ACME_HOST"], "verify": {"method": "GET", "path": "/me"}}
+]}
