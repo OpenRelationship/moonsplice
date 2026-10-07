@@ -213,6 +213,12 @@ compile, and a coroutine timeline at render would break seeking any frame in any
 Two docs describe things that do not exist yet: signals and a coroutine timeline. Treat them as plans. Scripts
 already run once at compile and record keys; that is the storyboard, and no coroutine runs at render.
 
+`.robot/docs/connect.robot` is the plan for connecting other people's APIs through connectory
+(`submodules/connectory`): secrets in the keychain behind `secret(name)` and never in rows, files or the agent's
+context; the agent asks, the person types into a masked field (editor) or a no-echo prompt (`./moonsplice
+connect`); calls run in resolve or as agent steps, their answers become assets, and calls with consequences wait
+for approval. Build to it.
+
 ## Working on the engine
 
 - Read `.robot/docs/design.robot` (the bet), `.robot/docs/canon.robot` (the locked canon decisions) and
