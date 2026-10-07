@@ -1,0 +1,8 @@
+native/target/
+.robot/runs/*/scratch/
+*.tmp
+.DS_Store
+editor/.tauri-plugin-mcp/
+editor/node_modules/
+editor/dist/
+editor/src-tauri/target/

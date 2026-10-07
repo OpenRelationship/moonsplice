@@ -1,0 +1,3 @@
+[submodule "tablua"]
+	path = tablua
+	url = https://github.com/OpenRelationship/tablua

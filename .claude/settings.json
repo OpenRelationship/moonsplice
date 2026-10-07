@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sed -n '/^\\*\\*\\* Settings/,/^\\*\\*\\* Test Cases/p' \"$CLAUDE_PROJECT_DIR/.robot/rules.robot\"; echo; echo 'Laws: luajit .robot/run.lua (rules.robot). Docs are .robot/docs/*.robot. No markdown; no file over 400 lines.'"
+          }
+        ]
+      }
+    ]
+  }
+}
