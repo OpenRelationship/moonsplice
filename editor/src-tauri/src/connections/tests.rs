@@ -127,3 +127,29 @@ fn the_directory_answers_through_the_command_line() {
     let found: Vec<Found> = rows(&connect(&["--find", "github"]).unwrap()).unwrap();
     assert!(found.iter().any(|f| f.service == "github"));
 }
+
+#[test]
+fn a_value_for_security_is_quoted_with_its_quotes_and_backslashes_escaped() {
+    assert_eq!(quoted(r#"a b'c"d\e"#), r#""a b'c\"d\\e""#);
+}
+
+/// The app's keychain write lands where the command line reads it, through `security` alone, in a
+/// throwaway keychain (never the login one).
+#[test]
+fn a_field_the_app_stores_is_read_back_by_security() {
+    let dir = std::env::temp_dir().join(format!("ms-kc-{}", std::process::id()));
+    std::fs::create_dir_all(&dir).unwrap();
+    let kc = dir.join("t.keychain");
+    let kcs = kc.to_str().unwrap();
+    let run = |args: &[&str]| std::process::Command::new("security").args(args).output().unwrap();
+    assert!(run(&["create-keychain", "-p", "pw", kcs]).status.success());
+    run(&["unlock-keychain", "-p", "pw", kcs]);
+    std::env::set_var("MOONSPLICE_KEYCHAIN", kcs);
+    let wrote = keychain_write("MS_TEST_TOKEN", "a \"quoted\" \\ value");
+    std::env::remove_var("MOONSPLICE_KEYCHAIN");
+    let read = run(&["find-generic-password", "-s", "moonsplice", "-a", "MS_TEST_TOKEN", "-w", kcs]);
+    run(&["delete-keychain", kcs]);
+    let _ = std::fs::remove_dir_all(&dir);
+    assert!(wrote.is_ok(), "{wrote:?}");
+    assert_eq!(String::from_utf8_lossy(&read.stdout).trim_end(), "a \"quoted\" \\ value");
+}

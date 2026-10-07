@@ -106,6 +106,11 @@ pub struct Recorded {
     pub fields: Vec<String>,
     #[serde(default)]
     pub checked: bool,
+    /// The service's own test call: "passed", "failed" or "none" (the directory knows none).
+    #[serde(default)]
+    pub test: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub test_message: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -230,10 +235,44 @@ fn save_with(
     Ok(())
 }
 
-fn keychain_write(name: &str, value: &str) -> Result<(), String> {
-    keyring::Entry::new(KEYCHAIN, name)
-        .and_then(|e| e.set_password(value))
-        .map_err(|e| format!("the keychain did not store {name} ({e})"))
+/// A value for `security -i`, which reads its commands from stdin and parses double quotes with
+/// backslash escapes.
+pub(crate) fn quoted(v: &str) -> String {
+    format!("\"{}\"", v.replace('\\', "\\\\").replace('"', "\\\""))
+}
+
+/// Through `security -i` on its stdin, as the command line's store does (core/connect/store.lua): the
+/// value is never an argument, and the item trusts `security`, so the command line reads it with no
+/// prompt. `MOONSPLICE_KEYCHAIN` names a keychain file in tests.
+pub(crate) fn keychain_write(name: &str, value: &str) -> Result<(), String> {
+    use std::io::Write;
+    let keychain = std::env::var("MOONSPLICE_KEYCHAIN").ok().filter(|k| !k.is_empty());
+    let line = format!(
+        "add-generic-password -U -s {} -a {} -l {} -w {}{}\n",
+        quoted(KEYCHAIN),
+        quoted(name),
+        quoted(&format!("Moonsplice: {name}")),
+        quoted(value),
+        keychain.map(|k| format!(" {}", quoted(&k))).unwrap_or_default()
+    );
+    let mut child = std::process::Command::new("security")
+        .arg("-i")
+        .stdin(std::process::Stdio::piped())
+        .stdout(std::process::Stdio::null())
+        .stderr(std::process::Stdio::null())
+        .spawn()
+        .map_err(|e| format!("the keychain did not store {name} ({e})"))?;
+    child
+        .stdin
+        .take()
+        .ok_or_else(|| format!("the keychain did not store {name}"))?
+        .write_all(line.as_bytes())
+        .map_err(|e| format!("the keychain did not store {name} ({e})"))?;
+    let status = child.wait().map_err(|e| format!("the keychain did not store {name} ({e})"))?;
+    if !status.success() {
+        return Err(format!("the keychain did not store {name}"));
+    }
+    Ok(())
 }
 
 /// Off the window's thread: every one of these starts a process.

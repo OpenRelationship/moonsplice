@@ -276,6 +276,9 @@ export interface ConnectRecorded {
   service: string;
   fields: string[];
   checked: boolean;
+  /** The service's own test call: passed, failed, or none known. */
+  test?: "passed" | "failed" | "none";
+  test_message?: string;
 }
 
 export type ConnectAnswer = "once" | "always" | "deny";

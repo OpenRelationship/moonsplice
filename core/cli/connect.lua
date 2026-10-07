@@ -85,10 +85,12 @@ function M.record(C, service, as_json)
   for _, f in ipairs(need.fields) do names[#names + 1] = f.name end
   C.state:connected(service, names)
   local ok, err = C.port:check(service)
-  local checked = ok and "the test call passed" or (err and err.code == "not_found" and "no test call is known"
-    or ("the test call failed: " .. tostring(err and err.message)))
-  return out({ service = service, fields = names, checked = ok and true or false }, as_json,
-    ("%s is connected (%s)."):format(need.name, checked))
+  local test = ok and "passed" or (err and err.code == "not_found" and "none") or "failed"
+  local said = test == "passed" and "the test call passed" or test == "none" and "no test call is known"
+    or ("the test call failed: " .. tostring(err and err.message))
+  return out({ service = service, fields = names, checked = ok and true or false, test = test,
+    test_message = test == "failed" and tostring(err and err.message) or nil }, as_json,
+    ("%s is connected (%s)."):format(need.name, said))
 end
 
 local function approve(C, o, service, op)

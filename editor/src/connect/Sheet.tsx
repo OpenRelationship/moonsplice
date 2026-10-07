@@ -134,9 +134,12 @@ export function ConnectForm({
       const r = await bridge.connectSave(ask.service, sent);
       setOutcome({
         ok: true,
-        text: r.checked
-          ? `${name} is connected, and its test call passed.`
-          : `${name} is connected. Its test call did not pass, or it has none.`,
+        text:
+          r.test === "passed" || (r.test === undefined && r.checked)
+            ? `${name} is connected, and its test call passed.`
+            : r.test === "none"
+              ? `${name} is connected.`
+              : `${name} is connected, but its test call did not pass${r.test_message ? `: ${r.test_message}` : ""}.`,
       });
     } catch (e) {
       setOutcome({ ok: false, text: why(e) });
