@@ -163,6 +163,50 @@ do not build on the behaviour it describes.
 6. **Each curve kind is spelled four times** (recorder, segment value, rows, dump). Fix: one registry of curve
    kinds, each with a compile and a dump, and rows that carry names and params only, never functions.
 7. **Games replay from zero.** There are no snapshots yet, so seeking a game in random order costs quadratic time.
+8. **Bevy 3D frames are not deterministic.** game_harbour3d hashed twice from the same code differs on 25 to 40 of
+   its 660 frames, so its golden cannot hold. Find what varies between runs in native/render (world.rs) before any
+   golden of a 3D comp is trusted.
+
+Each gap has a probe in `.robot/fixtures/probe/` and a test in `.robot/suites/gaps.robot` that passes once the gap is
+fixed (`luajit .robot/run.lua .robot/suites/gaps.robot`; all red at the handoff). Run it before and after each fix.
+
+Where each gap lives (lines at 2911787), and how the Lua directions from the audit apply to it:
+
+1. `core/moonsplice/rows/scene.lua:257-270` builds each system once and calls it per frame with no protection; one
+   error unwinds `comp:evaluate` (`core/moonsplice/init.lua`) and render dies in `core/runtime/main.lua:275`.
+   *pcall*: wrap each call in `xpcall` with a traceback handler, record the failure on the comp (system, line,
+   first and last t, count), and let lint turn the record into findings. Do not use pcall to hide the error: the
+   frame draws without that system's rows, and the finding is an error.
+2. `core/runtime/rowsmode.lua:243` evaluates a patched comp at three times; `core/moonsplice/lint.lua:128` samples
+   at the comp's fps but `core/runtime/checkmode.lua:24` assumes 30. *tables*: make the frame list one table built
+   once from the comp (`for i = 0, frames - 1 do ts[#ts+1] = i / fps end`) and pass it to patch, lint and check, so
+   no reader picks its own sampling.
+3. `core/moonsplice/init.lua:162` rounds frames with `+ 0.5`, `checkmode.lua:24` floors `t * 30`, `main.lua:275`
+   uses `i / fps`, and the recorder's waits add up doubles. *doubles*: Lua numbers are doubles, so keep time as an
+   integer frame count, or a rational fps (num/den), and turn it into seconds only at the edge. Snap every key and
+   wait to the render grid at compile (`math.floor(t * fps + 1e-6)`), so 0.1 + 0.2 means frame 9 at 30 fps.
+4. `core/moonsplice/rows/scene.lua:8` hands systems the host's `string` and `table`; `q.get`, `q.fact` and
+   `q.state` (lines 246-268) return live tables. *metatables*: give systems copies of the libraries and a read-only
+   view (a proxy whose `__index` reads through and whose `__newindex` errors), then `q.select` over indexes built at
+   compile. Under LuaJIT `setfenv` (line 14) already isolates globals; the leak is the shared library tables.
+5. `core/moonsplice/init.lua:173-182` merges `node_defaults` into `initial`, and the world, camera and mesh
+   constructors (lines 515, 534, 552) write `yaw = 0`. *metatables*: keep `authored` as written and put the kind's
+   defaults behind it with `setmetatable(authored_view, { __index = defaults })`, so a reader asks `rawget` for "was
+   it authored" and `Node:get` for the value. Readers that skip `Node:get` (worldbevy's `ci.*`) are the second half.
+6. Curve kinds live in the recorder (`core/moonsplice/timeline.lua:39`), segment values, rows
+   (`core/moonsplice/rows/init.lua:125`) and dump (`core/moonsplice/rows/dump.lua:53-73`). *tables* and
+   *closures*: one registry table of kinds, each an entry with `compile(params) -> f(u)` (a closure over its
+   params) and `dump(seg) -> params`. Rows carry the name and params; functions never enter the rows.
+7. `core/moonsplice/game.lua` replays from step 0 whenever time goes backwards (line 25). *tables*: a snapshot is
+   a deep copy of `state` every N steps, kept in a table keyed by step; seeking restores the nearest snapshot at or
+   before the target and steps forward. *coroutines* do not help here: a game step is already a pure function of
+   state and input, and a suspended coroutine cannot be copied, so it cannot be a snapshot.
+8. native/render/src/world.rs. No Lua direction applies; look for unordered iteration (a HashMap feeding spawn
+   order), GPU readback timing, or anything seeded from the clock.
+
+The six directions overall: tables, metatables, closures and pcall carry the fixes above. Doubles are a hazard
+to design around, not a feature. Coroutines stay out of the render path; the storyboard already records keys at
+compile, and a coroutine timeline at render would break seeking any frame in any order.
 
 Two docs describe things that do not exist yet: signals and a coroutine timeline. Treat them as plans. Scripts
 already run once at compile and record keys; that is the storyboard, and no coroutine runs at render.
